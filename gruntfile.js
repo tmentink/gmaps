@@ -32,6 +32,10 @@ module.exports = function(grunt) {
     concat: {
       gmaps: {
         src: ["src/js/vendor/jquery-shim.js",
+              "src/js/config.js",
+              "src/js/constants.js",
+              "src/js/util.js"
+             ],
         dest: "src/js/main.js"
       }
     },
