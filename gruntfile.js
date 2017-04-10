@@ -12,6 +12,13 @@ module.exports = function(grunt) {
                 " * Copyright <%= grunt.template.today('yyyy') %> <%= pkg.author %>\n" +
                 " * Licensed under <%= pkg.license %>\n" +
                 " */\n",
+    namespace: "var gmap = {}; gmap.__gmap__ = {};",
+
+
+    // --------------------------------------------------------------------
+    // Grunt Tasks
+    // --------------------------------------------------------------------
+    
     babel: {
       js: {
         files: {
@@ -24,12 +31,22 @@ module.exports = function(grunt) {
     },
     concat: {
       gmaps: {
-        src: ["src/js/vendor/jquery-shim.js"],
+        src: ["src/js/vendor/jquery-shim.js",
         dest: "src/js/main.js"
       }
     },
     eslint: {
       target: ["src/js/**/*.js"]
+    },
+    stamp: {
+      gmaps: {
+        options: {
+          banner: "<%= namespace %>"
+        },
+        files: {
+          src: "<%= concat.gmaps.dest %>"
+        }
+      }
     },
     uglify: {
       dev: {
@@ -65,6 +82,6 @@ module.exports = function(grunt) {
   require("load-grunt-tasks")(grunt)
   require("time-grunt")(grunt)
 
-  grunt.registerTask("default", ["eslint", "concat", "babel", "uglify", "clean"])
+  grunt.registerTask("default", ["eslint", "concat", "stamp", "babel", "uglify", "clean"])
   grunt.registerTask("lint", ["eslint"])
 }
