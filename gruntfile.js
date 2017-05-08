@@ -12,7 +12,7 @@ module.exports = function(grunt) {
                 " * Copyright <%= grunt.template.today('yyyy') %> <%= pkg.author %>\n" +
                 " * Licensed under <%= pkg.license %>\n" +
                 " */\n",
-    namespace: "var gmap = {}; gmap.__gmap__ = {};",
+    namespace: "",
 
 
     // --------------------------------------------------------------------
@@ -32,9 +32,15 @@ module.exports = function(grunt) {
     concat: {
       gmaps: {
         src: ["src/js/vendor/jquery-shim.js",
+              "src/js/constructor.js",
               "src/js/config.js",
               "src/js/constants.js",
-              "src/js/util.js"
+              "src/js/util.js",
+              "src/js/components/baseComponent.js",
+              "src/js/components/baseComponentArray.js",
+              "src/js/components/googleLabel.js",
+              "src/js/components/**/*.js",
+              "src/js/core/**/*.js"
              ],
         dest: "src/js/main.js"
       }
