@@ -10,9 +10,8 @@
   // Constants
   // ----------------------------------------------------------------------
 
-  const Comp   = gmap.__gmap__.Components
   const Config = gmap.Config
-  const Const  = gmap.__gmap__.Constants
+  const Const  = gmap.Const
 
   const ComponentTypeAlias = {
     label    : Const.Component.Type.LABEL,
@@ -83,7 +82,7 @@
     const src_proto  = Object.keys(Object.getPrototypeOf(source))
 
     // get the baseComponentArray class' prototype
-    const base_proto = Object.keys(Object.getPrototypeOf(new Comp.BaseComponentArray("", "")))
+    const base_proto = Object.keys(Object.getPrototypeOf(new gmap.BaseComponentArray("", "")))
 
     // merge the src_proto and base_proto into the exclude array
     exclude = src_proto.concat(exclude)
@@ -93,7 +92,7 @@
       delete src_copy[exclude[i]]
     }
 
-    const new_comp = source.Type ? new Comp[source.Type] : {}
+    const new_comp = source.Type ? new gmap[source.Type] : {}
     return $.extend(new_comp, src_copy)
   }
 
@@ -117,7 +116,7 @@
    * Returns an array of the component's google objects
    */
   const getGoogleObjects = function(compArray) {
-    const ids = getIDs(compArray)
+    const ids = getIds(compArray)
     const googleObjects = ids.map(function(id) {
       return compArray[id].Obj
     })
@@ -128,7 +127,7 @@
   /**
    * Returns an array of the component's ids
    */
-  const getIDs = function(compArray) {
+  const getIds = function(compArray) {
     const ids = Object.keys(compArray)
 
     // remove object properties from array
@@ -202,7 +201,7 @@
     getComponentType: getComponentType,
     getEventType:     getEventType,
     getGoogleObjects: getGoogleObjects,
-    getIDs:           getIDs,
+    getIds:           getIds,
     toArray:          toArray,
     toLatLng:         toLatLng,
     toLatLngArray:    toLatLngArray
