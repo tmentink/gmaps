@@ -10,13 +10,26 @@
 
         <!-- Google Maps V3 Library -->
         <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA0SLOL7qb7Ch3gVhP0yBCVYCp1_lVwF60"></script>
+        <style type="text/css">
+          body {
+            margin: 5px;
+          }
+          #gmap {
+            height: calc(100vh - 10px);
+            width: calc(100vw - 10px);
+            background: #5bc0de;
+            float: left;
+          }
+        </style>
     </head>
     <body>
 
+        <div id="gmap"></div>
 
         <!-- SCRIPTS
         ===========================================-->
         <script src="js/vendor/jquery/jquery-3.2.1.min.js"></script>
+        <script src="data.js"></script> 
         <script src="../dist/gmaps.js"></script>
     </body>
 </html>
