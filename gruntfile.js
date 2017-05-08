@@ -8,7 +8,7 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON("package.json"),
     banner: "/*!\n" +
-                " * GMaps v<%= pkg.version %> (<%= pkg.homepage %>)\n" +
+                " * GMaps v<%= pkg.version %>-alpha (<%= pkg.homepage %>)\n" +
                 " * Copyright <%= grunt.template.today('yyyy') %> <%= pkg.author %>\n" +
                 " * Licensed under <%= pkg.license %>\n" +
                 " */\n",
