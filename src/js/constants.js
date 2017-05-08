@@ -10,11 +10,12 @@
   // Global Constants
   // ----------------------------------------------------------------------
 
-  gmap.__gmap__.Constants = {
+  gmap.Const = {
 
     Component: {
       Properties: {
         CHILD_TYPE    : "ChildType",
+        MAP           : "Map",
         TYPE          : "Type"
       },
       Type: {
@@ -25,12 +26,6 @@
         MARKER_ARRAY  : "MarkerArray",
         POLYGON       : "Polygon",
         POLYGON_ARRAY : "PolygonArray"
-      }
-    },
-    Defaults: {
-      Map: {
-        zoom: 6,
-        center: { lat: 37.5, lng: -120 }
       }
     },
     Event: {
