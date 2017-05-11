@@ -1,0 +1,23 @@
+Components:
+  ☐ Consider adding methods to single components
+  ☐ Add all components and methods supported by google.maps
+
+
+Config:
+  ☐ Add ability to merge or overwrite options on init
+
+
+Constants:
+  ☐ Add colors
+  ☐ Consider flattening objects
+  ☐ Add version which is set by grunt and package.json
+
+
+Labels:
+  ☐ Allow label to be initialized hidden by settings its visible option to false
+  ☐ Make a text value of null switch to label's id
+
+
+Map:
+  ☐ Add version property
+  ☐ Add Id and Map properties to GMaps namespace of google object
