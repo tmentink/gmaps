@@ -177,6 +177,7 @@
     ctx.textBaseline = "top"
 
     this.drawCanvas_()
+    this.setVisibility()
 
     const panes = this.getPanes()
     if (panes) {
