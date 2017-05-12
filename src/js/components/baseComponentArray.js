@@ -44,7 +44,7 @@
       return gmap.Core.hide(this, this.getIds())
     }
 
-    not() {
+    others() {
       return gmap.Util.copy(this.Map.Components[this.ChildType], this.getIds())
     }
 
@@ -66,6 +66,14 @@
 
     update(options) {
       return gmap.Core.update(this, this.getIds(), options)
+    }
+
+    zoom() {
+      let parms = {}
+      parms[this.ChildType] = this.getIds()
+
+      gmap.Core.setBounds(this.Map, parms)
+      return this
     }
 
   }
