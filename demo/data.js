@@ -95,7 +95,7 @@ function _buildMarkerOptions(county) {
 function _buildPolygonOptions(county) {
   var polyOptions = { 
     id: county.countyID, 
-    path: county.geoCords
+    paths: county.geoCords
   };
   
   return polyOptions;

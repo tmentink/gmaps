@@ -10,6 +10,17 @@
   // Constants
   // ----------------------------------------------------------------------
 
+  const RequiredParms = {
+    Label: [
+      "id", "position"
+    ],
+    Marker: [
+      "id", "position"
+    ],
+    Polygon: [
+      "id", "paths"
+    ]
+  }
 
 
   // ----------------------------------------------------------------------
@@ -24,10 +35,10 @@
     }
 
     if ($.type(parms) == "object") {
-      return _add(map, type, parms)
+      if (_validParameters(map, type, parms)) {
+        return _add(map, type, parms)
+      }
     }
-
-    // TODO: add error handling
   }
 
 
@@ -76,18 +87,19 @@
   }
 
   function _validParameters(map, type, parms) {
-    if (map.Components[type][parms.id]) {
-      throw "Error: ID already exists"
+    const required = RequiredParms[type]
+    for (var i = 0, i_end = required.length; i < i_end; i++) {
+      if (!parms[required[i]]) {
+        throw "Error: " + required[i] + " is required"
+      }
     }
 
-    // TODO: make this intelligent on what parms are required
-    // if (!parms.path) {
-    //   throw "Error: Must supply a position"
-    // }
+    if (map.Components[type][parms.id]) {
+      throw "Error: Id already exists"
+    }
 
     return true
   }
-
 
 
   return Core
