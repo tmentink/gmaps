@@ -1,5 +1,5 @@
 /*!
- * GMaps v1.0.0-alpha (https://github.com/tmentink/gmaps)
+ * GMaps v1.1.0-alpha (https://github.com/tmentink/gmaps)
  * Copyright 2017 Trent Mentink
  * Licensed under MIT
  */
@@ -154,9 +154,13 @@ var gmap = function gmap(config) {
   };
   this.Obj = new google.maps.Map(document.getElementById(config.MapId), config.MapOptions);
   this.Obj["GMaps"] = {
-    Parent: this
+    Id: config.MapId,
+    Map: this,
+    Parent: this,
+    Version: gmap.Const.Version
   };
   this.Type = gmap.Const.Component.Type.MAP;
+  this.Version = gmap.Const.Version;
   google.maps.event.addListenerOnce(this.Obj, gmap.Const.Event.Type.TILES_LOADED, function() {
     _this.Init.Bounds = _this.Obj.getBounds();
   });
@@ -473,7 +477,8 @@ gmap.prototype = {
     this.Obj["GMaps"] = {
       Id: id,
       Map: map,
-      Parent: this
+      Parent: this,
+      Version: gmap.Const.Version
     };
     this.Type = type;
   };
@@ -505,7 +510,7 @@ gmap.prototype = {
     BaseComponentArray.prototype.hide = function hide() {
       return gmap.Core.hide(this, this.getIds());
     };
-    BaseComponentArray.prototype.not = function not() {
+    BaseComponentArray.prototype.others = function others() {
       return gmap.Util.copy(this.Map.Components[this.ChildType], this.getIds());
     };
     BaseComponentArray.prototype.remove = function remove() {
@@ -522,6 +527,12 @@ gmap.prototype = {
     };
     BaseComponentArray.prototype.update = function update(options) {
       return gmap.Core.update(this, this.getIds(), options);
+    };
+    BaseComponentArray.prototype.zoom = function zoom() {
+      var parms = {};
+      parms[this.ChildType] = this.getIds();
+      gmap.Core.setBounds(this.Map, parms);
+      return this;
     };
     return BaseComponentArray;
   }();
@@ -664,6 +675,7 @@ gmap.prototype = {
     ctx.lineJoin = "round";
     ctx.textBaseline = "top";
     this.drawCanvas_();
+    this.setVisibility();
     var panes = this.getPanes();
     if (panes) {
       panes.floatPane.appendChild(canvas);
@@ -801,13 +813,20 @@ gmap.prototype = {
 
 !function(Core) {
   "use strict";
+  var RequiredParms = {
+    Label: [ "id", "position" ],
+    Marker: [ "id", "position" ],
+    Polygon: [ "id", "paths" ]
+  };
   Core.addComponent = function(map, type, parms) {
     type = gmap.Util.getComponentType(type);
     if ($.type(parms) == "array") {
       return _multiAdd(map, type, parms);
     }
     if ($.type(parms) == "object") {
-      return _add(map, type, parms);
+      if (_validParameters(map, type, parms)) {
+        return _add(map, type, parms);
+      }
     }
   };
   function _add(map, type, parms) {
@@ -840,8 +859,14 @@ gmap.prototype = {
     return newCompArray;
   }
   function _validParameters(map, type, parms) {
+    var required = RequiredParms[type];
+    for (var i = 0, i_end = required.length; i < i_end; i++) {
+      if (!parms[required[i]]) {
+        throw "Error: " + required[i] + " is required";
+      }
+    }
     if (map.Components[type][parms.id]) {
-      throw "Error: ID already exists";
+      throw "Error: Id already exists";
     }
     return true;
   }
@@ -1161,3 +1186,5 @@ gmap.prototype = {
   }
   return Core;
 }(gmap.Core || (gmap.Core = {}));
+
+gmap.Const.Version = "1.1.0-alpha";
