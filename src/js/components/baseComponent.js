@@ -24,7 +24,8 @@
       this.Obj["GMaps"] = {
         Id: id,
         Map: map,
-        Parent: this
+        Parent: this,
+        Version: gmap.Const.Version
       }
       this.Type = type
     }

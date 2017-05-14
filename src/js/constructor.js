@@ -17,9 +17,13 @@ var gmap = function(config) {
   }
   this.Obj = new google.maps.Map(document.getElementById(config.MapId), config.MapOptions)
   this.Obj["GMaps"] = {
-    Parent: this
+    Id: config.MapId,
+    Map: this,
+    Parent: this,
+    Version: gmap.Const.Version
   }
   this.Type = gmap.Const.Component.Type.MAP
+  this.Version = gmap.Const.Version
 
   // save bounds after map has finished loading
   google.maps.event.addListenerOnce(this.Obj, gmap.Const.Event.Type.TILES_LOADED, () => {

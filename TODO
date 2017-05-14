@@ -14,9 +14,3 @@ Config:
 Constants:
   ☐ Add colors
   ☐ Consider flattening objects
-  ☐ Add version which is set by grunt and package.json
-
-
-Map:
-  ☐ Add version property
-  ☐ Add Id and Map properties to GMaps namespace of google object

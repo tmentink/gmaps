@@ -7,12 +7,12 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON("package.json"),
+    version: "<%= pkg.version %>-alpha",
     banner: "/*!\n" +
-                " * GMaps v<%= pkg.version %>-alpha (<%= pkg.homepage %>)\n" +
+                " * GMaps v<%= version %> (<%= pkg.homepage %>)\n" +
                 " * Copyright <%= grunt.template.today('yyyy') %> <%= pkg.author %>\n" +
                 " * Licensed under <%= pkg.license %>\n" +
                 " */\n",
-    namespace: "",
 
 
     // --------------------------------------------------------------------
@@ -51,7 +51,7 @@ module.exports = function(grunt) {
     stamp: {
       gmaps: {
         options: {
-          banner: "<%= namespace %>"
+          footer: "gmap.Const.Version='<%= version %>'"
         },
         files: {
           src: "<%= concat.gmaps.dest %>"
