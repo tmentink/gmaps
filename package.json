@@ -4,7 +4,7 @@
   "description": "google maps made easy",
   "main": "dist/gmaps.js",
   "scripts": {
-    "test": "mocha"
+    "test-all": "mocha test/unit --recursive"
   },
   "repository": {
     "type": "git",
