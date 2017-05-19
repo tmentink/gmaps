@@ -10,35 +10,6 @@
   // Constants
   // ----------------------------------------------------------------------
 
-  const Conversions = {
-    paths: function(parms) {
-      if ($.type(parms.paths) == "string") {
-        parms.paths = gmap.Util.toLatLngArray(parms.paths)
-      }
-    },
-    position: function(parms) {
-      if ($.type(parms.position) == "string") {
-        parms.position = gmap.Util.toLatLng(parms.position)
-      }
-    },
-    text: function(parms) {
-      parms.text = parms.text || parms.id
-    }
-  }
-
-  const ConvertableParms = {
-    Label: {
-      position: Conversions.position,
-      text: Conversions.text
-    },
-    Marker: {
-      position: Conversions.position
-    },
-    Polygon: {
-      paths: Conversions.paths
-    }
-  }
-
   const ErrorMessages = {
     IdExists: function(type, id) {
       return "Error: A " + type + " with the id " + id + " already exists"
@@ -87,7 +58,7 @@
   // ----------------------------------------------------------------------
 
   function _add(map, type, parms) {
-    _convertParms(type, parms)
+    parms = gmap.Util.convertCompOptions(type, parms)
     let options = _mergeDefaults(map, type, parms)
     return map.Components[type][parms.id] = new gmap[type](parms.id, options)
   }
@@ -104,12 +75,6 @@
     }
 
     return newCompArray
-  }
-
-  function _convertParms(type, parms) {
-    Object.keys(ConvertableParms[type]).forEach(function(key) {
-      ConvertableParms[type][key](parms)
-    })
   }
 
   function _mergeDefaults(map, type, parms) {
