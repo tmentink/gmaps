@@ -7,16 +7,23 @@
 
 
   // ----------------------------------------------------------------------
+  // Constants
+  // ----------------------------------------------------------------------
+
+  const ErrorMessages = {
+    MustSupplyOptions: "Error: Must supply options"
+  }
+
+
+  // ----------------------------------------------------------------------
   // Public Functions
   // ----------------------------------------------------------------------
 
   Core.update = function(comp, ids, options) {
     if (options == undefined) {
-      throw "Error: Must supply options"
+      throw ErrorMessages.MustSupplyOptions
     }
-    else {
-      options = _getOptions(options)
-    }
+    options = gmap.Util.convertCompOptions(comp.Type, options)
 
     if (comp.Type == gmap.Const.Component.Type.MAP) {
       return _update(comp, options)
@@ -53,23 +60,6 @@
     }
 
     return newCompArray
-  }
-
-  // TODO: replace with a Object literal lookup based on component type
-  function _getOptions(options) {
-    if ($.type(options.center) == "string") {
-      options.center = gmap.Util.toLatLng(options.center)
-    }
-
-    if ($.type(options.paths) == "string") {
-      options.paths = gmap.Util.toLatLngArray(options.paths)
-    }
-
-    if ($.type(options.position) == "string") {
-      options.position = gmap.Util.toLatLng(options.position)
-    }
-
-    return options
   }
 
 
