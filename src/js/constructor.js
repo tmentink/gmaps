@@ -5,6 +5,9 @@
 var gmap = function(config) {
   config = $.extend(true, {}, gmap.Config, config)
 
+  // delete any config options that should only exist in Global
+  delete config.Delimiter
+
   this.Components = {
     Label: new gmap.LabelArray(this),
     Marker: new gmap.MarkerArray(this),
