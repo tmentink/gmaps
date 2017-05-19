@@ -3,16 +3,6 @@ Components:
   ☐ Add all components and methods supported by google.maps
   
 
-Config:
-  ☐ Add ability to merge or overwrite options on init
-  ☐ Add ability to create custom color names
-    ☐ Fallback to CSS3 colors if name isnt in Configs
-    ☐ Add missing # symbol if valid color code
-
-
 Constants:
   ☐ Consider flattening objects
 
-
-Util:
-  ☐ Make functions reference local Config before falling back to global

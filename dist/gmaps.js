@@ -1,5 +1,5 @@
 /*!
- * GMaps v1.1.0-alpha (https://github.com/tmentink/gmaps)
+ * GMaps v1.2.0-alpha (https://github.com/tmentink/gmaps)
  * Copyright 2017 Trent Mentink
  * Licensed under MIT
  */
@@ -142,6 +142,7 @@ function _classCallCheck(instance, Constructor) {
 var gmap = function gmap(config) {
   var _this = this;
   config = $.extend(true, {}, gmap.Config, config);
+  delete config.Delimiter;
   this.Components = {
     Label: new gmap.LabelArray(this),
     Marker: new gmap.MarkerArray(this),
@@ -307,51 +308,94 @@ gmap.prototype = {
 
 !function(gmap) {
   "use strict";
-  var Config = gmap.Config;
-  var Const = gmap.Const;
+  var Conversions = {
+    center: function center(parms) {
+      if ($.type(parms.center) == "string") {
+        parms.center = gmap.Util.toLatLng(parms.center);
+      }
+    },
+    paths: function paths(parms) {
+      if ($.type(parms.paths) == "string") {
+        parms.paths = gmap.Util.toLatLngArray(parms.paths);
+      }
+    },
+    position: function position(parms) {
+      if ($.type(parms.position) == "string") {
+        parms.position = gmap.Util.toLatLng(parms.position);
+      }
+    },
+    text: function text(parms) {
+      parms.text = parms.text || parms.id;
+    }
+  };
+  var ConvertableComponentOptions = {
+    Label: {
+      position: Conversions.position,
+      text: Conversions.text
+    },
+    Map: {
+      center: Conversions.center
+    },
+    Marker: {
+      position: Conversions.position
+    },
+    Polygon: {
+      paths: Conversions.paths
+    }
+  };
   var ComponentTypeAlias = {
-    label: Const.Component.Type.LABEL,
-    labels: Const.Component.Type.LABEL,
-    map: Const.Component.Type.MAP,
-    maps: Const.Component.Type.MAP,
-    marker: Const.Component.Type.MARKER,
-    markers: Const.Component.Type.MARKER,
-    polygon: Const.Component.Type.POLYGON,
-    polygons: Const.Component.Type.POLYGON
+    label: gmap.Const.Component.Type.LABEL,
+    labels: gmap.Const.Component.Type.LABEL,
+    map: gmap.Const.Component.Type.MAP,
+    maps: gmap.Const.Component.Type.MAP,
+    marker: gmap.Const.Component.Type.MARKER,
+    markers: gmap.Const.Component.Type.MARKER,
+    polygon: gmap.Const.Component.Type.POLYGON,
+    polygons: gmap.Const.Component.Type.POLYGON
   };
   var EventTypeAlias = {
-    animationchanged: Const.Event.Type.ANIMATION_CHANGED,
-    boundschanged: Const.Event.Type.BOUNDS_CHANGED,
-    centerchanged: Const.Event.Type.CENTER_CHANGED,
-    click: Const.Event.Type.CLICK,
-    clickablechanged: Const.Event.Type.CLICKABLE_CHANGED,
-    cursorchanged: Const.Event.Type.CURSOR_CHANGED,
-    doubleclick: Const.Event.Type.DOUBLE_CLICK,
-    drag: Const.Event.Type.DRAG,
-    dragend: Const.Event.Type.DRAG_END,
-    dragstart: Const.Event.Type.DRAG_START,
-    draggablechanged: Const.Event.Type.DRAGGABLE_CHANGED,
-    flatchanged: Const.Event.Type.FLAT_CHANGED,
-    headingchanged: Const.Event.Type.HEADING_CHANGED,
-    iconchanged: Const.Event.Type.ICON_CHANGED,
-    idle: Const.Event.Type.IDLE,
-    maptypeidchanged: Const.Event.Type.MAP_TYPE_ID_CHANGED,
-    mousedown: Const.Event.Type.MOUSE_DOWN,
-    mousemove: Const.Event.Type.MOUSE_MOVE,
-    mouseout: Const.Event.Type.MOUSE_OUT,
-    mouseover: Const.Event.Type.MOUSE_OVER,
-    mouseup: Const.Event.Type.MOUSE_UP,
-    positionchanged: Const.Event.Type.POSITION_CHANGED,
-    projectionchanged: Const.Event.Type.PROJECTION_CHANGED,
-    resize: Const.Event.Type.RESIZE,
-    rightclick: Const.Event.Type.RIGHT_CLICK,
-    shapechanged: Const.Event.Type.SHAPE_CHANGED,
-    tilesloaded: Const.Event.Type.TILES_LOADED,
-    tiltchanged: Const.Event.Type.TILT_CHANGED,
-    titlechanged: Const.Event.Type.TITLE_CHANGED,
-    visiblechanged: Const.Event.Type.VISIBLE_CHANGED,
-    zindexchanged: Const.Event.Type.ZINDEX_CHANGED,
-    zoomchanged: Const.Event.Type.ZOOM_CHANGED
+    animationchanged: gmap.Const.Event.Type.ANIMATION_CHANGED,
+    boundschanged: gmap.Const.Event.Type.BOUNDS_CHANGED,
+    centerchanged: gmap.Const.Event.Type.CENTER_CHANGED,
+    click: gmap.Const.Event.Type.CLICK,
+    clickablechanged: gmap.Const.Event.Type.CLICKABLE_CHANGED,
+    cursorchanged: gmap.Const.Event.Type.CURSOR_CHANGED,
+    doubleclick: gmap.Const.Event.Type.DOUBLE_CLICK,
+    drag: gmap.Const.Event.Type.DRAG,
+    dragend: gmap.Const.Event.Type.DRAG_END,
+    dragstart: gmap.Const.Event.Type.DRAG_START,
+    draggablechanged: gmap.Const.Event.Type.DRAGGABLE_CHANGED,
+    flatchanged: gmap.Const.Event.Type.FLAT_CHANGED,
+    headingchanged: gmap.Const.Event.Type.HEADING_CHANGED,
+    iconchanged: gmap.Const.Event.Type.ICON_CHANGED,
+    idle: gmap.Const.Event.Type.IDLE,
+    maptypeidchanged: gmap.Const.Event.Type.MAP_TYPE_ID_CHANGED,
+    mousedown: gmap.Const.Event.Type.MOUSE_DOWN,
+    mousemove: gmap.Const.Event.Type.MOUSE_MOVE,
+    mouseout: gmap.Const.Event.Type.MOUSE_OUT,
+    mouseover: gmap.Const.Event.Type.MOUSE_OVER,
+    mouseup: gmap.Const.Event.Type.MOUSE_UP,
+    positionchanged: gmap.Const.Event.Type.POSITION_CHANGED,
+    projectionchanged: gmap.Const.Event.Type.PROJECTION_CHANGED,
+    resize: gmap.Const.Event.Type.RESIZE,
+    rightclick: gmap.Const.Event.Type.RIGHT_CLICK,
+    shapechanged: gmap.Const.Event.Type.SHAPE_CHANGED,
+    tilesloaded: gmap.Const.Event.Type.TILES_LOADED,
+    tiltchanged: gmap.Const.Event.Type.TILT_CHANGED,
+    titlechanged: gmap.Const.Event.Type.TITLE_CHANGED,
+    visiblechanged: gmap.Const.Event.Type.VISIBLE_CHANGED,
+    zindexchanged: gmap.Const.Event.Type.ZINDEX_CHANGED,
+    zoomchanged: gmap.Const.Event.Type.ZOOM_CHANGED
+  };
+  /**
+   * Converts the supplied parameters based on the component type
+   */
+  var convertCompOptions = function convertCompOptions(type, parms) {
+    type = type.replace("Array", "");
+    Object.keys(ConvertableComponentOptions[type]).forEach(function(key) {
+      ConvertableComponentOptions[type][key](parms);
+    });
+    return parms;
   };
   /**
    * Returns a copy of source minus the values of exclude
@@ -402,8 +446,8 @@ gmap.prototype = {
    */
   var getIds = function getIds(compArray) {
     var ids = Object.keys(compArray);
-    for (var prop in Const.Component.Properties) {
-      var index = ids.indexOf(Const.Component.Properties[prop]);
+    for (var prop in gmap.Const.Component.Properties) {
+      var index = ids.indexOf(gmap.Const.Component.Properties[prop]);
       if (index !== -1) {
         ids.splice(index, 1);
       }
@@ -428,7 +472,7 @@ gmap.prototype = {
    */
   var toLatLng = function toLatLng(str) {
     var Delimiter = {
-      LatLng: Config.Delimiter.LatLng || ","
+      LatLng: gmap.Config.Delimiter.LatLng || ","
     };
     var points = str.split(Delimiter.LatLng);
     return new google.maps.LatLng(parseFloat(points[0]), parseFloat(points[1]));
@@ -438,8 +482,8 @@ gmap.prototype = {
    */
   var toLatLngArray = function toLatLngArray(str) {
     var Delimiter = {
-      LatLng: Config.Delimiter.LatLng || ",",
-      LatLngPair: Config.Delimiter.LatLngPair || "|"
+      LatLng: gmap.Config.Delimiter.LatLng || ",",
+      LatLngPair: gmap.Config.Delimiter.LatLngPair || "|"
     };
     var latLngArray = [];
     var coordPairs = str.split(Delimiter.LatLngPair);
@@ -451,6 +495,7 @@ gmap.prototype = {
     return latLngArray;
   };
   gmap.Util = {
+    convertCompOptions: convertCompOptions,
     copy: copy,
     getComponentType: getComponentType,
     getEventType: getEventType,
@@ -813,6 +858,14 @@ gmap.prototype = {
 
 !function(Core) {
   "use strict";
+  var ErrorMessages = {
+    IdExists: function IdExists(type, id) {
+      return "Error: A " + type + " with the id " + id + " already exists";
+    },
+    ParmIsRequired: function ParmIsRequired(parm) {
+      return "Error: " + parm + " is required";
+    }
+  };
   var RequiredParms = {
     Label: [ "id", "position" ],
     Marker: [ "id", "position" ],
@@ -824,49 +877,44 @@ gmap.prototype = {
       return _multiAdd(map, type, parms);
     }
     if ($.type(parms) == "object") {
-      if (_validParameters(map, type, parms)) {
-        return _add(map, type, parms);
+      if (_validateParms(map, type, parms)) {
+        var newCompArray = new gmap[type + "Array"](map);
+        newCompArray[parms.id] = _add(map, type, parms);
+        return newCompArray;
       }
     }
   };
   function _add(map, type, parms) {
-    if ($.type(parms.path) == "string") {
-      parms.path = gmap.Util.toLatLngArray(parms.path);
-    }
-    if ($.type(parms.paths) == "string") {
-      parms.paths = gmap.Util.toLatLngArray(parms.paths);
-    }
-    if ($.type(parms.position) == "string") {
-      parms.position = gmap.Util.toLatLng(parms.position);
-    }
-    var defaults = map.Config[type + "Options"] || {};
-    var options = $.extend({}, defaults, parms.options);
-    options.map = map.Obj;
-    options.paths = parms.paths || parms.path;
-    options.position = parms.position;
-    options.text = parms.text || parms.id;
-    map.Components[type][parms.id] = new gmap[type](parms.id, options);
-    return map.Components[type][parms.id];
+    parms = gmap.Util.convertCompOptions(type, parms);
+    var options = _mergeDefaults(map, type, parms);
+    return map.Components[type][parms.id] = new gmap[type](parms.id, options);
   }
   function _multiAdd(map, type, parmsArray) {
     var newCompArray = new gmap[type + "Array"](map);
     for (var i = 0, i_end = parmsArray.length; i < i_end; i++) {
       var parms = parmsArray[i];
-      if (_validParameters(map, type, parms)) {
+      if (_validateParms(map, type, parms)) {
         newCompArray[parms.id] = _add(map, type, parms);
       }
     }
     return newCompArray;
   }
-  function _validParameters(map, type, parms) {
-    var required = RequiredParms[type];
-    for (var i = 0, i_end = required.length; i < i_end; i++) {
-      if (!parms[required[i]]) {
-        throw "Error: " + required[i] + " is required";
+  function _mergeDefaults(map, type, parms) {
+    var defaults = map.Config[type + "Options"] || {};
+    var options = $.extend({}, defaults, parms);
+    options.map = map.Obj;
+    delete options.id;
+    return options;
+  }
+  function _validateParms(map, type, parms) {
+    for (var i = 0, i_end = RequiredParms[type].length; i < i_end; i++) {
+      var reqParm = RequiredParms[type][i];
+      if (!parms[reqParm]) {
+        throw ErrorMessages.ParmIsRequired(reqParm);
       }
     }
     if (map.Components[type][parms.id]) {
-      throw "Error: Id already exists";
+      throw ErrorMessages.IdExists(type, parms.id);
     }
     return true;
   }
@@ -1142,12 +1190,14 @@ gmap.prototype = {
 
 !function(Core) {
   "use strict";
+  var ErrorMessages = {
+    MustSupplyOptions: "Error: Must supply options"
+  };
   Core.update = function(comp, ids, options) {
     if (options == undefined) {
-      throw "Error: Must supply options";
-    } else {
-      options = _getOptions(options);
+      throw ErrorMessages.MustSupplyOptions;
     }
+    options = gmap.Util.convertCompOptions(comp.Type, options);
     if (comp.Type == gmap.Const.Component.Type.MAP) {
       return _update(comp, options);
     }
@@ -1172,19 +1222,7 @@ gmap.prototype = {
     }
     return newCompArray;
   }
-  function _getOptions(options) {
-    if ($.type(options.center) == "string") {
-      options.center = gmap.Util.toLatLng(options.center);
-    }
-    if ($.type(options.paths) == "string") {
-      options.paths = gmap.Util.toLatLngArray(options.paths);
-    }
-    if ($.type(options.position) == "string") {
-      options.position = gmap.Util.toLatLng(options.position);
-    }
-    return options;
-  }
   return Core;
 }(gmap.Core || (gmap.Core = {}));
 
-gmap.Const.Version = "1.1.0-alpha";
+gmap.Const.Version = "1.2.0-alpha";
