@@ -74,7 +74,9 @@
 
     if ($.type(parms) == "object") {
       if (_validateParms(map, type, parms)) {
-        return _add(map, type, parms)
+        const newCompArray = new gmap[type + "Array"](map)
+        newCompArray[parms.id] = _add(map, type, parms)
+        return newCompArray
       }
     }
   }
@@ -86,10 +88,8 @@
 
   function _add(map, type, parms) {
     _convertParms(type, parms)
-
     let options = _mergeDefaults(map, type, parms)
-    map.Components[type][parms.id] = new gmap[type](parms.id, options)
-    return map.Components[type][parms.id]
+    return map.Components[type][parms.id] = new gmap[type](parms.id, options)
   }
 
   function _multiAdd(map, type, parmsArray) {
