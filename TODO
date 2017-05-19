@@ -2,9 +2,6 @@ Components:
   ☐ Consider adding methods to single components
   ☐ Add all components and methods supported by google.maps
   
-  Add method:
-  ☐ Make the options parameter optional. Allow options to be included in the first level of the parms object
-
 
 Config:
   ☐ Add ability to merge or overwrite options on init
