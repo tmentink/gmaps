@@ -41,7 +41,8 @@
       strokeWeight: 1,
       fillColor: "#0275D8",
       fillOpacity: 0.8
-    }
+    },
+    UrlPrecision: 5
 
   }
 

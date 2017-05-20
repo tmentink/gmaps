@@ -230,6 +230,25 @@
   }
 
   /**
+   * Converts a MVCArray into a delimited string
+   */
+  const toDelimitedString = function(MVCArray) {
+    const Delimiter = {
+      LatLng: gmap.Config.Delimiter.LatLng || "|"
+    }
+    let str = ""
+
+    MVCArray.forEach(function(el, i) {
+      if (i > 0) {
+        str += Delimiter.LatLng
+      }
+      str += el.toUrlValue(gmap.Config.UrlPrecision)
+    })
+
+    return str
+  }
+
+  /**
    * Converts a comma delimited string into a LatLng object
    */
   const toLatLng = function(str) {
@@ -254,6 +273,25 @@
     return latLngArray
   }
 
+  /**
+   * Converts a multidimensional MVCArray into a delimited string
+   */
+  const toMultiDelimitedString = function(MVCArray) {
+    const Delimiter = {
+      LatLngArray: gmap.Config.Delimiter.LatLngArray || "~"
+    }
+    let str = ""
+
+    MVCArray.forEach(function(el, i) {
+      if (i > 0) {
+        str += Delimiter.LatLngArray
+      }
+      str += toDelimitedString(el)
+    })
+
+    return str
+  }
+
 
   // ----------------------------------------------------------------------
   // Add Util Namespace
@@ -268,8 +306,10 @@
     getGoogleObjects: getGoogleObjects,
     getIds: getIds,
     toArray: toArray,
+    toDelimitedString: toDelimitedString,
     toLatLng: toLatLng,
-    toLatLngArray: toLatLngArray
+    toLatLngArray: toLatLngArray,
+    toMultiDelimitedString: toMultiDelimitedString
   }
 
   return gmap
