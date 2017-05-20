@@ -13,8 +13,8 @@
   gmap.Config = {
 
     Delimiter: {
-      LatLng: ",",
-      LatLngPair: "|"
+      LatLng: "|",
+      LatLngArray: "~"
     },
     LabelOptions: {
       fontSize: 14,

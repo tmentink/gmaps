@@ -230,14 +230,10 @@
   }
 
   /**
-   * Converts a formatted string into a LatLng object
+   * Converts a comma delimited string into a LatLng object
    */
   const toLatLng = function(str) {
-    const Delimiter = {
-      LatLng: gmap.Config.Delimiter.LatLng || ","
-    }
-
-    const points = str.split(Delimiter.LatLng)
+    const points = str.split(",")
     return new google.maps.LatLng(parseFloat(points[0]), parseFloat(points[1]))
   }
 
@@ -246,17 +242,13 @@
    */
   const toLatLngArray = function(str) {
     const Delimiter = {
-      LatLng: gmap.Config.Delimiter.LatLng || ",",
-      LatLngPair: gmap.Config.Delimiter.LatLngPair || "|"
+      LatLng: gmap.Config.Delimiter.LatLng || "|"
     }
 
     const latLngArray = []
-    const coordPairs = str.split(Delimiter.LatLngPair)
-
+    const coordPairs = str.split(Delimiter.LatLng)
     for (var i = 0, i_end = coordPairs.length; i < i_end; i++) {
-      let points = coordPairs[i].split(Delimiter.LatLng)
-      let latLng = new google.maps.LatLng(parseFloat(points[0]), parseFloat(points[1]))
-      latLngArray.push(latLng)
+      latLngArray.push(toLatLng(coordPairs[i]))
     }
 
     return latLngArray
