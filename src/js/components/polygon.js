@@ -7,13 +7,6 @@
 
 
   // ----------------------------------------------------------------------
-  // Constants
-  // ----------------------------------------------------------------------
-
-  const Type = gmap.Const.Component.Type
-
-
-  // ----------------------------------------------------------------------
   // Class Definition
   // ----------------------------------------------------------------------
 
@@ -21,7 +14,7 @@
 
     constructor(id, options) {
       const obj = new google.maps.Polygon(options)
-      super(id, options, obj, Type.POLYGON)
+      super(id, options, obj, gmap.Const.ComponentType.POLYGON)
     }
 
   }

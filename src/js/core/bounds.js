@@ -11,9 +11,15 @@
   // ----------------------------------------------------------------------
 
   const BoundsFunction = {
-    Label   : function(comp) { return _getBoundsByPosition(comp) },
-    Marker  : function(comp) { return _getBoundsByPosition(comp) },
-    Polygon : function(comp) { return _getBoundsByPath(comp) }
+    Label: function(comp) {
+      return _getBoundsByPosition(comp)
+    },
+    Marker: function(comp) {
+      return _getBoundsByPosition(comp)
+    },
+    Polygon: function(comp) {
+      return _getBoundsByPath(comp)
+    }
   }
 
 

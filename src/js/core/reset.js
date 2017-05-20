@@ -11,7 +11,7 @@
   // ----------------------------------------------------------------------
 
   Core.reset = function(comp, ids) {
-    if (comp.Type == gmap.Const.Component.Type.MAP) {
+    if (comp.Type == gmap.Const.ComponentType.MAP) {
       comp.Obj.fitBounds(comp.Init.Bounds)
       return _reset(comp)
     }

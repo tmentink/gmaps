@@ -11,15 +11,21 @@
   // ----------------------------------------------------------------------
 
   const Action = {
-    HIDE   : "hide",
-    SHOW   : "show",
-    TOGGLE : "toggle"
+    HIDE:   "hide",
+    SHOW:   "show",
+    TOGGLE: "toggle"
   }
 
   const Visibility = {
-    hide   : function()     { return false },
-    show   : function()     { return true },
-    toggle : function(comp) { return !comp.Obj.getVisible() }
+    hide: function() {
+      return false
+    },
+    show: function() {
+      return true
+    },
+    toggle: function(comp) {
+      return !comp.Obj.getVisible()
+    }
   }
 
 

@@ -25,7 +25,7 @@
     }
     options = gmap.Util.convertCompOptions(comp.Type, options)
 
-    if (comp.Type == gmap.Const.Component.Type.MAP) {
+    if (comp.Type == gmap.Const.ComponentType.MAP) {
       return _update(comp, options)
     }
 

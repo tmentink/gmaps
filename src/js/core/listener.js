@@ -11,15 +11,21 @@
   // ----------------------------------------------------------------------
 
   const Action = {
-    ADD         : "add",
-    REMOVE_ALL  : "remove_all",
-    REMOVE_TYPE : "remove_type",
+    ADD:         "add",
+    REMOVE_ALL:  "remove_all",
+    REMOVE_TYPE: "remove_type",
   }
 
   const Execute = {
-    add         : function(comp, type, fn) { return _add(comp, type, fn) },
-    remove_all  : function(comp)           { return _removeAll(comp) },
-    remove_type : function(comp, type)     { return _removeType(comp, type) }
+    add: function(comp, type, fn) {
+      return _add(comp, type, fn)
+    },
+    remove_all: function(comp) {
+      return _removeAll(comp)
+    },
+    remove_type: function(comp, type) {
+      return _removeType(comp, type)
+    }
   }
 
 
@@ -47,7 +53,7 @@
   // ----------------------------------------------------------------------
 
   function _listener(compArray, ids, type, fn, action) {
-    if (compArray.Type == gmap.Const.Component.Type.MAP) {
+    if (compArray.Type == gmap.Const.ComponentType.MAP) {
       return Execute[action](compArray, type, fn)
     }
 

@@ -7,20 +7,13 @@
 
 
   // ----------------------------------------------------------------------
-  // Constants
-  // ----------------------------------------------------------------------
-
-  const Type = gmap.Const.Component.Type
-
-
-  // ----------------------------------------------------------------------
   // Class Definition
   // ----------------------------------------------------------------------
 
   class PolygonArray extends gmap.BaseComponentArray {
 
     constructor(map) {
-      super(map, Type.POLYGON_ARRAY, Type.POLYGON)
+      super(map, gmap.Const.ComponentType.POLYGON_ARRAY, gmap.Const.ComponentType.POLYGON)
     }
 
 

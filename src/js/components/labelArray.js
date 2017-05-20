@@ -7,20 +7,13 @@
 
 
   // ----------------------------------------------------------------------
-  // Constants
-  // ----------------------------------------------------------------------
-
-  const Type = gmap.Const.Component.Type
-
-
-  // ----------------------------------------------------------------------
   // Class Definition
   // ----------------------------------------------------------------------
 
   class LabelArray extends gmap.BaseComponentArray {
 
     constructor(map) {
-      super(map, Type.LABEL_ARRAY, Type.LABEL)
+      super(map, gmap.Const.ComponentType.LABEL_ARRAY, gmap.Const.ComponentType.LABEL)
     }
 
   }

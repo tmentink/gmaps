@@ -34,63 +34,63 @@
   const ConvertableComponentOptions = {
     Label: {
       position: Conversions.position,
-      text: Conversions.text
+      text:     Conversions.text
     },
     Map: {
-      center: Conversions.center
+      center:   Conversions.center
     },
     Marker: {
       position: Conversions.position
     },
     Polygon: {
-      paths: Conversions.paths
+      paths:    Conversions.paths
     }
   }
 
   const ComponentTypeAlias = {
-    label    : gmap.Const.Component.Type.LABEL,
-    labels   : gmap.Const.Component.Type.LABEL,
-    map      : gmap.Const.Component.Type.MAP,
-    maps     : gmap.Const.Component.Type.MAP,
-    marker   : gmap.Const.Component.Type.MARKER,
-    markers  : gmap.Const.Component.Type.MARKER,
-    polygon  : gmap.Const.Component.Type.POLYGON,
-    polygons : gmap.Const.Component.Type.POLYGON
+    label:    gmap.Const.ComponentType.LABEL,
+    labels:   gmap.Const.ComponentType.LABEL,
+    map:      gmap.Const.ComponentType.MAP,
+    maps:     gmap.Const.ComponentType.MAP,
+    marker:   gmap.Const.ComponentType.MARKER,
+    markers:  gmap.Const.ComponentType.MARKER,
+    polygon:  gmap.Const.ComponentType.POLYGON,
+    polygons: gmap.Const.ComponentType.POLYGON
   }
 
   const EventTypeAlias = {
-    animationchanged  : gmap.Const.Event.Type.ANIMATION_CHANGED,
-    boundschanged     : gmap.Const.Event.Type.BOUNDS_CHANGED,
-    centerchanged     : gmap.Const.Event.Type.CENTER_CHANGED,
-    click             : gmap.Const.Event.Type.CLICK,
-    clickablechanged  : gmap.Const.Event.Type.CLICKABLE_CHANGED,
-    cursorchanged     : gmap.Const.Event.Type.CURSOR_CHANGED,
-    doubleclick       : gmap.Const.Event.Type.DOUBLE_CLICK,
-    drag              : gmap.Const.Event.Type.DRAG,
-    dragend           : gmap.Const.Event.Type.DRAG_END,
-    dragstart         : gmap.Const.Event.Type.DRAG_START,
-    draggablechanged  : gmap.Const.Event.Type.DRAGGABLE_CHANGED,
-    flatchanged       : gmap.Const.Event.Type.FLAT_CHANGED,
-    headingchanged    : gmap.Const.Event.Type.HEADING_CHANGED,
-    iconchanged       : gmap.Const.Event.Type.ICON_CHANGED,
-    idle              : gmap.Const.Event.Type.IDLE,
-    maptypeidchanged  : gmap.Const.Event.Type.MAP_TYPE_ID_CHANGED,
-    mousedown         : gmap.Const.Event.Type.MOUSE_DOWN,
-    mousemove         : gmap.Const.Event.Type.MOUSE_MOVE,
-    mouseout          : gmap.Const.Event.Type.MOUSE_OUT,
-    mouseover         : gmap.Const.Event.Type.MOUSE_OVER,
-    mouseup           : gmap.Const.Event.Type.MOUSE_UP,
-    positionchanged   : gmap.Const.Event.Type.POSITION_CHANGED,
-    projectionchanged : gmap.Const.Event.Type.PROJECTION_CHANGED,
-    resize            : gmap.Const.Event.Type.RESIZE,
-    rightclick        : gmap.Const.Event.Type.RIGHT_CLICK,
-    shapechanged      : gmap.Const.Event.Type.SHAPE_CHANGED,
-    tilesloaded       : gmap.Const.Event.Type.TILES_LOADED,
-    tiltchanged       : gmap.Const.Event.Type.TILT_CHANGED,
-    titlechanged      : gmap.Const.Event.Type.TITLE_CHANGED,
-    visiblechanged    : gmap.Const.Event.Type.VISIBLE_CHANGED,
-    zindexchanged     : gmap.Const.Event.Type.ZINDEX_CHANGED,
-    zoomchanged       : gmap.Const.Event.Type.ZOOM_CHANGED
+    animationchanged:  gmap.Const.EventType.ANIMATION_CHANGED,
+    boundschanged:     gmap.Const.EventType.BOUNDS_CHANGED,
+    centerchanged:     gmap.Const.EventType.CENTER_CHANGED,
+    click:             gmap.Const.EventType.CLICK,
+    clickablechanged:  gmap.Const.EventType.CLICKABLE_CHANGED,
+    cursorchanged:     gmap.Const.EventType.CURSOR_CHANGED,
+    doubleclick:       gmap.Const.EventType.DOUBLE_CLICK,
+    drag:              gmap.Const.EventType.DRAG,
+    dragend:           gmap.Const.EventType.DRAG_END,
+    dragstart:         gmap.Const.EventType.DRAG_START,
+    draggablechanged:  gmap.Const.EventType.DRAGGABLE_CHANGED,
+    flatchanged:       gmap.Const.EventType.FLAT_CHANGED,
+    headingchanged:    gmap.Const.EventType.HEADING_CHANGED,
+    iconchanged:       gmap.Const.EventType.ICON_CHANGED,
+    idle:              gmap.Const.EventType.IDLE,
+    maptypeidchanged:  gmap.Const.EventType.MAP_TYPE_ID_CHANGED,
+    mousedown:         gmap.Const.EventType.MOUSE_DOWN,
+    mousemove:         gmap.Const.EventType.MOUSE_MOVE,
+    mouseout:          gmap.Const.EventType.MOUSE_OUT,
+    mouseover:         gmap.Const.EventType.MOUSE_OVER,
+    mouseup:           gmap.Const.EventType.MOUSE_UP,
+    positionchanged:   gmap.Const.EventType.POSITION_CHANGED,
+    projectionchanged: gmap.Const.EventType.PROJECTION_CHANGED,
+    resize:            gmap.Const.EventType.RESIZE,
+    rightclick:        gmap.Const.EventType.RIGHT_CLICK,
+    shapechanged:      gmap.Const.EventType.SHAPE_CHANGED,
+    tilesloaded:       gmap.Const.EventType.TILES_LOADED,
+    tiltchanged:       gmap.Const.EventType.TILT_CHANGED,
+    titlechanged:      gmap.Const.EventType.TITLE_CHANGED,
+    visiblechanged:    gmap.Const.EventType.VISIBLE_CHANGED,
+    zindexchanged:     gmap.Const.EventType.ZINDEX_CHANGED,
+    zoomchanged:       gmap.Const.EventType.ZOOM_CHANGED
   }
 
 
@@ -201,13 +201,13 @@
   const getIds = function(compArray) {
     const ids = Object.keys(compArray)
 
-    // remove object properties from array
-    for (var prop in gmap.Const.Component.Properties) {
-      const index = ids.indexOf(gmap.Const.Component.Properties[prop])
+    // remove component properties from array
+    Object.keys(gmap.Const.ComponentProperty).forEach(function(key) {
+      const index = ids.indexOf(gmap.Const.ComponentProperty[key])
       if (index !== -1) {
         ids.splice(index, 1)
       }
-    }
+    })
 
     return ids
   }

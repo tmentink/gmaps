@@ -27,11 +27,11 @@ var gmap = function(config) {
     Parent: this,
     Version: gmap.Const.Version
   }
-  this.Type = gmap.Const.Component.Type.MAP
+  this.Type = gmap.Const.ComponentType.MAP
   this.Version = gmap.Const.Version
 
   // save bounds after map has finished loading
-  google.maps.event.addListenerOnce(this.Obj, gmap.Const.Event.Type.TILES_LOADED, () => {
+  google.maps.event.addListenerOnce(this.Obj, gmap.Const.EventType.TILES_LOADED, () => {
     this.Init.Bounds = this.Obj.getBounds()
   })
 }
@@ -48,15 +48,15 @@ gmap.prototype = {
   },
 
   addLabel: function(parms) {
-    return gmap.Core.addComponent(this, gmap.Const.Component.Type.LABEL, parms)
+    return gmap.Core.addComponent(this, gmap.Const.ComponentType.LABEL, parms)
   },
 
   addMarker: function(parms) {
-    return gmap.Core.addComponent(this, gmap.Const.Component.Type.MARKER, parms)
+    return gmap.Core.addComponent(this, gmap.Const.ComponentType.MARKER, parms)
   },
 
   addPolygon: function(parms) {
-    return gmap.Core.addComponent(this, gmap.Const.Component.Type.POLYGON, parms)
+    return gmap.Core.addComponent(this, gmap.Const.ComponentType.POLYGON, parms)
   },
 
   getBounds: function() {
@@ -72,15 +72,15 @@ gmap.prototype = {
   },
 
   labels: function(ids) {
-    return gmap.Core.search(this, gmap.Const.Component.Type.LABEL, ids)
+    return gmap.Core.search(this, gmap.Const.ComponentType.LABEL, ids)
   },
 
   markers: function(ids) {
-    return gmap.Core.search(this, gmap.Const.Component.Type.MARKER, ids)
+    return gmap.Core.search(this, gmap.Const.ComponentType.MARKER, ids)
   },
 
   polygons: function(ids) {
-    return gmap.Core.search(this, gmap.Const.Component.Type.POLYGON, ids)
+    return gmap.Core.search(this, gmap.Const.ComponentType.POLYGON, ids)
   },
 
   removeAllListeners: function() {

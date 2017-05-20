@@ -7,13 +7,6 @@
 
 
   // ----------------------------------------------------------------------
-  // Constants
-  // ----------------------------------------------------------------------
-
-  const Type = gmap.Const.Component.Type
-
-
-  // ----------------------------------------------------------------------
   // Class Definition
   // ----------------------------------------------------------------------
 
@@ -21,7 +14,7 @@
 
     constructor(id, options) {
       const obj = new gmap.GoogleLabel(options)
-      super(id, options, obj, Type.LABEL)
+      super(id, options, obj, gmap.Const.ComponentType.LABEL)
     }
 
   }

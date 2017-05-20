@@ -7,20 +7,13 @@
 
 
   // ----------------------------------------------------------------------
-  // Constants
-  // ----------------------------------------------------------------------
-
-  const Type = gmap.Const.Component.Type
-
-
-  // ----------------------------------------------------------------------
   // Class Definition
   // ----------------------------------------------------------------------
 
   class MarkerArray extends gmap.BaseComponentArray {
 
     constructor(map) {
-      super(map, Type.MARKER_ARRAY, Type.MARKER)
+      super(map, gmap.Const.ComponentType.MARKER_ARRAY, gmap.Const.ComponentType.MARKER)
     }
 
 

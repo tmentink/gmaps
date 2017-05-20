@@ -20,15 +20,9 @@
   }
 
   const RequiredParms = {
-    Label: [
-      "id", "position"
-    ],
-    Marker: [
-      "id", "position"
-    ],
-    Polygon: [
-      "id", "paths"
-    ]
+    Label:   [ "id", "position" ],
+    Marker:  [ "id", "position" ],
+    Polygon: [ "id", "paths" ]
   }
 
 
