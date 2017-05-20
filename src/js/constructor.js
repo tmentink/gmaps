@@ -57,8 +57,16 @@ gmap.prototype = {
     return gmap.Core.addComponent(this, gmap.Const.Component.Type.POLYGON, parms)
   },
 
+  getBounds: function() {
+    return this.Obj.getBounds()
+  },
+
   getCenter: function() {
     return this.Obj.getCenter()
+  },
+
+  getZoom: function() {
+    return this.Obj.getZoom()
   },
 
   labels: function(ids) {
@@ -87,6 +95,20 @@ gmap.prototype = {
 
   setBounds: function(parms) {
     return gmap.Core.setBounds(this, parms)
+  },
+
+  setCenter: function(center) {
+    if (center != null) {
+      return gmap.Core.update(this, null, { center: center })
+    }
+    return this
+  },
+
+  setZoom: function(zoom) {
+    if (zoom != null) {
+      return gmap.Core.update(this, null, { zoom: zoom })
+    }
+    return this
   },
 
   update: function(options) {
