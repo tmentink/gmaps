@@ -1,5 +1,5 @@
 /*!
- * GMaps v1.2.0-alpha (https://github.com/tmentink/gmaps)
+ * GMaps v1.3.0-alpha (https://github.com/tmentink/gmaps)
  * Copyright 2017 Trent Mentink
  * Licensed under MIT
  */
@@ -38,7 +38,17 @@ function _classCallCheck(instance, Constructor) {
   }
 }
 
-(function(window) {
+!function() {
+  "use strict";
+  Number.prototype.toRad = function() {
+    return this * Math.PI / 180;
+  };
+  Number.prototype.toDeg = function() {
+    return this * 180 / Math.PI;
+  };
+}();
+
+!function(window) {
   "use strict";
   if (window.jQuery) {
     return;
@@ -137,12 +147,14 @@ function _classCallCheck(instance, Constructor) {
     return target;
   };
   window.$ = $;
-})(window);
+}(window);
 
 var gmap = function gmap(config) {
   var _this = this;
   config = $.extend(true, {}, gmap.Config, config);
-  delete config.Delimiter;
+  Object.keys(gmap.Const.GlobalConfig).forEach(function(key) {
+    delete config[gmap.Const.GlobalConfig[key]];
+  });
   this.Components = {
     Label: new gmap.LabelArray(this),
     Marker: new gmap.MarkerArray(this),
@@ -160,9 +172,9 @@ var gmap = function gmap(config) {
     Parent: this,
     Version: gmap.Const.Version
   };
-  this.Type = gmap.Const.Component.Type.MAP;
+  this.Type = gmap.Const.ComponentType.MAP;
   this.Version = gmap.Const.Version;
-  google.maps.event.addListenerOnce(this.Obj, gmap.Const.Event.Type.TILES_LOADED, function() {
+  google.maps.event.addListenerOnce(this.Obj, gmap.Const.EventType.TILES_LOADED, function() {
     _this.Init.Bounds = _this.Obj.getBounds();
   });
 };
@@ -172,25 +184,31 @@ gmap.prototype = {
     return gmap.Core.addListener(this, null, type, fn);
   },
   addLabel: function addLabel(parms) {
-    return gmap.Core.addComponent(this, gmap.Const.Component.Type.LABEL, parms);
+    return gmap.Core.addComponent(this, gmap.Const.ComponentType.LABEL, parms);
   },
   addMarker: function addMarker(parms) {
-    return gmap.Core.addComponent(this, gmap.Const.Component.Type.MARKER, parms);
+    return gmap.Core.addComponent(this, gmap.Const.ComponentType.MARKER, parms);
   },
   addPolygon: function addPolygon(parms) {
-    return gmap.Core.addComponent(this, gmap.Const.Component.Type.POLYGON, parms);
+    return gmap.Core.addComponent(this, gmap.Const.ComponentType.POLYGON, parms);
+  },
+  getBounds: function getBounds() {
+    return this.Obj.getBounds();
   },
   getCenter: function getCenter() {
     return this.Obj.getCenter();
   },
+  getZoom: function getZoom() {
+    return this.Obj.getZoom();
+  },
   labels: function labels(ids) {
-    return gmap.Core.search(this, gmap.Const.Component.Type.LABEL, ids);
+    return gmap.Core.search(this, gmap.Const.ComponentType.LABEL, ids);
   },
   markers: function markers(ids) {
-    return gmap.Core.search(this, gmap.Const.Component.Type.MARKER, ids);
+    return gmap.Core.search(this, gmap.Const.ComponentType.MARKER, ids);
   },
   polygons: function polygons(ids) {
-    return gmap.Core.search(this, gmap.Const.Component.Type.POLYGON, ids);
+    return gmap.Core.search(this, gmap.Const.ComponentType.POLYGON, ids);
   },
   removeAllListeners: function removeAllListeners() {
     return gmap.Core.removeAllListeners(this);
@@ -204,6 +222,22 @@ gmap.prototype = {
   setBounds: function setBounds(parms) {
     return gmap.Core.setBounds(this, parms);
   },
+  setCenter: function setCenter(center) {
+    if (center != null) {
+      return gmap.Core.update(this, null, {
+        center: center
+      });
+    }
+    return this;
+  },
+  setZoom: function setZoom(zoom) {
+    if (zoom != null) {
+      return gmap.Core.update(this, null, {
+        zoom: zoom
+      });
+    }
+    return this;
+  },
   update: function update(options) {
     return gmap.Core.update(this, null, options);
   }
@@ -213,8 +247,8 @@ gmap.prototype = {
   "use strict";
   gmap.Config = {
     Delimiter: {
-      LatLng: ",",
-      LatLngPair: "|"
+      LatLng: "|",
+      LatLngArray: "~"
     },
     LabelOptions: {
       fontSize: 14,
@@ -242,7 +276,8 @@ gmap.prototype = {
       strokeWeight: 1,
       fillColor: "#0275D8",
       fillOpacity: .8
-    }
+    },
+    UrlPrecision: 5
   };
   return gmap;
 }(gmap || {});
@@ -250,78 +285,139 @@ gmap.prototype = {
 !function(gmap) {
   "use strict";
   gmap.Const = {
-    Component: {
-      Properties: {
-        CHILD_TYPE: "ChildType",
-        MAP: "Map",
-        TYPE: "Type"
-      },
-      Type: {
-        LABEL: "Label",
-        LABEL_ARRAY: "LabelArray",
-        MAP: "Map",
-        MARKER: "Marker",
-        MARKER_ARRAY: "MarkerArray",
-        POLYGON: "Polygon",
-        POLYGON_ARRAY: "PolygonArray"
-      }
+    ComponentProperty: {
+      CHILD_TYPE: "ChildType",
+      MAP: "Map",
+      TYPE: "Type"
     },
-    Event: {
-      Type: {
-        ANIMATION_CHANGED: "animation_changed",
-        BOUNDS_CHANGED: "bounds_changed",
-        CENTER_CHANGED: "center_changed",
-        CLICK: "click",
-        CLICKABLE_CHANGED: "clickable_changed",
-        CURSOR_CHANGED: "cursor_changed",
-        DOUBLE_CLICK: "dblclick",
-        DRAG: "drag",
-        DRAG_END: "dragend",
-        DRAG_START: "dragstart",
-        DRAGGABLE_CHANGED: "draggable_changed",
-        FLAT_CHANGED: "flat_changed",
-        HEADING_CHANGED: "heading_changed",
-        ICON_CHANGED: "icon_changed",
-        IDLE: "idle",
-        MAP_TYPE_ID_CHANGED: "maptypeid_changed",
-        MOUSE_DOWN: "mousedown",
-        MOUSE_MOVE: "mousemove",
-        MOUSE_OUT: "mouseout",
-        MOUSE_OVER: "mouseover",
-        MOUSE_UP: "mouseup",
-        POSITION_CHANGED: "position_changed",
-        PROJECTION_CHANGED: "projection_changed",
-        RESIZE: "resize",
-        RIGHT_CLICK: "rightclick",
-        SHAPE_CHANGED: "shape_changed",
-        TILES_LOADED: "tilesloaded",
-        TILT_CHANGED: "tilt_changed",
-        TITLE_CHANGED: "title_changed",
-        VISIBLE_CHANGED: "visible_changed",
-        ZINDEX_CHANGED: "zindex_changed",
-        ZOOM_CHANGED: "zoom_changed"
-      }
+    ComponentType: {
+      LABEL: "Label",
+      LABEL_ARRAY: "LabelArray",
+      MAP: "Map",
+      MARKER: "Marker",
+      MARKER_ARRAY: "MarkerArray",
+      POLYGON: "Polygon",
+      POLYGON_ARRAY: "PolygonArray"
+    },
+    EventType: {
+      ANIMATION_CHANGED: "animation_changed",
+      BOUNDS_CHANGED: "bounds_changed",
+      CENTER_CHANGED: "center_changed",
+      CLICK: "click",
+      CLICKABLE_CHANGED: "clickable_changed",
+      CURSOR_CHANGED: "cursor_changed",
+      DOUBLE_CLICK: "dblclick",
+      DRAG: "drag",
+      DRAG_END: "dragend",
+      DRAG_START: "dragstart",
+      DRAGGABLE_CHANGED: "draggable_changed",
+      FLAT_CHANGED: "flat_changed",
+      HEADING_CHANGED: "heading_changed",
+      ICON_CHANGED: "icon_changed",
+      IDLE: "idle",
+      MAP_TYPE_ID_CHANGED: "maptypeid_changed",
+      MOUSE_DOWN: "mousedown",
+      MOUSE_MOVE: "mousemove",
+      MOUSE_OUT: "mouseout",
+      MOUSE_OVER: "mouseover",
+      MOUSE_UP: "mouseup",
+      POSITION_CHANGED: "position_changed",
+      PROJECTION_CHANGED: "projection_changed",
+      RESIZE: "resize",
+      RIGHT_CLICK: "rightclick",
+      SHAPE_CHANGED: "shape_changed",
+      TILES_LOADED: "tilesloaded",
+      TILT_CHANGED: "tilt_changed",
+      TITLE_CHANGED: "title_changed",
+      VISIBLE_CHANGED: "visible_changed",
+      ZINDEX_CHANGED: "zindex_changed",
+      ZOOM_CHANGED: "zoom_changed"
+    },
+    GlobalConfig: {
+      DELIMITER: "Delimiter",
+      URL_PRECISION: "UrlPrecision"
     }
   };
   return gmap;
 }(gmap || {});
 
-!function(gmap) {
+!function(Util) {
+  "use strict";
+  Util.getDestinationPoint = function(latLng, bearing, distance) {
+    bearing = bearing.toRad();
+    distance = distance / 6371;
+    var src_lat = latLng.lat().toRad();
+    var src_lng = latLng.lng().toRad();
+    var dest_lat = Math.asin(Math.sin(src_lat) * Math.cos(distance) + Math.cos(src_lat) * Math.sin(distance) * Math.cos(bearing));
+    var dest_lng = src_lng + Math.atan2(Math.sin(bearing) * Math.sin(distance) * Math.cos(src_lat), Math.cos(distance) - Math.sin(src_lat) * Math.sin(dest_lat));
+    if (isNaN(src_lng) || isNaN(dest_lng)) {
+      return null;
+    }
+    return new google.maps.LatLng(dest_lat.toDeg(), dest_lng.toDeg());
+  };
+  return Util;
+}(gmap.Util || (gmap.Util = {}));
+
+!function(Util, Const) {
+  "use strict";
+  Util.copy = function(compArray, exclude) {
+    if ($.type(exclude) == "object") {
+      exclude = Object.keys(exclude);
+    }
+    exclude = _addPrototypesToArray(compArray, exclude);
+    var copy = $.extend(true, {}, compArray);
+    for (var i = 0, i_end = exclude.length; i < i_end; i++) {
+      delete copy[exclude[i]];
+    }
+    var new_comp = new gmap[compArray.Type]();
+    return $.extend(new_comp, copy);
+  };
+  Util.getGoogleObjects = function(compArray) {
+    var ids = Util.getIds(compArray);
+    var googleObjects = ids.map(function(id) {
+      return compArray[id].Obj;
+    });
+    return googleObjects;
+  };
+  Util.getIds = function(compArray) {
+    var ids = Object.keys(compArray);
+    return _removeComponentProperties(ids);
+  };
+  function _addPrototypesToArray(compArray, array) {
+    var proto = Object.keys(Object.getPrototypeOf(compArray));
+    var base_proto = Object.keys(Object.getPrototypeOf(new gmap.BaseComponentArray("", "")));
+    array = proto.concat(array);
+    array = base_proto.concat(array);
+    return array;
+  }
+  function _removeComponentProperties(ids) {
+    Object.keys(Const.ComponentProperty).forEach(function(key) {
+      var index = ids.indexOf(Const.ComponentProperty[key]);
+      if (index !== -1) {
+        ids.splice(index, 1);
+      }
+    });
+    return ids;
+  }
+  return Util;
+}(gmap.Util || (gmap.Util = {}), gmap.Const);
+
+!function(Util, Config) {
   "use strict";
   var Conversions = {
     center: function center(parms) {
       if ($.type(parms.center) == "string") {
-        parms.center = gmap.Util.toLatLng(parms.center);
+        parms.center = Util.toLatLng(parms.center);
       }
     },
     paths: function paths(parms) {
       if ($.type(parms.paths) == "string") {
-        parms.paths = gmap.Util.toLatLngArray(parms.paths);
+        parms.paths = Util.toLatLngArray(parms.paths);
       }
     },
     position: function position(parms) {
       if ($.type(parms.position) == "string") {
-        parms.position = gmap.Util.toLatLng(parms.position);
+        parms.position = Util.toLatLng(parms.position);
       }
     },
     text: function text(parms) {
@@ -343,121 +439,14 @@ gmap.prototype = {
       paths: Conversions.paths
     }
   };
-  var ComponentTypeAlias = {
-    label: gmap.Const.Component.Type.LABEL,
-    labels: gmap.Const.Component.Type.LABEL,
-    map: gmap.Const.Component.Type.MAP,
-    maps: gmap.Const.Component.Type.MAP,
-    marker: gmap.Const.Component.Type.MARKER,
-    markers: gmap.Const.Component.Type.MARKER,
-    polygon: gmap.Const.Component.Type.POLYGON,
-    polygons: gmap.Const.Component.Type.POLYGON
-  };
-  var EventTypeAlias = {
-    animationchanged: gmap.Const.Event.Type.ANIMATION_CHANGED,
-    boundschanged: gmap.Const.Event.Type.BOUNDS_CHANGED,
-    centerchanged: gmap.Const.Event.Type.CENTER_CHANGED,
-    click: gmap.Const.Event.Type.CLICK,
-    clickablechanged: gmap.Const.Event.Type.CLICKABLE_CHANGED,
-    cursorchanged: gmap.Const.Event.Type.CURSOR_CHANGED,
-    doubleclick: gmap.Const.Event.Type.DOUBLE_CLICK,
-    drag: gmap.Const.Event.Type.DRAG,
-    dragend: gmap.Const.Event.Type.DRAG_END,
-    dragstart: gmap.Const.Event.Type.DRAG_START,
-    draggablechanged: gmap.Const.Event.Type.DRAGGABLE_CHANGED,
-    flatchanged: gmap.Const.Event.Type.FLAT_CHANGED,
-    headingchanged: gmap.Const.Event.Type.HEADING_CHANGED,
-    iconchanged: gmap.Const.Event.Type.ICON_CHANGED,
-    idle: gmap.Const.Event.Type.IDLE,
-    maptypeidchanged: gmap.Const.Event.Type.MAP_TYPE_ID_CHANGED,
-    mousedown: gmap.Const.Event.Type.MOUSE_DOWN,
-    mousemove: gmap.Const.Event.Type.MOUSE_MOVE,
-    mouseout: gmap.Const.Event.Type.MOUSE_OUT,
-    mouseover: gmap.Const.Event.Type.MOUSE_OVER,
-    mouseup: gmap.Const.Event.Type.MOUSE_UP,
-    positionchanged: gmap.Const.Event.Type.POSITION_CHANGED,
-    projectionchanged: gmap.Const.Event.Type.PROJECTION_CHANGED,
-    resize: gmap.Const.Event.Type.RESIZE,
-    rightclick: gmap.Const.Event.Type.RIGHT_CLICK,
-    shapechanged: gmap.Const.Event.Type.SHAPE_CHANGED,
-    tilesloaded: gmap.Const.Event.Type.TILES_LOADED,
-    tiltchanged: gmap.Const.Event.Type.TILT_CHANGED,
-    titlechanged: gmap.Const.Event.Type.TITLE_CHANGED,
-    visiblechanged: gmap.Const.Event.Type.VISIBLE_CHANGED,
-    zindexchanged: gmap.Const.Event.Type.ZINDEX_CHANGED,
-    zoomchanged: gmap.Const.Event.Type.ZOOM_CHANGED
-  };
-  /**
-   * Converts the supplied parameters based on the component type
-   */
-  var convertCompOptions = function convertCompOptions(type, parms) {
+  Util.convertCompOptions = function(type, parms) {
     type = type.replace("Array", "");
     Object.keys(ConvertableComponentOptions[type]).forEach(function(key) {
       ConvertableComponentOptions[type][key](parms);
     });
     return parms;
   };
-  /**
-   * Returns a copy of source minus the values of exclude
-   */
-  var copy = function copy(source, exclude) {
-    var src_copy = $.extend(true, {}, source);
-    if ($.type(exclude) == "object") {
-      exclude = Object.keys(exclude);
-    } else if ($.type(exclude) == "string") {
-      exclude = exclude.split(",");
-    }
-    var src_proto = Object.keys(Object.getPrototypeOf(source));
-    var base_proto = Object.keys(Object.getPrototypeOf(new gmap.BaseComponentArray("", "")));
-    exclude = src_proto.concat(exclude);
-    exclude = base_proto.concat(exclude);
-    for (var i = 0, i_end = exclude.length; i < i_end; i++) {
-      delete src_copy[exclude[i]];
-    }
-    var new_comp = source.Type ? new gmap[source.Type]() : {};
-    return $.extend(new_comp, src_copy);
-  };
-  /**
-   * Returns component type constant
-   */
-  var getComponentType = function getComponentType(type) {
-    type = type.toLowerCase().replace(/\s+/g, "");
-    return ComponentTypeAlias[type] || type;
-  };
-  /**
-   * Returns event type constant
-   */
-  var getEventType = function getEventType(event) {
-    event = event.toLowerCase().replace(/\s+/g, "");
-    return EventTypeAlias[event] || event;
-  };
-  /**
-   * Returns an array of the component's google objects
-   */
-  var getGoogleObjects = function getGoogleObjects(compArray) {
-    var ids = getIds(compArray);
-    var googleObjects = ids.map(function(id) {
-      return compArray[id].Obj;
-    });
-    return googleObjects;
-  };
-  /**
-   * Returns an array of the component's ids
-   */
-  var getIds = function getIds(compArray) {
-    var ids = Object.keys(compArray);
-    for (var prop in gmap.Const.Component.Properties) {
-      var index = ids.indexOf(gmap.Const.Component.Properties[prop]);
-      if (index !== -1) {
-        ids.splice(index, 1);
-      }
-    }
-    return ids;
-  };
-  /**
-   * Returns value converted into an array
-   */
-  var toArray = function toArray(value) {
+  Util.toArray = function(value) {
     if ($.type(value) == "number") {
       value = value.toString().split();
     } else if ($.type(value) == "string") {
@@ -467,46 +456,110 @@ gmap.prototype = {
     }
     return value;
   };
-  /**
-   * Converts a formatted string into a LatLng object
-   */
-  var toLatLng = function toLatLng(str) {
-    var Delimiter = {
-      LatLng: gmap.Config.Delimiter.LatLng || ","
-    };
-    var points = str.split(Delimiter.LatLng);
+  Util.toDelimitedString = function(obj) {
+    if (obj instanceof google.maps.LatLng) {
+      return obj.toUrlValue(Config.UrlPrecision);
+    }
+    if (obj instanceof google.maps.MVCArray) {
+      if (obj.getAt(0) instanceof google.maps.MVCArray) {
+        return _multiDelimitedString(obj);
+      } else {
+        return _delimitedString(obj);
+      }
+    }
+    return null;
+  };
+  Util.toLatLng = function(str) {
+    var points = str.split(",");
     return new google.maps.LatLng(parseFloat(points[0]), parseFloat(points[1]));
   };
-  /**
-   * Converts a formatted string into an array of LatLng objects
-   */
-  var toLatLngArray = function toLatLngArray(str) {
-    var Delimiter = {
-      LatLng: gmap.Config.Delimiter.LatLng || ",",
-      LatLngPair: gmap.Config.Delimiter.LatLngPair || "|"
-    };
+  Util.toLatLngArray = function(str) {
     var latLngArray = [];
-    var coordPairs = str.split(Delimiter.LatLngPair);
+    var coordPairs = str.split(Config.Delimiter.LatLng || "|");
     for (var i = 0, i_end = coordPairs.length; i < i_end; i++) {
-      var points = coordPairs[i].split(Delimiter.LatLng);
-      var latLng = new google.maps.LatLng(parseFloat(points[0]), parseFloat(points[1]));
-      latLngArray.push(latLng);
+      latLngArray.push(Util.toLatLng(coordPairs[i]));
     }
     return latLngArray;
   };
-  gmap.Util = {
-    convertCompOptions: convertCompOptions,
-    copy: copy,
-    getComponentType: getComponentType,
-    getEventType: getEventType,
-    getGoogleObjects: getGoogleObjects,
-    getIds: getIds,
-    toArray: toArray,
-    toLatLng: toLatLng,
-    toLatLngArray: toLatLngArray
+  function _delimitedString(MVCArray) {
+    var str = "";
+    MVCArray.forEach(function(el, i) {
+      if (i > 0) {
+        str += Config.Delimiter.LatLng || "|";
+      }
+      str += el.toUrlValue(Config.UrlPrecision);
+    });
+    return str;
+  }
+  function _multiDelimitedString(MVCArray) {
+    var str = "";
+    MVCArray.forEach(function(el, i) {
+      if (i > 0) {
+        str += Config.Delimiter.LatLngArray || "~";
+      }
+      str += _delimitedString(el);
+    });
+    return str;
+  }
+  return Util;
+}(gmap.Util || (gmap.Util = {}), gmap.Config);
+
+!function(Util, Const) {
+  "use strict";
+  var ComponentTypeAlias = {
+    label: Const.ComponentType.LABEL,
+    labels: Const.ComponentType.LABEL,
+    map: Const.ComponentType.MAP,
+    maps: Const.ComponentType.MAP,
+    marker: Const.ComponentType.MARKER,
+    markers: Const.ComponentType.MARKER,
+    polygon: Const.ComponentType.POLYGON,
+    polygons: Const.ComponentType.POLYGON
   };
-  return gmap;
-}(gmap || {});
+  var EventTypeAlias = {
+    animationchanged: Const.EventType.ANIMATION_CHANGED,
+    boundschanged: Const.EventType.BOUNDS_CHANGED,
+    centerchanged: Const.EventType.CENTER_CHANGED,
+    click: Const.EventType.CLICK,
+    clickablechanged: Const.EventType.CLICKABLE_CHANGED,
+    cursorchanged: Const.EventType.CURSOR_CHANGED,
+    doubleclick: Const.EventType.DOUBLE_CLICK,
+    drag: Const.EventType.DRAG,
+    dragend: Const.EventType.DRAG_END,
+    dragstart: Const.EventType.DRAG_START,
+    draggablechanged: Const.EventType.DRAGGABLE_CHANGED,
+    flatchanged: Const.EventType.FLAT_CHANGED,
+    headingchanged: Const.EventType.HEADING_CHANGED,
+    iconchanged: Const.EventType.ICON_CHANGED,
+    idle: Const.EventType.IDLE,
+    maptypeidchanged: Const.EventType.MAP_TYPE_ID_CHANGED,
+    mousedown: Const.EventType.MOUSE_DOWN,
+    mousemove: Const.EventType.MOUSE_MOVE,
+    mouseout: Const.EventType.MOUSE_OUT,
+    mouseover: Const.EventType.MOUSE_OVER,
+    mouseup: Const.EventType.MOUSE_UP,
+    positionchanged: Const.EventType.POSITION_CHANGED,
+    projectionchanged: Const.EventType.PROJECTION_CHANGED,
+    resize: Const.EventType.RESIZE,
+    rightclick: Const.EventType.RIGHT_CLICK,
+    shapechanged: Const.EventType.SHAPE_CHANGED,
+    tilesloaded: Const.EventType.TILES_LOADED,
+    tiltchanged: Const.EventType.TILT_CHANGED,
+    titlechanged: Const.EventType.TITLE_CHANGED,
+    visiblechanged: Const.EventType.VISIBLE_CHANGED,
+    zindexchanged: Const.EventType.ZINDEX_CHANGED,
+    zoomchanged: Const.EventType.ZOOM_CHANGED
+  };
+  Util.getComponentType = function(type) {
+    type = type.toLowerCase().replace(/\s+/g, "");
+    return ComponentTypeAlias[type] || type;
+  };
+  Util.getEventType = function(event) {
+    event = event.toLowerCase().replace(/\s+/g, "");
+    return EventTypeAlias[event] || event;
+  };
+  return Util;
+}(gmap.Util || (gmap.Util = {}), gmap.Const);
 
 !function(gmap) {
   "use strict";
@@ -612,9 +665,10 @@ gmap.prototype = {
     Z_INDEX: 1e3
   };
   var googleLabel = function googleLabel(options) {
-    for (var prop in Default) {
-      this.set(Property[prop], Default[prop]);
-    }
+    var _this2 = this;
+    Object.keys(Default).forEach(function(key) {
+      _this2.set(Property[key], Default[key]);
+    });
     this.setValues(options);
   };
   googleLabel.prototype = new google.maps.OverlayView();
@@ -747,13 +801,12 @@ gmap.prototype = {
 
 !function(gmap) {
   "use strict";
-  var Type = gmap.Const.Component.Type;
   var Label = function(_gmap$BaseComponent) {
     _inherits(Label, _gmap$BaseComponent);
     function Label(id, options) {
       _classCallCheck(this, Label);
       var obj = new gmap.GoogleLabel(options);
-      return _possibleConstructorReturn(this, _gmap$BaseComponent.call(this, id, options, obj, Type.LABEL));
+      return _possibleConstructorReturn(this, _gmap$BaseComponent.call(this, id, options, obj, gmap.Const.ComponentType.LABEL));
     }
     return Label;
   }(gmap.BaseComponent);
@@ -763,13 +816,18 @@ gmap.prototype = {
 
 !function(gmap) {
   "use strict";
-  var Type = gmap.Const.Component.Type;
   var LabelArray = function(_gmap$BaseComponentAr) {
     _inherits(LabelArray, _gmap$BaseComponentAr);
     function LabelArray(map) {
       _classCallCheck(this, LabelArray);
-      return _possibleConstructorReturn(this, _gmap$BaseComponentAr.call(this, map, Type.LABEL_ARRAY, Type.LABEL));
+      return _possibleConstructorReturn(this, _gmap$BaseComponentAr.call(this, map, gmap.Const.ComponentType.LABEL_ARRAY, gmap.Const.ComponentType.LABEL));
     }
+    LabelArray.prototype.getPosition = function getPosition() {
+      return gmap.Core.getPosition(this, this.getIds());
+    };
+    LabelArray.prototype.getPositionString = function getPositionString() {
+      return gmap.Core.getPosition(this, this.getIds(), true);
+    };
     return LabelArray;
   }(gmap.BaseComponentArray);
   gmap.LabelArray = LabelArray;
@@ -778,13 +836,12 @@ gmap.prototype = {
 
 !function(gmap) {
   "use strict";
-  var Type = gmap.Const.Component.Type;
   var Marker = function(_gmap$BaseComponent2) {
     _inherits(Marker, _gmap$BaseComponent2);
     function Marker(id, options) {
       _classCallCheck(this, Marker);
       var obj = new google.maps.Marker(options);
-      return _possibleConstructorReturn(this, _gmap$BaseComponent2.call(this, id, options, obj, Type.MARKER));
+      return _possibleConstructorReturn(this, _gmap$BaseComponent2.call(this, id, options, obj, gmap.Const.ComponentType.MARKER));
     }
     return Marker;
   }(gmap.BaseComponent);
@@ -794,15 +851,20 @@ gmap.prototype = {
 
 !function(gmap) {
   "use strict";
-  var Type = gmap.Const.Component.Type;
   var MarkerArray = function(_gmap$BaseComponentAr2) {
     _inherits(MarkerArray, _gmap$BaseComponentAr2);
     function MarkerArray(map) {
       _classCallCheck(this, MarkerArray);
-      return _possibleConstructorReturn(this, _gmap$BaseComponentAr2.call(this, map, Type.MARKER_ARRAY, Type.MARKER));
+      return _possibleConstructorReturn(this, _gmap$BaseComponentAr2.call(this, map, gmap.Const.ComponentType.MARKER_ARRAY, gmap.Const.ComponentType.MARKER));
     }
     MarkerArray.prototype.addListener = function addListener(type, fn) {
       return gmap.Core.addListener(this, this.getIds(), type, fn);
+    };
+    MarkerArray.prototype.getPosition = function getPosition() {
+      return gmap.Core.getPosition(this, this.getIds());
+    };
+    MarkerArray.prototype.getPositionString = function getPositionString() {
+      return gmap.Core.getPosition(this, this.getIds(), true);
     };
     MarkerArray.prototype.removeAllListeners = function removeAllListeners() {
       return gmap.Core.removeAllListeners(this, this.getIds());
@@ -818,13 +880,12 @@ gmap.prototype = {
 
 !function(gmap) {
   "use strict";
-  var Type = gmap.Const.Component.Type;
   var Polygon = function(_gmap$BaseComponent3) {
     _inherits(Polygon, _gmap$BaseComponent3);
     function Polygon(id, options) {
       _classCallCheck(this, Polygon);
       var obj = new google.maps.Polygon(options);
-      return _possibleConstructorReturn(this, _gmap$BaseComponent3.call(this, id, options, obj, Type.POLYGON));
+      return _possibleConstructorReturn(this, _gmap$BaseComponent3.call(this, id, options, obj, gmap.Const.ComponentType.POLYGON));
     }
     return Polygon;
   }(gmap.BaseComponent);
@@ -834,15 +895,20 @@ gmap.prototype = {
 
 !function(gmap) {
   "use strict";
-  var Type = gmap.Const.Component.Type;
   var PolygonArray = function(_gmap$BaseComponentAr3) {
     _inherits(PolygonArray, _gmap$BaseComponentAr3);
     function PolygonArray(map) {
       _classCallCheck(this, PolygonArray);
-      return _possibleConstructorReturn(this, _gmap$BaseComponentAr3.call(this, map, Type.POLYGON_ARRAY, Type.POLYGON));
+      return _possibleConstructorReturn(this, _gmap$BaseComponentAr3.call(this, map, gmap.Const.ComponentType.POLYGON_ARRAY, gmap.Const.ComponentType.POLYGON));
     }
     PolygonArray.prototype.addListener = function addListener(type, fn) {
       return gmap.Core.addListener(this, this.getIds(), type, fn);
+    };
+    PolygonArray.prototype.getPath = function getPath() {
+      return gmap.Core.getPath(this, this.getIds());
+    };
+    PolygonArray.prototype.getPathString = function getPathString() {
+      return gmap.Core.getPath(this, this.getIds(), true);
     };
     PolygonArray.prototype.removeAllListeners = function removeAllListeners() {
       return gmap.Core.removeAllListeners(this, this.getIds());
@@ -992,6 +1058,41 @@ gmap.prototype = {
 
 !function(Core) {
   "use strict";
+  Core.getPath = function(compArray, ids, delimited) {
+    ids = gmap.Util.toArray(ids);
+    var retVal = {};
+    for (var i = 0, i_end = ids.length; i < i_end; i++) {
+      var id = ids[i];
+      var comp = compArray[id];
+      if (comp) {
+        var path = comp.Obj.getPath();
+        retVal[id] = delimited ? gmap.Util.toDelimitedString(path) : path;
+      }
+    }
+    return _formatRetVal(retVal);
+  };
+  Core.getPosition = function(compArray, ids, delimited) {
+    ids = gmap.Util.toArray(ids);
+    var retVal = {};
+    for (var i = 0, i_end = ids.length; i < i_end; i++) {
+      var id = ids[i];
+      var comp = compArray[id];
+      if (comp) {
+        var position = comp.Obj.getPosition();
+        retVal[id] = delimited ? gmap.Util.toDelimitedString(position) : position;
+      }
+    }
+    return _formatRetVal(retVal);
+  };
+  function _formatRetVal(retVal) {
+    var keys = Object.keys(retVal);
+    return keys.length == 1 ? retVal[keys[0]] : retVal;
+  }
+  return Core;
+}(gmap.Core || (gmap.Core = {}));
+
+!function(Core) {
+  "use strict";
   var Action = {
     HIDE: "hide",
     SHOW: "show",
@@ -1074,7 +1175,7 @@ gmap.prototype = {
     return _listener(compArray, ids, type, null, Action.REMOVE_TYPE);
   };
   function _listener(compArray, ids, type, fn, action) {
-    if (compArray.Type == gmap.Const.Component.Type.MAP) {
+    if (compArray.Type == gmap.Const.ComponentType.MAP) {
       return Execute[action](compArray, type, fn);
     }
     if ($.isArray(ids)) {
@@ -1140,7 +1241,7 @@ gmap.prototype = {
 !function(Core) {
   "use strict";
   Core.reset = function(comp, ids) {
-    if (comp.Type == gmap.Const.Component.Type.MAP) {
+    if (comp.Type == gmap.Const.ComponentType.MAP) {
       comp.Obj.fitBounds(comp.Init.Bounds);
       return _reset(comp);
     }
@@ -1198,7 +1299,7 @@ gmap.prototype = {
       throw ErrorMessages.MustSupplyOptions;
     }
     options = gmap.Util.convertCompOptions(comp.Type, options);
-    if (comp.Type == gmap.Const.Component.Type.MAP) {
+    if (comp.Type == gmap.Const.ComponentType.MAP) {
       return _update(comp, options);
     }
     if ($.isArray(ids)) {
@@ -1225,4 +1326,4 @@ gmap.prototype = {
   return Core;
 }(gmap.Core || (gmap.Core = {}));
 
-gmap.Const.Version = "1.2.0-alpha";
+gmap.Const.Version = "1.3.0-alpha";
