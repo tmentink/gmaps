@@ -63,6 +63,10 @@
         ZINDEX_CHANGED      : "zindex_changed",
         ZOOM_CHANGED        : "zoom_changed"
       }
+    },
+    GlobalConfig: {
+      DELIMITER     : "Delimiter",
+      URL_PRECISION : "UrlPrecision"
     }
 
   }
