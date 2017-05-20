@@ -25,6 +25,14 @@
       return gmap.Core.addListener(this, this.getIds(), type, fn)
     }
 
+    getPosition() {
+      return gmap.Core.getPosition(this, this.getIds())
+    }
+
+    getPositionString() {
+      return gmap.Core.getPosition(this, this.getIds(), true)
+    }
+
     removeAllListeners() {
       return gmap.Core.removeAllListeners(this, this.getIds())
     }

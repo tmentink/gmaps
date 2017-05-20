@@ -25,6 +25,14 @@
       return gmap.Core.addListener(this, this.getIds(), type, fn)
     }
 
+    getPath() {
+      return gmap.Core.getPath(this, this.getIds())
+    }
+
+    getPathString() {
+      return gmap.Core.getPath(this, this.getIds(), true)
+    }
+
     removeAllListeners() {
       return gmap.Core.removeAllListeners(this, this.getIds())
     }
