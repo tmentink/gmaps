@@ -2,7 +2,7 @@
 // Gmaps: jquery-shim.js
 // ------------------------------------------------------------------------
 
-((window) => {
+!((window) => {
   "use strict"
 
   // if jQuery is already loaded then exit shim
