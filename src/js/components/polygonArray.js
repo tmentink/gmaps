@@ -2,7 +2,7 @@
 // GMaps: polygonArray.js
 // ------------------------------------------------------------------------
 
-!((gmap) => {
+!((gmap, Core, ComponentType) => {
   "use strict"
 
 
@@ -13,7 +13,7 @@
   class PolygonArray extends gmap.BaseComponentArray {
 
     constructor(map) {
-      super(map, gmap.Const.ComponentType.POLYGON_ARRAY, gmap.Const.ComponentType.POLYGON)
+      super(map, ComponentType.POLYGON_ARRAY, ComponentType.POLYGON)
     }
 
 
@@ -22,28 +22,33 @@
     // --------------------------------------------------------------------
 
     addListener(type, fn) {
-      return gmap.Core.addListener(this, this.getIds(), type, fn)
+      return Core.addListener(this, this.getIds(), type, fn)
     }
 
     getPath() {
-      return gmap.Core.getPath(this, this.getIds())
+      return Core.getPath(this, this.getIds())
     }
 
     getPathString() {
-      return gmap.Core.getPath(this, this.getIds(), true)
+      return Core.getPath(this, this.getIds(), true)
     }
 
     removeAllListeners() {
-      return gmap.Core.removeAllListeners(this, this.getIds())
+      return Core.removeAllListeners(this, this.getIds())
     }
 
     removeListenerType(type) {
-      return gmap.Core.removeListenerType(this, this.getIds(), type)
+      return Core.removeListenerType(this, this.getIds(), type)
     }
 
   }
 
+
+  // ----------------------------------------------------------------------
+  // Namespace
+  // ----------------------------------------------------------------------
+
   gmap.PolygonArray = PolygonArray
 
   return gmap
-})(gmap || {})
+})(gmap, gmap.Core, gmap.Const.ComponentType)

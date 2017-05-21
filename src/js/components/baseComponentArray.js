@@ -3,7 +3,7 @@
 // ------------------------------------------------------------------------
 
 
-!((gmap) => {
+!((gmap, Core, Util) => {
   "use strict"
 
 
@@ -25,60 +25,65 @@
     // --------------------------------------------------------------------
 
     getBounds() {
-      return gmap.Core.getBounds(this, this.getIds())
+      return Core.getBounds(this, this.getIds())
     }
 
     getCenter() {
-      return gmap.Core.getCenter(this, this.getIds())
+      return Core.getCenter(this, this.getIds())
     }
 
     getGoogleObjects() {
-      return gmap.Util.getGoogleObjects(this)
+      return Util.getGoogleObjects(this)
     }
 
     getIds() {
-      return gmap.Util.getIds(this)
+      return Util.getIds(this)
     }
 
     hide() {
-      return gmap.Core.hide(this, this.getIds())
+      return Core.hide(this, this.getIds())
     }
 
     others() {
-      return gmap.Util.copy(this.Map.Components[this.ChildType], this.getIds())
+      return Util.copy(this.Map.Components[this.ChildType], this.getIds())
     }
 
     remove() {
-      return gmap.Core.remove(this, this.getIds())
+      return Core.remove(this, this.getIds())
     }
 
     reset() {
-      return gmap.Core.reset(this, this.getIds())
+      return Core.reset(this, this.getIds())
     }
 
     show() {
-      return gmap.Core.show(this, this.getIds())
+      return Core.show(this, this.getIds())
     }
 
     toggle() {
-      return gmap.Core.toggle(this, this.getIds())
+      return Core.toggle(this, this.getIds())
     }
 
     update(options) {
-      return gmap.Core.update(this, this.getIds(), options)
+      return Core.update(this, this.getIds(), options)
     }
 
     zoom() {
       let parms = {}
       parms[this.ChildType] = this.getIds()
 
-      gmap.Core.setBounds(this.Map, parms)
+      Core.setBounds(this.Map, parms)
       return this
     }
 
   }
 
+
+  // ----------------------------------------------------------------------
+  // Namespace
+  // ----------------------------------------------------------------------
+
   gmap.BaseComponentArray = BaseComponentArray
 
   return gmap
-})(gmap || {})
+})(gmap, gmap.Core, gmap.Util)

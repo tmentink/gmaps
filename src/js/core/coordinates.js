@@ -2,7 +2,7 @@
 // GMaps: coordinates.js
 // ------------------------------------------------------------------------
 
-!((Core) => {
+!((Core, Util) => {
   "use strict"
 
 
@@ -11,7 +11,7 @@
   // ----------------------------------------------------------------------
 
   Core.getPath = function(compArray, ids, delimited) {
-    ids = gmap.Util.toArray(ids)
+    ids = Util.toArray(ids)
 
     const retVal = {}
     for (var i = 0, i_end = ids.length; i < i_end; i++) {
@@ -20,7 +20,7 @@
 
       if (comp) {
         let path = comp.Obj.getPath()
-        retVal[id] = delimited ? gmap.Util.toDelimitedString(path) : path
+        retVal[id] = delimited ? Util.toDelimitedString(path) : path
       }
     }
 
@@ -28,7 +28,7 @@
   }
 
   Core.getPosition = function(compArray, ids, delimited) {
-    ids = gmap.Util.toArray(ids)
+    ids = Util.toArray(ids)
 
     const retVal = {}
     for (var i = 0, i_end = ids.length; i < i_end; i++) {
@@ -37,7 +37,7 @@
 
       if (comp) {
         let position = comp.Obj.getPosition()
-        retVal[id] = delimited ? gmap.Util.toDelimitedString(position) : position
+        retVal[id] = delimited ? Util.toDelimitedString(position) : position
       }
     }
 
@@ -56,4 +56,4 @@
 
 
   return Core
-})(gmap.Core || (gmap.Core = {}))
+})(gmap.Core || (gmap.Core = {}), gmap.Util)

@@ -2,7 +2,7 @@
 // GMaps: polygon.js
 // ------------------------------------------------------------------------
 
-!((gmap) => {
+!((gmap, ComponentType) => {
   "use strict"
 
 
@@ -14,12 +14,17 @@
 
     constructor(id, options) {
       const obj = new google.maps.Polygon(options)
-      super(id, options, obj, gmap.Const.ComponentType.POLYGON)
+      super(id, options, obj, ComponentType.POLYGON)
     }
 
   }
 
+
+  // ----------------------------------------------------------------------
+  // Namespace
+  // ----------------------------------------------------------------------
+
   gmap.Polygon = Polygon
 
   return gmap
-})(gmap || {})
+})(gmap, gmap.Const.ComponentType)

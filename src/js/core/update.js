@@ -2,7 +2,7 @@
 // GMaps: update.js
 // ------------------------------------------------------------------------
 
-!((Core) => {
+!((Core, Util, ComponentType) => {
   "use strict"
 
 
@@ -23,9 +23,9 @@
     if (options == undefined) {
       throw ErrorMessages.MustSupplyOptions
     }
-    options = gmap.Util.convertCompOptions(comp.Type, options)
+    options = Util.convertCompOptions(comp.Type, options)
 
-    if (comp.Type == gmap.Const.ComponentType.MAP) {
+    if (comp.Type == ComponentType.MAP) {
       return _update(comp, options)
     }
 
@@ -64,4 +64,4 @@
 
 
   return Core
-})(gmap.Core || (gmap.Core = {}))
+})(gmap.Core || (gmap.Core = {}), gmap.Util, gmap.Const.ComponentType)

@@ -2,7 +2,7 @@
 // GMaps: label.js
 // ------------------------------------------------------------------------
 
-!((gmap) => {
+!((gmap, ComponentType) => {
   "use strict"
 
 
@@ -14,12 +14,17 @@
 
     constructor(id, options) {
       const obj = new gmap.GoogleLabel(options)
-      super(id, options, obj, gmap.Const.ComponentType.LABEL)
+      super(id, options, obj, ComponentType.LABEL)
     }
 
   }
 
+
+  // ----------------------------------------------------------------------
+  // Namespace
+  // ----------------------------------------------------------------------
+
   gmap.Label = Label
 
   return gmap
-})(gmap || {})
+})(gmap, gmap.Const.ComponentType)

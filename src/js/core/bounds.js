@@ -2,7 +2,7 @@
 // GMaps: bounds.js
 // ------------------------------------------------------------------------
 
-!((Core) => {
+!((Core, Util) => {
   "use strict"
 
 
@@ -28,7 +28,7 @@
   // ----------------------------------------------------------------------
 
   Core.getBounds = function(compArray, ids) {
-    ids = gmap.Util.toArray(ids)
+    ids = Util.toArray(ids)
 
     const bounds = new google.maps.LatLngBounds()
     for (var i = 0, i_end = ids.length; i < i_end; i++) {
@@ -68,10 +68,10 @@
 
     const types = Object.keys(parms)
     for (var i = 0, i_end = types.length; i < i_end; i++) {
-      let type = gmap.Util.getComponentType(types[i])
+      let type = Util.getComponentType(types[i])
       let ids = _getIds(mapComps[type], parms[types[i]])
 
-      bounds.union(gmap.Core.getBounds(mapComps[type], ids))
+      bounds.union(Core.getBounds(mapComps[type], ids))
     }
 
     return bounds
@@ -99,9 +99,9 @@
   }
 
   function _getIds(comp, ids) {
-    return ids == null || ids == "all" ? gmap.Util.getIds(comp) : ids
+    return ids == null || ids == "all" ? Util.getIds(comp) : ids
   }
 
 
   return Core
-})(gmap.Core || (gmap.Core = {}))
+})(gmap.Core || (gmap.Core = {}), gmap.Util)

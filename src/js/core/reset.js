@@ -2,7 +2,7 @@
 // GMaps: reset.js
 // ------------------------------------------------------------------------
 
-!((Core) => {
+!((Core, ComponentType) => {
   "use strict"
 
 
@@ -11,7 +11,7 @@
   // ----------------------------------------------------------------------
 
   Core.reset = function(comp, ids) {
-    if (comp.Type == gmap.Const.ComponentType.MAP) {
+    if (comp.Type == ComponentType.MAP) {
       comp.Obj.fitBounds(comp.Init.Bounds)
       return _reset(comp)
     }
@@ -51,4 +51,4 @@
 
 
   return Core
-})(gmap.Core || (gmap.Core = {}))
+})(gmap.Core || (gmap.Core = {}), gmap.Const.ComponentType)

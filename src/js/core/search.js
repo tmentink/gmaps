@@ -2,7 +2,7 @@
 // GMaps: search.js
 // ------------------------------------------------------------------------
 
-!((Core) => {
+!((Core, Util) => {
   "use strict"
 
 
@@ -13,8 +13,8 @@
   Core.search = function(map, type, ids) {
     const compArray = map.Components[type]
     if (ids) {
-      const exclude = _getIdsToExclude(compArray, gmap.Util.toArray(ids))
-      return gmap.Util.copy(compArray, exclude)
+      const exclude = _getIdsToExclude(compArray, Util.toArray(ids))
+      return Util.copy(compArray, exclude)
     }
     return compArray
   }
@@ -35,4 +35,4 @@
 
 
   return Core
-})(gmap.Core || (gmap.Core = {}))
+})(gmap.Core || (gmap.Core = {}), gmap.Util)

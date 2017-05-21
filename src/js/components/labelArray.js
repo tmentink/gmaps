@@ -2,7 +2,7 @@
 // GMaps: labelArray.js
 // ------------------------------------------------------------------------
 
-!((gmap) => {
+!((gmap, Core, ComponentType) => {
   "use strict"
 
 
@@ -13,7 +13,7 @@
   class LabelArray extends gmap.BaseComponentArray {
 
     constructor(map) {
-      super(map, gmap.Const.ComponentType.LABEL_ARRAY, gmap.Const.ComponentType.LABEL)
+      super(map, ComponentType.LABEL_ARRAY, ComponentType.LABEL)
     }
 
 
@@ -22,16 +22,21 @@
     // --------------------------------------------------------------------
 
     getPosition() {
-      return gmap.Core.getPosition(this, this.getIds())
+      return Core.getPosition(this, this.getIds())
     }
 
     getPositionString() {
-      return gmap.Core.getPosition(this, this.getIds(), true)
+      return Core.getPosition(this, this.getIds(), true)
     }
 
   }
 
+
+  // ----------------------------------------------------------------------
+  // Namespace
+  // ----------------------------------------------------------------------
+
   gmap.LabelArray = LabelArray
 
   return gmap
-})(gmap || {})
+})(gmap, gmap.Core, gmap.Const.ComponentType)

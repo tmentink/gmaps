@@ -2,7 +2,7 @@
 // GMaps: listener.js
 // ------------------------------------------------------------------------
 
-!((Core) => {
+!((Core, Util, ComponentType) => {
   "use strict"
 
 
@@ -34,7 +34,7 @@
   // ----------------------------------------------------------------------
 
   Core.addListener = function(compArray, ids, type, fn) {
-    type = gmap.Util.getEventType(type)
+    type = Util.getEventType(type)
     return _listener(compArray, ids, type, fn, Action.ADD)
   }
 
@@ -43,7 +43,7 @@
   }
 
   Core.removeListenerType = function(compArray, ids, type) {
-    type = gmap.Util.getEventType(type)
+    type = Util.getEventType(type)
     return _listener(compArray, ids, type, null, Action.REMOVE_TYPE)
   }
 
@@ -53,7 +53,7 @@
   // ----------------------------------------------------------------------
 
   function _listener(compArray, ids, type, fn, action) {
-    if (compArray.Type == gmap.Const.ComponentType.MAP) {
+    if (compArray.Type == ComponentType.MAP) {
       return Execute[action](compArray, type, fn)
     }
 
@@ -97,4 +97,4 @@
 
 
   return Core
-})(gmap.Core || (gmap.Core = {}))
+})(gmap.Core || (gmap.Core = {}), gmap.Util, gmap.Const.ComponentType)

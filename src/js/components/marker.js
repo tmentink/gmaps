@@ -2,7 +2,7 @@
 // GMaps: marker.js
 // ------------------------------------------------------------------------
 
-!((gmap) => {
+!((gmap, ComponentType) => {
   "use strict"
 
 
@@ -14,12 +14,17 @@
 
     constructor(id, options) {
       const obj = new google.maps.Marker(options)
-      super(id, options, obj, gmap.Const.ComponentType.MARKER)
+      super(id, options, obj, ComponentType.MARKER)
     }
 
   }
 
+
+  // ----------------------------------------------------------------------
+  // Namespace
+  // ----------------------------------------------------------------------
+
   gmap.Marker = Marker
 
   return gmap
-})(gmap || {})
+})(gmap, gmap.Const.ComponentType)

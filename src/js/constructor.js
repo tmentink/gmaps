@@ -2,7 +2,7 @@
 // GMaps: constructor.js
 // ------------------------------------------------------------------------
 
-var gmap = function(config) {
+const gmap = function(config) {
   config = $.extend(true, {}, gmap.Config, config)
 
   // delete any config options that should only exist in Global

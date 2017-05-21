@@ -2,7 +2,7 @@
 // GMaps: add.js
 // ------------------------------------------------------------------------
 
-!((Core) => {
+!((Core, Util) => {
   "use strict"
 
 
@@ -31,7 +31,7 @@
   // ----------------------------------------------------------------------
 
   Core.addComponent = function(map, type, parms) {
-    type = gmap.Util.getComponentType(type)
+    type = Util.getComponentType(type)
 
     if ($.type(parms) == "array") {
       return _multiAdd(map, type, parms)
@@ -52,7 +52,7 @@
   // ----------------------------------------------------------------------
 
   function _add(map, type, parms) {
-    parms = gmap.Util.convertCompOptions(type, parms)
+    parms = Util.convertCompOptions(type, parms)
     let options = _mergeDefaults(map, type, parms)
     return map.Components[type][parms.id] = new gmap[type](parms.id, options)
   }
@@ -100,4 +100,4 @@
 
 
   return Core
-})(gmap.Core || (gmap.Core = {}))
+})(gmap.Core || (gmap.Core = {}), gmap.Util)
