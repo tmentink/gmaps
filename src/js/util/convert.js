@@ -120,7 +120,7 @@
       if (i > 0) {
         str += Config.Delimiter.LatLng || "|"
       }
-      str += el.toUrlValue(Config.UrlPrecision)
+      str += el.toUrlValue(Config.UrlPrecision || 6)
     })
 
     return str
