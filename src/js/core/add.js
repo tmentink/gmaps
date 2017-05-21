@@ -14,15 +14,24 @@
     IdExists: function(type, id) {
       return "Error: A " + type + " with the id " + id + " already exists"
     },
-    ParmIsRequired: function(parm) {
-      return "Error: " + parm + " is required"
+    ParmIsRequired: function(parms) {
+      let str = "Error: "
+
+      for (var i = 0, i_end = parms.length; i < i_end; i++) {
+        if (i > 0) {
+          str += " or "
+        }
+        str += parms[i]
+      }
+
+      return str + " must have a value"
     }
   }
 
   const RequiredParms = {
     Label:   [ "id", "position" ],
     Marker:  [ "id", "position" ],
-    Polygon: [ "id", "paths" ]
+    Polygon: [ "id", ["path", "paths"] ]
   }
 
 
@@ -84,9 +93,9 @@
 
   function _validateParms(map, type, parms) {
     for (var i = 0, i_end = RequiredParms[type].length; i < i_end; i++) {
-      let reqParm = RequiredParms[type][i]
+      let reqParm = Util.toArray(RequiredParms[type][i])
 
-      if (!parms[reqParm]) {
+      if (_noParmsFound(reqParm, parms)) {
         throw ErrorMessages.ParmIsRequired(reqParm)
       }
     }
@@ -96,6 +105,12 @@
     }
 
     return true
+  }
+
+  function _noParmsFound(reqParms, parms) {
+    return reqParms.map(function(key) {
+      return parms[key] != undefined
+    }).indexOf(true) == -1
   }
 
 
