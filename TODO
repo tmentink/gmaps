@@ -1,8 +1,21 @@
+
+Constructor:
+  ☐ Figure out how to have shortened namespaces in prototype
+  ☐ Allow supplied config options to be case insensitive
+
+
 Components:
   ☐ Consider adding methods to single components
   ☐ Add all components and methods supported by google.maps
-  
+  ☐ Allow options to be case insensitive
 
-Constants:
-  ☐ Consider flattening objects
+
+Errors:
+  ☐ Consider creating global error handling
+  ☐ Look into Semantic-UI's approach to debugging and error handling
+
+
+Shapes:
+  ☐ Validate parameters
+  ☐ Add error handling
 

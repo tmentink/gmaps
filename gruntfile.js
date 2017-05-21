@@ -36,11 +36,12 @@ module.exports = function(grunt) {
               "src/js/config.js",
               "src/js/constants.js",
               "src/js/util/**/*.js",
+              "src/js/core/**/*.js",
+              "src/js/shapes/**/*.js",
               "src/js/components/baseComponent.js",
               "src/js/components/baseComponentArray.js",
               "src/js/components/googleLabel.js",
               "src/js/components/**/*.js",
-              "src/js/core/**/*.js"
              ],
         dest: "src/js/main.js"
       }
