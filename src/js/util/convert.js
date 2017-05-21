@@ -16,9 +16,13 @@
         parms.center = Util.toLatLng(parms.center)
       }
     },
-    paths: function(parms) {
+    path: function(parms) {
       if ($.type(parms.paths) == "string") {
         parms.paths = Util.toLatLngArray(parms.paths)
+        delete parms.path
+      }
+      else if ($.type(parms.path) == "string") {
+        parms.path = Util.toLatLngArray(parms.path)
       }
     },
     position: function(parms) {
@@ -43,7 +47,8 @@
       position: Conversions.position
     },
     Polygon: {
-      paths:    Conversions.paths
+      path:     Conversions.path,
+      paths:    Conversions.path
     }
   }
 
