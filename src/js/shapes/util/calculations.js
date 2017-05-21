@@ -11,11 +11,11 @@
   // ----------------------------------------------------------------------
 
   Util.getDestinationPoint = function(latLng, bearing, distance) {
-    bearing = bearing.toRad()
+    bearing = _toRad(bearing)
     distance = distance / 6371
 
-    const src_lat = latLng.lat().toRad()
-    const src_lng = latLng.lng().toRad()
+    const src_lat = _toRad(latLng.lat())
+    const src_lng = _toRad(latLng.lng())
 
     const dest_lat = Math.asin(Math.sin(src_lat) * Math.cos(distance) +
                                Math.cos(src_lat) * Math.sin(distance) *
@@ -28,7 +28,26 @@
       return null
     }
 
-    return new google.maps.LatLng(dest_lat.toDeg(), dest_lng.toDeg())
+    return new google.maps.LatLng(_toDeg(dest_lat), _toDeg(dest_lng))
+  }
+
+  Util.getSizeFromZoom = function(zoom) {
+    const minZoom = 5
+    const size    = 500
+    return zoom <= minZoom ? size : size / Math.pow(2, zoom - minZoom)
+  }
+
+
+  // ----------------------------------------------------------------------
+  // Private Functions
+  // ----------------------------------------------------------------------
+
+  function _toRad(val) {
+    return val * Math.PI / 180
+  }
+
+  function _toDeg(val) {
+    return val * 180 / Math.PI
   }
 
 
