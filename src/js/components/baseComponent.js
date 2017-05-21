@@ -25,7 +25,7 @@
         Id: id,
         Map: map,
         Parent: this,
-        Version: gmap.Const.Version
+        Version: gmap.Version
       }
       this.Type = type
     }

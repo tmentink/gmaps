@@ -25,10 +25,10 @@ var gmap = function(config) {
     Id: config.MapId,
     Map: this,
     Parent: this,
-    Version: gmap.Const.Version
+    Version: gmap.Version
   }
   this.Type = gmap.Const.ComponentType.MAP
-  this.Version = gmap.Const.Version
+  this.Version = gmap.Version
 
   // save bounds after map has finished loading
   google.maps.event.addListenerOnce(this.Obj, gmap.Const.EventType.TILES_LOADED, () => {

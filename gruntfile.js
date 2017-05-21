@@ -51,7 +51,7 @@ module.exports = function(grunt) {
     stamp: {
       gmaps: {
         options: {
-          footer: "gmap.Const.Version='<%= version %>'"
+          footer: "gmap.Version='<%= version %>'"
         },
         files: {
           src: "<%= concat.gmaps.dest %>"
