@@ -1,5 +1,5 @@
 /*!
- * GMaps v1.4.0-alpha (https://github.com/tmentink/gmaps)
+ * GMaps v1.4.1-alpha (https://github.com/tmentink/gmaps)
  * Copyright 2017 Trent Mentink
  * Licensed under MIT
  */
@@ -441,6 +441,8 @@ gmap.prototype = {
       value = value.toString().split();
     } else if ($.type(value) == "string") {
       value = value.split();
+    } else if ($.type(value) == "array") {
+      value = value.toString().split(",");
     }
     return value;
   };
@@ -1437,4 +1439,4 @@ gmap.prototype = {
   return gmap;
 }(gmap, gmap.Core, gmap.Const.ComponentType);
 
-gmap.Version = "1.4.0-alpha";
+gmap.Version = "1.4.1-alpha";

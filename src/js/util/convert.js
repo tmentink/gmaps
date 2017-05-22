@@ -74,6 +74,9 @@
     else if ($.type(value) == "string") {
       value = value.split()
     }
+    else if ($.type(value) == "array") {
+      value = value.toString().split(",")
+    }
 
     return value
   }
