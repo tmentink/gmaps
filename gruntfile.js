@@ -40,6 +40,7 @@ module.exports = function(grunt) {
               "src/js/constants.js",
               "src/js/util/**/*.js",
               "src/js/core/**/*.js",
+              "src/js/prototype.js",
               "src/js/shapes/**/*.js",
               "src/js/components/baseComponent.js",
               "src/js/components/baseComponentArray.js",
