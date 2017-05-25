@@ -7,21 +7,15 @@
 
 
   // ----------------------------------------------------------------------
-  // Constants
-  // ----------------------------------------------------------------------
-
-  const ErrorMessages = {
-    MustSupplyOptions: "Error: Must supply options"
-  }
-
-
-  // ----------------------------------------------------------------------
   // Public Functions
   // ----------------------------------------------------------------------
 
   Core.update = function(comp, ids, options) {
     if (options == undefined) {
-      throw ErrorMessages.MustSupplyOptions
+      return Util.throwError({
+        method: "update",
+        message: "Must supply " + (comp.ChildType || comp.Type) + " options"
+      })
     }
     options = Util.convertCompOptions(comp.Type, options)
 

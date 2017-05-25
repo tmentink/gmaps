@@ -10,24 +10,6 @@
   // Constants
   // ----------------------------------------------------------------------
 
-  const ErrorMessages = {
-    IdExists: function(type, id) {
-      return "Error: A " + type + " with the id " + id + " already exists"
-    },
-    ParmIsRequired: function(parms) {
-      let str = "Error: "
-
-      for (var i = 0, i_end = parms.length; i < i_end; i++) {
-        if (i > 0) {
-          str += " or "
-        }
-        str += parms[i]
-      }
-
-      return str + " must have a value"
-    }
-  }
-
   const RequiredParms = {
     Label:   [ "id", "position" ],
     Marker:  [ "id", "position" ],
@@ -96,12 +78,20 @@
       let reqParm = Util.toArray(RequiredParms[type][i])
 
       if (_noParmsFound(reqParm, parms)) {
-        throw ErrorMessages.ParmIsRequired(reqParm)
+        return Util.throwError({
+          method: "add" + type,
+          message: reqParm.join(" or ") + " must have a value",
+          obj: parms
+        })
       }
     }
 
     if (map.Components[type][parms.id]) {
-      throw ErrorMessages.IdExists(type, parms.id)
+      return Util.throwError({
+        method: "add" + type,
+        message: "A " + type + " with an id of " + parms.id + " already exists",
+        obj: parms
+      })
     }
 
     return true
@@ -109,7 +99,7 @@
 
   function _noParmsFound(reqParms, parms) {
     return reqParms.map(function(key) {
-      return parms[key] != undefined
+      return parms[key] != undefined && parms[key] !== ""
     }).indexOf(true) == -1
   }
 
