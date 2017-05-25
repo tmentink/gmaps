@@ -1,5 +1,5 @@
 /*!
- * GMaps v1.4.1-alpha (https://github.com/tmentink/gmaps)
+ * GMaps v1.4.2-alpha (https://github.com/tmentink/gmaps)
  * Copyright 2017 Trent Mentink
  * Licensed under MIT
  */
@@ -36,6 +36,10 @@ function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
   }
+}
+
+if (typeof google === "undefined" || typeof google.maps === "undefined") {
+  throw new Error("gmaps.js requires Google Maps JavaScript API v3.");
 }
 
 !function($) {
@@ -494,6 +498,15 @@ gmap.prototype = {
   return Util;
 }(gmap.Util || (gmap.Util = {}), gmap.Config);
 
+!function(Util) {
+  "use strict";
+  Util.throwError = function(parms) {
+    console.error(parms.method + ": " + parms.message, parms.obj || "");
+    return false;
+  };
+  return Util;
+}(gmap.Util || (gmap.Util = {}));
+
 !function(Util, Const) {
   "use strict";
   var ComponentTypeAlias = {
@@ -553,21 +566,6 @@ gmap.prototype = {
 
 !function(Core, Util) {
   "use strict";
-  var ErrorMessages = {
-    IdExists: function IdExists(type, id) {
-      return "Error: A " + type + " with the id " + id + " already exists";
-    },
-    ParmIsRequired: function ParmIsRequired(parms) {
-      var str = "Error: ";
-      for (var i = 0, i_end = parms.length; i < i_end; i++) {
-        if (i > 0) {
-          str += " or ";
-        }
-        str += parms[i];
-      }
-      return str + " must have a value";
-    }
-  };
   var RequiredParms = {
     Label: [ "id", "position" ],
     Marker: [ "id", "position" ],
@@ -612,17 +610,25 @@ gmap.prototype = {
     for (var i = 0, i_end = RequiredParms[type].length; i < i_end; i++) {
       var reqParm = Util.toArray(RequiredParms[type][i]);
       if (_noParmsFound(reqParm, parms)) {
-        throw ErrorMessages.ParmIsRequired(reqParm);
+        return Util.throwError({
+          method: "add" + type,
+          message: reqParm.join(" or ") + " must have a value",
+          obj: parms
+        });
       }
     }
     if (map.Components[type][parms.id]) {
-      throw ErrorMessages.IdExists(type, parms.id);
+      return Util.throwError({
+        method: "add" + type,
+        message: "A " + type + " with an id of " + parms.id + " already exists",
+        obj: parms
+      });
     }
     return true;
   }
   function _noParmsFound(reqParms, parms) {
     return reqParms.map(function(key) {
-      return parms[key] != undefined;
+      return parms[key] != undefined && parms[key] !== "";
     }).indexOf(true) == -1;
   }
   return Core;
@@ -932,12 +938,12 @@ gmap.prototype = {
 
 !function(Core, Util, ComponentType) {
   "use strict";
-  var ErrorMessages = {
-    MustSupplyOptions: "Error: Must supply options"
-  };
   Core.update = function(comp, ids, options) {
     if (options == undefined) {
-      throw ErrorMessages.MustSupplyOptions;
+      return Util.throwError({
+        method: "update",
+        message: "Must supply " + (comp.ChildType || comp.Type) + " options"
+      });
     }
     options = Util.convertCompOptions(comp.Type, options);
     if (comp.Type == ComponentType.MAP) {
@@ -1439,4 +1445,4 @@ gmap.prototype = {
   return gmap;
 }(gmap, gmap.Core, gmap.Const.ComponentType);
 
-gmap.Version = "1.4.1-alpha";
+gmap.Version = "1.4.2-alpha";
