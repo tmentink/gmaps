@@ -7,8 +7,56 @@
 
 
   // ----------------------------------------------------------------------
+  // Constants
+  // ----------------------------------------------------------------------
+
+  const Conversions = {
+    center: function(parms) {
+      parms.center = Util.toLatLng(parms.center)
+    },
+    path: function(parms) {
+      parms.paths = Util.toLatLngArray(parms.paths || parms.path)
+      delete parms.path
+    },
+    position: function(parms) {
+      parms.position = Util.toLatLng(parms.position)
+    },
+    text: function(parms) {
+      parms.text = parms.text || parms.id
+    }
+  }
+
+  const ConvertableOptions = {
+    Label: {
+      position: Conversions.position,
+      text:     Conversions.text
+    },
+    Map: {
+      center:   Conversions.center
+    },
+    Marker: {
+      position: Conversions.position
+    },
+    Polygon: {
+      path:     Conversions.path,
+      paths:    Conversions.path
+    }
+  }
+
+
+  // ----------------------------------------------------------------------
   // Public Functions
   // ----------------------------------------------------------------------
+
+  Util.convertCompOptions = function(type, parms) {
+    type = type.replace("Array", "")
+
+    Object.keys(ConvertableOptions[type]).forEach(function(key) {
+      ConvertableOptions[type][key](parms)
+    })
+
+    return parms
+  }
 
   Util.copy = function(compArray, exclude) {
     if ($.type(exclude) == "object") {
@@ -45,7 +93,7 @@
   // ----------------------------------------------------------------------
 
   function _addPrototypesToArray(compArray, array) {
-    const proto  = Object.keys(Object.getPrototypeOf(compArray))
+    const proto      = Object.keys(Object.getPrototypeOf(compArray))
     const base_proto = Object.keys(Object.getPrototypeOf(new gmap.BaseComponentArray("", "")))
 
     array = proto.concat(array)

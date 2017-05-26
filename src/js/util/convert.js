@@ -7,65 +7,8 @@
 
 
   // ----------------------------------------------------------------------
-  // Constants
-  // ----------------------------------------------------------------------
-
-  const Conversions = {
-    center: function(parms) {
-      if ($.type(parms.center) == "string") {
-        parms.center = Util.toLatLng(parms.center)
-      }
-    },
-    path: function(parms) {
-      if ($.type(parms.paths) == "string") {
-        parms.paths = Util.toLatLngArray(parms.paths)
-        delete parms.path
-      }
-      else if ($.type(parms.path) == "string") {
-        parms.path = Util.toLatLngArray(parms.path)
-      }
-    },
-    position: function(parms) {
-      if ($.type(parms.position) == "string") {
-        parms.position = Util.toLatLng(parms.position)
-      }
-    },
-    text: function(parms) {
-      parms.text = parms.text || parms.id
-    }
-  }
-
-  const ConvertableComponentOptions = {
-    Label: {
-      position: Conversions.position,
-      text:     Conversions.text
-    },
-    Map: {
-      center:   Conversions.center
-    },
-    Marker: {
-      position: Conversions.position
-    },
-    Polygon: {
-      path:     Conversions.path,
-      paths:    Conversions.path
-    }
-  }
-
-
-  // ----------------------------------------------------------------------
   // Public Functions
   // ----------------------------------------------------------------------
-
-  Util.convertCompOptions = function(type, parms) {
-    type = type.replace("Array", "")
-
-    Object.keys(ConvertableComponentOptions[type]).forEach(function(key) {
-      ConvertableComponentOptions[type][key](parms)
-    })
-
-    return parms
-  }
 
   Util.toArray = function(value) {
     if ($.type(value) == "number") {
@@ -98,19 +41,27 @@
     return null
   }
 
-  Util.toLatLng = function(str) {
-    const points = str.split(",")
-    return new google.maps.LatLng(parseFloat(points[0]), parseFloat(points[1]))
+  Util.toLatLng = function(val) {
+    if ($.type(val) == "string") {
+      const points = val.split(",")
+      return new google.maps.LatLng(parseFloat(points[0]), parseFloat(points[1]))
+    }
+
+    return val
   }
 
-  Util.toLatLngArray = function(str) {
-    const latLngArray = []
-    const coordPairs = str.split(Config.Delimiter.LatLng || "|")
+  Util.toLatLngArray = function(val) {
+    if ($.type(val) == "string") {
+      const latLngArray = []
+      const coordPairs = val.split(Config.Delimiter.LatLng || "|")
 
-    for (var i = 0, i_end = coordPairs.length; i < i_end; i++) {
-      latLngArray.push(Util.toLatLng(coordPairs[i]))
+      for (var i = 0, i_end = coordPairs.length; i < i_end; i++) {
+        latLngArray.push(Util.toLatLng(coordPairs[i]))
+      }
+      return latLngArray
     }
-    return latLngArray
+
+    return val
   }
 
 
