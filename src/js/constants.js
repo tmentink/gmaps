@@ -10,6 +10,16 @@
   // Global Constants
   // ----------------------------------------------------------------------
 
+  Const.Config = {
+    DELIMITER:       "Delimiter",
+    LABEL_OPTIONS:   "LabelOptions",
+    MAP_ID:          "MapId",
+    MAP_OPTIONS:     "MapOptions",
+    MARKER_OPTIONS:  "MarkerOptions",
+    POLYGON_OPTIONS: "PolygonOptions",
+    URL_PRECISION:   "UrlPrecision"
+  }
+
   Const.ComponentProperty = {
     CHILD_TYPE: "ChildType",
     MAP:        "Map",
@@ -59,11 +69,6 @@
     VISIBLE_CHANGED:     "visible_changed",
     ZINDEX_CHANGED:      "zindex_changed",
     ZOOM_CHANGED:        "zoom_changed"
-  }
-
-  Const.GlobalConfig = {
-    DELIMITER:     "Delimiter",
-    URL_PRECISION: "UrlPrecision"
   }
 
 
