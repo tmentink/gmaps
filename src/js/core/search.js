@@ -25,11 +25,13 @@
   // ----------------------------------------------------------------------
 
   function _getIdsToExclude(compArray, ids) {
+    // ensure ids are strings
+    ids = ids.toString().split(",")
+
     const allIDs = compArray.getIds()
     const exclude = allIDs.filter(function(i) {
       return ids.indexOf(i) === -1
     })
-
     return exclude
   }
 
