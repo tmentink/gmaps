@@ -10,6 +10,16 @@
   // Constants
   // ----------------------------------------------------------------------
 
+  const ConfigAlias = {
+    delimiter:      Const.Config.DELIMITER,
+    labeloptions:   Const.Config.LABEL_OPTIONS,
+    mapid:          Const.Config.MAP_ID,
+    mapoptions:     Const.Config.MAP_OPTIONS,
+    markeroptions:  Const.Config.MARKER_OPTIONS,
+    polygonoptions: Const.Config.POLYGON_OPTIONS,
+    urlprecision:   Const.Config.URL_PRECISION
+  }
+
   const ComponentTypeAlias = {
     label:    Const.ComponentType.LABEL,
     labels:   Const.ComponentType.LABEL,
@@ -60,6 +70,11 @@
   // ----------------------------------------------------------------------
   // Public Functions
   // ----------------------------------------------------------------------
+
+  Util.getConfigOption = function(option) {
+    option = option.toLowerCase().replace(/\s+/g, "")
+    return ConfigAlias[option] || option
+  }
 
   Util.getComponentType = function(type) {
     type = type.toLowerCase().replace(/\s+/g, "")
