@@ -1,16 +1,7 @@
 
-Constructor:
-  ☐ Add error handling if MapId is not found
-  
-
 Components:
   ☐ Consider adding methods to single components
   ☐ Add all components and methods supported by google.maps
   ☐ Allow options to be case insensitive
 
-
-Util:
-  ☐ Decide how I want to organize methods in separate files
-  ☐ Add renameProperty to Util
-  ☐ Add type checking inside toLatLng and toLatLngArray methods
 

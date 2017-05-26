@@ -1,5 +1,5 @@
 /*!
- * GMaps v1.5.0-alpha (https://github.com/tmentink/gmaps)
+ * GMaps v1.5.1-alpha (https://github.com/tmentink/gmaps)
  * Copyright 2017 Trent Mentink
  * Licensed under MIT
  */
@@ -151,7 +151,15 @@ var gmap = function gmap(config) {
     Util.renameConfigOptions(config);
   }
   config = Util.mergeWithGlobalConfig(config);
-  config = Util.convertCompOptions(ComponentType.MAP, config.MapOptions);
+  config.MapOptions = Util.convertCompOptions(ComponentType.MAP, config.MapOptions);
+  var mapContainer = document.getElementById(config.MapId);
+  if (!mapContainer) {
+    return Util.throwError({
+      method: "new gmap",
+      message: "Could not find an element with an Id of " + config.MapId,
+      obj: config
+    });
+  }
   this.Components = {
     Label: new gmap.LabelArray(this),
     Marker: new gmap.MarkerArray(this),
@@ -162,7 +170,7 @@ var gmap = function gmap(config) {
     Bounds: undefined,
     Options: config.MapOptions
   };
-  this.Obj = new google.maps.Map(document.getElementById(config.MapId), config.MapOptions);
+  this.Obj = new google.maps.Map(mapContainer, config.MapOptions);
   this.Obj["GMaps"] = {
     Id: config.MapId,
     Map: this,
@@ -290,10 +298,45 @@ var gmap = function gmap(config) {
 
 !function(Util, Const) {
   "use strict";
-  Util.copy = function(compArray, exclude) {
-    if ($.type(exclude) == "object") {
-      exclude = Object.keys(exclude);
+  var Conversions = {
+    center: function center(parms) {
+      parms.center = Util.toLatLng(parms.center);
+    },
+    path: function path(parms) {
+      parms.paths = Util.toLatLngArray(parms.paths || parms.path);
+      delete parms.path;
+    },
+    position: function position(parms) {
+      parms.position = Util.toLatLng(parms.position);
+    },
+    text: function text(parms) {
+      parms.text = parms.text || parms.id;
     }
+  };
+  var ConvertableOptions = {
+    Label: {
+      position: Conversions.position,
+      text: Conversions.text
+    },
+    Map: {
+      center: Conversions.center
+    },
+    Marker: {
+      position: Conversions.position
+    },
+    Polygon: {
+      path: Conversions.path,
+      paths: Conversions.path
+    }
+  };
+  Util.convertCompOptions = function(type, parms) {
+    type = type.replace("Array", "");
+    Object.keys(ConvertableOptions[type]).forEach(function(key) {
+      ConvertableOptions[type][key](parms);
+    });
+    return parms;
+  };
+  Util.copy = function(compArray, exclude) {
     exclude = _addPrototypesToArray(compArray, exclude);
     var copy = $.extend(true, {}, compArray);
     for (var i = 0, i_end = exclude.length; i < i_end; i++) {
@@ -337,8 +380,13 @@ var gmap = function gmap(config) {
   var LocalConfig = [ Const.Config.LABEL_OPTIONS, Const.Config.MAP_ID, Const.Config.MAP_OPTIONS, Const.Config.MARKER_OPTIONS, Const.Config.POLYGON_OPTIONS ];
   Util.renameConfigOptions = function(userConfig) {
     Object.keys(userConfig).forEach(function(key) {
-      _renameProperty(userConfig, key, Util.getConfigOption(key));
+      Util.renameProperty({
+        obj: userConfig,
+        oldName: key,
+        newName: Util.getConfigOption(key)
+      });
     });
+    return userConfig;
   };
   Util.mergeWithGlobalConfig = function(userConfig) {
     userConfig = $.extend(true, {}, GlobalConfig, userConfig);
@@ -349,73 +397,16 @@ var gmap = function gmap(config) {
     });
     return userConfig;
   };
-  function _renameProperty(obj, oldName, newName) {
-    if (oldName == newName) {
-      return;
-    }
-    if (obj.hasOwnProperty(oldName)) {
-      obj[newName] = obj[oldName];
-      delete obj[oldName];
-    }
-  }
   return Util;
 }(gmap.Util || (gmap.Util = {}), gmap.Config, gmap.Const);
 
 !function(Util, Config) {
   "use strict";
-  var Conversions = {
-    center: function center(parms) {
-      if ($.type(parms.center) == "string") {
-        parms.center = Util.toLatLng(parms.center);
-      }
-    },
-    path: function path(parms) {
-      if ($.type(parms.paths) == "string") {
-        parms.paths = Util.toLatLngArray(parms.paths);
-        delete parms.path;
-      } else if ($.type(parms.path) == "string") {
-        parms.path = Util.toLatLngArray(parms.path);
-      }
-    },
-    position: function position(parms) {
-      if ($.type(parms.position) == "string") {
-        parms.position = Util.toLatLng(parms.position);
-      }
-    },
-    text: function text(parms) {
-      parms.text = parms.text || parms.id;
-    }
-  };
-  var ConvertableComponentOptions = {
-    Label: {
-      position: Conversions.position,
-      text: Conversions.text
-    },
-    Map: {
-      center: Conversions.center
-    },
-    Marker: {
-      position: Conversions.position
-    },
-    Polygon: {
-      path: Conversions.path,
-      paths: Conversions.path
-    }
-  };
-  Util.convertCompOptions = function(type, parms) {
-    type = type.replace("Array", "");
-    Object.keys(ConvertableComponentOptions[type]).forEach(function(key) {
-      ConvertableComponentOptions[type][key](parms);
-    });
-    return parms;
-  };
   Util.toArray = function(value) {
     if ($.type(value) == "number") {
       value = value.toString().split();
     } else if ($.type(value) == "string") {
       value = value.split();
-    } else if ($.type(value) == "array") {
-      value = value.toString().split(",");
     }
     return value;
   };
@@ -432,17 +423,23 @@ var gmap = function gmap(config) {
     }
     return null;
   };
-  Util.toLatLng = function(str) {
-    var points = str.split(",");
-    return new google.maps.LatLng(parseFloat(points[0]), parseFloat(points[1]));
-  };
-  Util.toLatLngArray = function(str) {
-    var latLngArray = [];
-    var coordPairs = str.split(Config.Delimiter.LatLng || "|");
-    for (var i = 0, i_end = coordPairs.length; i < i_end; i++) {
-      latLngArray.push(Util.toLatLng(coordPairs[i]));
+  Util.toLatLng = function(val) {
+    if ($.type(val) == "string") {
+      var points = val.split(",");
+      return new google.maps.LatLng(parseFloat(points[0]), parseFloat(points[1]));
     }
-    return latLngArray;
+    return val;
+  };
+  Util.toLatLngArray = function(val) {
+    if ($.type(val) == "string") {
+      var latLngArray = [];
+      var coordPairs = val.split(Config.Delimiter.LatLng || "|");
+      for (var i = 0, i_end = coordPairs.length; i < i_end; i++) {
+        latLngArray.push(Util.toLatLng(coordPairs[i]));
+      }
+      return latLngArray;
+    }
+    return val;
   };
   function _delimitedString(MVCArray) {
     var str = "";
@@ -466,15 +463,6 @@ var gmap = function gmap(config) {
   }
   return Util;
 }(gmap.Util || (gmap.Util = {}), gmap.Config);
-
-!function(Util) {
-  "use strict";
-  Util.throwError = function(parms) {
-    console.error(parms.method + ": " + parms.message, parms.obj || "");
-    return false;
-  };
-  return Util;
-}(gmap.Util || (gmap.Util = {}));
 
 !function(Util, Const) {
   "use strict";
@@ -545,6 +533,27 @@ var gmap = function gmap(config) {
   };
   return Util;
 }(gmap.Util || (gmap.Util = {}), gmap.Const);
+
+!function(Util) {
+  "use strict";
+  Util.renameProperty = function(parms) {
+    var obj = parms.obj;
+    var oldName = parms.oldName;
+    var newName = parms.newName;
+    if (oldName == newName) {
+      return;
+    }
+    if (obj.hasOwnProperty(oldName)) {
+      obj[newName] = obj[oldName];
+      delete obj[oldName];
+    }
+  };
+  Util.throwError = function(parms) {
+    console.error(parms.method + ": " + parms.message, parms.obj || "");
+    return false;
+  };
+  return Util;
+}(gmap.Util || (gmap.Util = {}));
 
 !function(Core, Util) {
   "use strict";
@@ -909,6 +918,7 @@ var gmap = function gmap(config) {
     return compArray;
   };
   function _getIdsToExclude(compArray, ids) {
+    ids = ids.toString().split(",");
     var allIDs = compArray.getIds();
     var exclude = allIDs.filter(function(i) {
       return ids.indexOf(i) === -1;
@@ -1465,4 +1475,4 @@ var gmap = function gmap(config) {
   return gmap;
 }(gmap, gmap.Core, gmap.Const.ComponentType);
 
-gmap.Version = "1.5.0-alpha";
+gmap.Version = "1.5.1-alpha";
