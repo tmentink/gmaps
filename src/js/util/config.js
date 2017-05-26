@@ -25,8 +25,13 @@
 
   Util.renameConfigOptions = function(userConfig) {
     Object.keys(userConfig).forEach(function(key) {
-      _renameProperty(userConfig, key, Util.getConfigOption(key))
+      Util.renameProperty({
+        obj: userConfig,
+        oldName: key,
+        newName: Util.getConfigOption(key)
+      })
     })
+    return userConfig
   }
 
   Util.mergeWithGlobalConfig = function(userConfig) {
@@ -38,24 +43,7 @@
         delete userConfig[key]
       }
     })
-
     return userConfig
-  }
-
-
-  // ----------------------------------------------------------------------
-  // Private Functions
-  // ----------------------------------------------------------------------
-
-  function _renameProperty(obj, oldName, newName) {
-    if (oldName == newName) {
-      return
-    }
-
-    if (obj.hasOwnProperty(oldName)) {
-      obj[newName] = obj[oldName]
-      delete obj[oldName]
-    }
   }
 
 
