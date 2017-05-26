@@ -11,7 +11,17 @@ const gmap = function(config) {
     Util.renameConfigOptions(config)
   }
   config = Util.mergeWithGlobalConfig(config)
-  config = Util.convertCompOptions(ComponentType.MAP, config.MapOptions)
+  config.MapOptions = Util.convertCompOptions(ComponentType.MAP, config.MapOptions)
+
+  // check if element with MapId exists
+  const mapContainer = document.getElementById(config.MapId)
+  if (!mapContainer) {
+    return Util.throwError({
+      method: "new gmap",
+      message: "Could not find an element with an Id of " + config.MapId,
+      obj: config
+    })
+  }
 
 
   // ----------------------------------------------------------------------
@@ -28,7 +38,7 @@ const gmap = function(config) {
     Bounds:  undefined,
     Options: config.MapOptions
   }
-  this.Obj = new google.maps.Map(document.getElementById(config.MapId), config.MapOptions)
+  this.Obj = new google.maps.Map(mapContainer, config.MapOptions)
   this.Obj["GMaps"] = {
     Id:      config.MapId,
     Map:     this,
