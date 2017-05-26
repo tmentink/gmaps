@@ -59,9 +59,6 @@
   }
 
   Util.copy = function(compArray, exclude) {
-    if ($.type(exclude) == "object") {
-      exclude = Object.keys(exclude)
-    }
     exclude = _addPrototypesToArray(compArray, exclude)
 
     const copy = $.extend(true, {}, compArray)
