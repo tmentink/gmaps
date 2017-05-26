@@ -1,8 +1,7 @@
 
 Constructor:
-  ☐ Figure out how to have shortened namespaces in prototype
-  ☐ Allow supplied config options to be case insensitive
-
+  ☐ Add error handling if MapId is not found
+  
 
 Components:
   ☐ Consider adding methods to single components
@@ -10,12 +9,8 @@ Components:
   ☐ Allow options to be case insensitive
 
 
-Errors:
-  ☐ Consider creating global error handling
-  ☐ Look into Semantic-UI's approach to debugging and error handling
-
-
-Shapes:
-  ☐ Validate parameters
-  ☐ Add error handling
+Util:
+  ☐ Decide how I want to organize methods in separate files
+  ☐ Add renameProperty to Util
+  ☐ Add type checking inside toLatLng and toLatLngArray methods
 

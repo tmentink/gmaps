@@ -1,5 +1,5 @@
 /*!
- * GMaps v1.4.2-alpha (https://github.com/tmentink/gmaps)
+ * GMaps v1.5.0-alpha (https://github.com/tmentink/gmaps)
  * Copyright 2017 Trent Mentink
  * Licensed under MIT
  */
@@ -146,13 +146,12 @@ var gmap = function gmap(config) {
   var _this = this;
   var ComponentType = gmap.Const.ComponentType;
   var EventType = gmap.Const.EventType;
-  var GlobalConfig = gmap.Const.GlobalConfig;
   var Util = gmap.Util;
-  config = $.extend(true, {}, gmap.Config, config);
-  Object.keys(GlobalConfig).forEach(function(key) {
-    delete config[GlobalConfig[key]];
-  });
-  Util.convertCompOptions(ComponentType.MAP, config.MapOptions);
+  if ($.isPlainObject(config)) {
+    Util.renameConfigOptions(config);
+  }
+  config = Util.mergeWithGlobalConfig(config);
+  config = Util.convertCompOptions(ComponentType.MAP, config.MapOptions);
   this.Components = {
     Label: new gmap.LabelArray(this),
     Marker: new gmap.MarkerArray(this),
@@ -175,70 +174,6 @@ var gmap = function gmap(config) {
   google.maps.event.addListenerOnce(this.Obj, EventType.TILES_LOADED, function() {
     _this.Init.Bounds = _this.Obj.getBounds();
   });
-};
-
-gmap.prototype = {
-  addListener: function addListener(type, fn) {
-    return gmap.Core.addListener(this, null, type, fn);
-  },
-  addLabel: function addLabel(parms) {
-    return gmap.Core.addComponent(this, gmap.Const.ComponentType.LABEL, parms);
-  },
-  addMarker: function addMarker(parms) {
-    return gmap.Core.addComponent(this, gmap.Const.ComponentType.MARKER, parms);
-  },
-  addPolygon: function addPolygon(parms) {
-    return gmap.Core.addComponent(this, gmap.Const.ComponentType.POLYGON, parms);
-  },
-  getBounds: function getBounds() {
-    return this.Obj.getBounds();
-  },
-  getCenter: function getCenter() {
-    return this.Obj.getCenter();
-  },
-  getZoom: function getZoom() {
-    return this.Obj.getZoom();
-  },
-  labels: function labels(ids) {
-    return gmap.Core.search(this, gmap.Const.ComponentType.LABEL, ids);
-  },
-  markers: function markers(ids) {
-    return gmap.Core.search(this, gmap.Const.ComponentType.MARKER, ids);
-  },
-  polygons: function polygons(ids) {
-    return gmap.Core.search(this, gmap.Const.ComponentType.POLYGON, ids);
-  },
-  removeAllListeners: function removeAllListeners() {
-    return gmap.Core.removeAllListeners(this);
-  },
-  removeListenerType: function removeListenerType(type) {
-    return gmap.Core.removeListenerType(this, null, type);
-  },
-  reset: function reset() {
-    return gmap.Core.reset(this);
-  },
-  setBounds: function setBounds(parms) {
-    return gmap.Core.setBounds(this, parms);
-  },
-  setCenter: function setCenter(center) {
-    if (center != null) {
-      return gmap.Core.update(this, null, {
-        center: center
-      });
-    }
-    return this;
-  },
-  setZoom: function setZoom(zoom) {
-    if (zoom != null) {
-      return gmap.Core.update(this, null, {
-        zoom: zoom
-      });
-    }
-    return this;
-  },
-  update: function update(options) {
-    return gmap.Core.update(this, null, options);
-  }
 };
 
 !function(Config) {
@@ -293,6 +228,15 @@ gmap.prototype = {
 
 !function(Const) {
   "use strict";
+  Const.Config = {
+    DELIMITER: "Delimiter",
+    LABEL_OPTIONS: "LabelOptions",
+    MAP_ID: "MapId",
+    MAP_OPTIONS: "MapOptions",
+    MARKER_OPTIONS: "MarkerOptions",
+    POLYGON_OPTIONS: "PolygonOptions",
+    URL_PRECISION: "UrlPrecision"
+  };
   Const.ComponentProperty = {
     CHILD_TYPE: "ChildType",
     MAP: "Map",
@@ -341,10 +285,6 @@ gmap.prototype = {
     ZINDEX_CHANGED: "zindex_changed",
     ZOOM_CHANGED: "zoom_changed"
   };
-  Const.GlobalConfig = {
-    DELIMITER: "Delimiter",
-    URL_PRECISION: "UrlPrecision"
-  };
   return Const;
 }(gmap.Const || (gmap.Const = {}));
 
@@ -391,6 +331,35 @@ gmap.prototype = {
   }
   return Util;
 }(gmap.Util || (gmap.Util = {}), gmap.Const);
+
+!function(Util, GlobalConfig, Const) {
+  "use strict";
+  var LocalConfig = [ Const.Config.LABEL_OPTIONS, Const.Config.MAP_ID, Const.Config.MAP_OPTIONS, Const.Config.MARKER_OPTIONS, Const.Config.POLYGON_OPTIONS ];
+  Util.renameConfigOptions = function(userConfig) {
+    Object.keys(userConfig).forEach(function(key) {
+      _renameProperty(userConfig, key, Util.getConfigOption(key));
+    });
+  };
+  Util.mergeWithGlobalConfig = function(userConfig) {
+    userConfig = $.extend(true, {}, GlobalConfig, userConfig);
+    Object.keys(userConfig).forEach(function(key) {
+      if (LocalConfig.indexOf(key) == -1) {
+        delete userConfig[key];
+      }
+    });
+    return userConfig;
+  };
+  function _renameProperty(obj, oldName, newName) {
+    if (oldName == newName) {
+      return;
+    }
+    if (obj.hasOwnProperty(oldName)) {
+      obj[newName] = obj[oldName];
+      delete obj[oldName];
+    }
+  }
+  return Util;
+}(gmap.Util || (gmap.Util = {}), gmap.Config, gmap.Const);
 
 !function(Util, Config) {
   "use strict";
@@ -509,6 +478,15 @@ gmap.prototype = {
 
 !function(Util, Const) {
   "use strict";
+  var ConfigAlias = {
+    delimiter: Const.Config.DELIMITER,
+    labeloptions: Const.Config.LABEL_OPTIONS,
+    mapid: Const.Config.MAP_ID,
+    mapoptions: Const.Config.MAP_OPTIONS,
+    markeroptions: Const.Config.MARKER_OPTIONS,
+    polygonoptions: Const.Config.POLYGON_OPTIONS,
+    urlprecision: Const.Config.URL_PRECISION
+  };
   var ComponentTypeAlias = {
     label: Const.ComponentType.LABEL,
     labels: Const.ComponentType.LABEL,
@@ -552,6 +530,10 @@ gmap.prototype = {
     visiblechanged: Const.EventType.VISIBLE_CHANGED,
     zindexchanged: Const.EventType.ZINDEX_CHANGED,
     zoomchanged: Const.EventType.ZOOM_CHANGED
+  };
+  Util.getConfigOption = function(option) {
+    option = option.toLowerCase().replace(/\s+/g, "");
+    return ConfigAlias[option] || option;
   };
   Util.getComponentType = function(type) {
     type = type.toLowerCase().replace(/\s+/g, "");
@@ -973,9 +955,78 @@ gmap.prototype = {
   return Core;
 }(gmap.Core || (gmap.Core = {}), gmap.Util, gmap.Const.ComponentType);
 
-!function(Shapes, Util) {
+!function(gmap, Core, ComponentType) {
+  "use strict";
+  gmap.prototype = {
+    addListener: function addListener(type, fn) {
+      return Core.addListener(this, null, type, fn);
+    },
+    addLabel: function addLabel(parms) {
+      return Core.addComponent(this, ComponentType.LABEL, parms);
+    },
+    addMarker: function addMarker(parms) {
+      return Core.addComponent(this, ComponentType.MARKER, parms);
+    },
+    addPolygon: function addPolygon(parms) {
+      return Core.addComponent(this, ComponentType.POLYGON, parms);
+    },
+    getBounds: function getBounds() {
+      return this.Obj.getBounds();
+    },
+    getCenter: function getCenter() {
+      return this.Obj.getCenter();
+    },
+    getZoom: function getZoom() {
+      return this.Obj.getZoom();
+    },
+    labels: function labels(ids) {
+      return Core.search(this, ComponentType.LABEL, ids);
+    },
+    markers: function markers(ids) {
+      return Core.search(this, ComponentType.MARKER, ids);
+    },
+    polygons: function polygons(ids) {
+      return Core.search(this, ComponentType.POLYGON, ids);
+    },
+    removeAllListeners: function removeAllListeners() {
+      return Core.removeAllListeners(this);
+    },
+    removeListenerType: function removeListenerType(type) {
+      return Core.removeListenerType(this, null, type);
+    },
+    reset: function reset() {
+      return Core.reset(this);
+    },
+    setBounds: function setBounds(parms) {
+      return Core.setBounds(this, parms);
+    },
+    setCenter: function setCenter(center) {
+      if (center != null) {
+        return Core.update(this, null, {
+          center: center
+        });
+      }
+      return this;
+    },
+    setZoom: function setZoom(zoom) {
+      if (zoom != null) {
+        return Core.update(this, null, {
+          zoom: zoom
+        });
+      }
+      return this;
+    },
+    update: function update(options) {
+      return Core.update(this, null, options);
+    }
+  };
+  return gmap;
+}(gmap, gmap.Core, gmap.Const.ComponentType);
+
+!function(gmap, Util) {
   "use strict";
   var Shape = {
+    DECAGON: "Decagon",
     HEXAGON: "Hexagon",
     PENTAGON: "Pentagon",
     RECTANGLE: "Rectangle",
@@ -983,33 +1034,37 @@ gmap.prototype = {
     TRIANGLE: "Triangle"
   };
   var ShapeDegrees = {
+    Decagon: [ 36, 72, 108, 144, 180, 216, 252, 288, 324, 360 ],
     Hexagon: [ 30, 90, 150, 210, 270, 330 ],
     Pentagon: [ 72, 144, 216, 288, 360 ],
     Rectangle: [ 60, 120, 240, 300 ],
     Square: [ 45, 135, 225, 315 ],
     Triangle: [ 120, 240, 360 ]
   };
-  Shapes.hexagon = function(parms) {
-    return _getShapePath(Shape.HEXAGON, parms);
+  gmap.prototype.decagon = function(parms) {
+    return _getShapePath(this, parms, Shape.DECAGON);
   };
-  Shapes.pentagon = function(parms) {
-    return _getShapePath(Shape.PENTAGON, parms);
+  gmap.prototype.hexagon = function(parms) {
+    return _getShapePath(this, parms, Shape.HEXAGON);
   };
-  Shapes.rectangle = function(parms) {
-    return _getShapePath(Shape.RECTANGLE, parms);
+  gmap.prototype.pentagon = function(parms) {
+    return _getShapePath(this, parms, Shape.PENTAGON);
   };
-  Shapes.square = function(parms) {
-    return _getShapePath(Shape.SQUARE, parms);
+  gmap.prototype.rectangle = function(parms) {
+    return _getShapePath(this, parms, Shape.RECTANGLE);
   };
-  Shapes.triangle = function(parms) {
-    return _getShapePath(Shape.TRIANGLE, parms);
+  gmap.prototype.square = function(parms) {
+    return _getShapePath(this, parms, Shape.SQUARE);
   };
-  function _getShapePath(type, parms) {
-    if (parms.map) {
-      parms.center = parms.map.getCenter();
-      parms.size = Util.getSizeFromZoom(parms.map.getZoom());
-    } else {
-      parms = Util.convertShapeOptions(type, parms);
+  gmap.prototype.triangle = function(parms) {
+    return _getShapePath(this, parms, Shape.TRIANGLE);
+  };
+  function _getShapePath(map, parms, type) {
+    parms = $.isPlainObject(parms) ? parms : {};
+    parms.center = parms.center || map.getCenter();
+    parms.size = parms.size || Util.getSizeFromZoom(map.getZoom());
+    if ($.type(parms.center) == "string") {
+      parms.center = Util.toLatLng(parms.center);
     }
     var path = [];
     for (var i = 0, i_end = ShapeDegrees[type].length; i < i_end; i++) {
@@ -1018,8 +1073,8 @@ gmap.prototype = {
     }
     return path;
   }
-  return Shapes;
-}(gmap.Shapes || (gmap.Shapes = {}), gmap.Util);
+  return gmap;
+}(gmap, gmap.Util);
 
 !function(Util) {
   "use strict";
@@ -1046,41 +1101,6 @@ gmap.prototype = {
   function _toDeg(val) {
     return val * 180 / Math.PI;
   }
-  return Util;
-}(gmap.Util || (gmap.Util = {}));
-
-!function(Util) {
-  "use strict";
-  var Conversions = {
-    center: function center(parms) {
-      if ($.type(parms.center) == "string") {
-        parms.center = Util.toLatLng(parms.center);
-      }
-    }
-  };
-  var ConvertableShapeOptions = {
-    Hexagon: {
-      center: Conversions.center
-    },
-    Pentagon: {
-      center: Conversions.center
-    },
-    Rectangle: {
-      center: Conversions.center
-    },
-    Square: {
-      center: Conversions.center
-    },
-    Triangle: {
-      center: Conversions.center
-    }
-  };
-  Util.convertShapeOptions = function(type, parms) {
-    Object.keys(ConvertableShapeOptions[type]).forEach(function(key) {
-      ConvertableShapeOptions[type][key](parms);
-    });
-    return parms;
-  };
   return Util;
 }(gmap.Util || (gmap.Util = {}));
 
@@ -1445,4 +1465,4 @@ gmap.prototype = {
   return gmap;
 }(gmap, gmap.Core, gmap.Const.ComponentType);
 
-gmap.Version = "1.4.2-alpha";
+gmap.Version = "1.5.0-alpha";
