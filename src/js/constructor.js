@@ -5,18 +5,18 @@
 const gmap = function(config) {
   const ComponentType = gmap.Const.ComponentType
   const EventType     = gmap.Const.EventType
-  const GlobalConfig  = gmap.Const.GlobalConfig
   const Util          = gmap.Util
 
-  // merge with global config options
-  config = $.extend(true, {}, gmap.Config, config)
+  if ($.isPlainObject(config)) {
+    Util.renameConfigOptions(config)
+  }
+  config = Util.mergeWithGlobalConfig(config)
+  config = Util.convertCompOptions(ComponentType.MAP, config.MapOptions)
 
-  // delete any config options that should only exist in Global
-  Object.keys(GlobalConfig).forEach(function(key) {
-    delete config[GlobalConfig[key]]
-  })
 
-  Util.convertCompOptions(ComponentType.MAP, config.MapOptions)
+  // ----------------------------------------------------------------------
+  // Class Definition
+  // ----------------------------------------------------------------------
 
   this.Components = {
     Label:   new gmap.LabelArray(this),
