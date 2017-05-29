@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// GMaps: baseComponent.js
+// GMaps: components/baseComponent.js
 // ------------------------------------------------------------------------
 
 !((gmap) => {
@@ -22,9 +22,9 @@
       this.Map = map
       this.Obj = obj
       this.Obj["GMaps"] = {
-        Id: id,
-        Map: map,
-        Parent: this,
+        Id:      id,
+        Map:     map,
+        Parent:  this,
         Version: gmap.Version
       }
       this.Type = type
