@@ -1,5 +1,5 @@
 /*!
- * GMaps v1.5.1-alpha (https://github.com/tmentink/gmaps)
+ * GMaps v1.5.2-alpha (https://github.com/tmentink/gmaps)
  * Copyright 2017 Trent Mentink
  * Licensed under MIT
  */
@@ -1051,22 +1051,22 @@ var gmap = function gmap(config) {
     Square: [ 45, 135, 225, 315 ],
     Triangle: [ 120, 240, 360 ]
   };
-  gmap.prototype.decagon = function(parms) {
+  gmap.prototype.decagonShape = function(parms) {
     return _getShapePath(this, parms, Shape.DECAGON);
   };
-  gmap.prototype.hexagon = function(parms) {
+  gmap.prototype.hexagonShape = function(parms) {
     return _getShapePath(this, parms, Shape.HEXAGON);
   };
-  gmap.prototype.pentagon = function(parms) {
+  gmap.prototype.pentagonShape = function(parms) {
     return _getShapePath(this, parms, Shape.PENTAGON);
   };
-  gmap.prototype.rectangle = function(parms) {
+  gmap.prototype.rectangleShape = function(parms) {
     return _getShapePath(this, parms, Shape.RECTANGLE);
   };
-  gmap.prototype.square = function(parms) {
+  gmap.prototype.squareShape = function(parms) {
     return _getShapePath(this, parms, Shape.SQUARE);
   };
-  gmap.prototype.triangle = function(parms) {
+  gmap.prototype.triangleShape = function(parms) {
     return _getShapePath(this, parms, Shape.TRIANGLE);
   };
   function _getShapePath(map, parms, type) {
@@ -1475,4 +1475,4 @@ var gmap = function gmap(config) {
   return gmap;
 }(gmap, gmap.Core, gmap.Const.ComponentType);
 
-gmap.Version = "1.5.1-alpha";
+gmap.Version = "1.5.2-alpha";

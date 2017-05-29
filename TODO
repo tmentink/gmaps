@@ -1,7 +1,25 @@
 
+Add Remaining Components:
+  ☐ Circle
+  ☐ GroundOverlay
+  ☐ InfoWindow
+  ☐ Polyline
+  ☐ Rectangle
+
+
 Components:
   ☐ Consider adding methods to single components
-  ☐ Add all components and methods supported by google.maps
   ☐ Allow options to be case insensitive
 
 
+General:
+  ☐ Update all functions to take a single object as a parameter
+
+
+Shapes:
+  ☐ Remove shape suffix and move methods to Shape namespace
+
+
+Testing:
+  ☐ Create mock google.maps service for testing
+  
