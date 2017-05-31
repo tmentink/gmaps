@@ -1,5 +1,5 @@
 /*!
- * GMaps v1.5.2-alpha (https://github.com/tmentink/gmaps)
+ * GMaps v1.6.0-alpha (https://github.com/tmentink/gmaps)
  * Copyright 2017 Trent Mentink
  * Licensed under MIT
  */
@@ -151,7 +151,10 @@ var gmap = function gmap(config) {
     Util.renameConfigOptions(config);
   }
   config = Util.mergeWithGlobalConfig(config);
-  config.MapOptions = Util.convertCompOptions(ComponentType.MAP, config.MapOptions);
+  config.MapOptions = Util.convertCompOptions({
+    compType: ComponentType.MAP,
+    compOptions: config.MapOptions
+  });
   var mapContainer = document.getElementById(config.MapId);
   if (!mapContainer) {
     return Util.throwError({
@@ -161,9 +164,15 @@ var gmap = function gmap(config) {
     });
   }
   this.Components = {
-    Label: new gmap.LabelArray(this),
-    Marker: new gmap.MarkerArray(this),
-    Polygon: new gmap.PolygonArray(this)
+    Label: new gmap.LabelArray({
+      map: this
+    }),
+    Marker: new gmap.MarkerArray({
+      map: this
+    }),
+    Polygon: new gmap.PolygonArray({
+      map: this
+    })
   };
   this.Config = config;
   this.Init = {
@@ -303,8 +312,10 @@ var gmap = function gmap(config) {
       parms.center = Util.toLatLng(parms.center);
     },
     path: function path(parms) {
-      parms.paths = Util.toLatLngArray(parms.paths || parms.path);
-      delete parms.path;
+      if (parms.paths || parms.path) {
+        parms.paths = Util.toLatLngArray(parms.paths || parms.path);
+        delete parms.path;
+      }
     },
     position: function position(parms) {
       parms.position = Util.toLatLng(parms.position);
@@ -329,36 +340,40 @@ var gmap = function gmap(config) {
       paths: Conversions.path
     }
   };
-  Util.convertCompOptions = function(type, parms) {
-    type = type.replace("Array", "");
-    Object.keys(ConvertableOptions[type]).forEach(function(key) {
-      ConvertableOptions[type][key](parms);
+  Util.convertCompOptions = function(parms) {
+    var compOptions = parms.compOptions;
+    var compType = parms.compType.replace("Array", "");
+    Object.keys(ConvertableOptions[compType]).forEach(function(key) {
+      ConvertableOptions[compType][key](compOptions);
     });
-    return parms;
+    return compOptions;
   };
-  Util.copy = function(compArray, exclude) {
-    exclude = _addPrototypesToArray(compArray, exclude);
+  Util.copy = function(parms) {
+    var compArray = parms.compArray;
+    var exclude = _addPrototypesToArray(compArray, parms.exclude);
     var copy = $.extend(true, {}, compArray);
     for (var i = 0, i_end = exclude.length; i < i_end; i++) {
       delete copy[exclude[i]];
     }
-    var new_comp = new gmap[compArray.Type]();
+    var new_comp = new gmap[compArray.Type]({
+      map: compArray.Map
+    });
     return $.extend(new_comp, copy);
   };
-  Util.getGoogleObjects = function(compArray) {
+  Util.getGoogleObjects = function(parms) {
+    var compArray = parms.compArray;
     var ids = Util.getIds(compArray);
-    var googleObjects = ids.map(function(id) {
+    return ids.map(function(id) {
       return compArray[id].Obj;
     });
-    return googleObjects;
   };
-  Util.getIds = function(compArray) {
-    var ids = Object.keys(compArray);
+  Util.getIds = function(parms) {
+    var ids = Object.keys(parms.compArray);
     return _removeComponentProperties(ids);
   };
   function _addPrototypesToArray(compArray, array) {
     var proto = Object.keys(Object.getPrototypeOf(compArray));
-    var base_proto = Object.keys(Object.getPrototypeOf(new gmap.BaseComponentArray("", "")));
+    var base_proto = Object.keys(Object.getPrototypeOf(new gmap.BaseComponentArray({})));
     array = proto.concat(array);
     array = base_proto.concat(array);
     return array;
@@ -381,9 +396,9 @@ var gmap = function gmap(config) {
   Util.renameConfigOptions = function(userConfig) {
     Object.keys(userConfig).forEach(function(key) {
       Util.renameProperty({
+        newName: Util.getConfigOption(key),
         obj: userConfig,
-        oldName: key,
-        newName: Util.getConfigOption(key)
+        oldName: key
       });
     });
     return userConfig;
@@ -402,13 +417,13 @@ var gmap = function gmap(config) {
 
 !function(Util, Config) {
   "use strict";
-  Util.toArray = function(value) {
-    if ($.type(value) == "number") {
-      value = value.toString().split();
-    } else if ($.type(value) == "string") {
-      value = value.split();
+  Util.toArray = function(val) {
+    if ($.type(val) == "number") {
+      val = val.toString().split();
+    } else if ($.type(val) == "string") {
+      val = val.split();
     }
-    return value;
+    return val;
   };
   Util.toDelimitedString = function(obj) {
     if (obj instanceof google.maps.LatLng) {
@@ -537,9 +552,9 @@ var gmap = function gmap(config) {
 !function(Util) {
   "use strict";
   Util.renameProperty = function(parms) {
+    var newName = parms.newName;
     var obj = parms.obj;
     var oldName = parms.oldName;
-    var newName = parms.newName;
     if (oldName == newName) {
       return;
     }
@@ -562,33 +577,46 @@ var gmap = function gmap(config) {
     Marker: [ "id", "position" ],
     Polygon: [ "id", [ "path", "paths" ] ]
   };
-  Core.addComponent = function(map, type, parms) {
-    type = Util.getComponentType(type);
-    if ($.type(parms) == "array") {
-      return _multiAdd(map, type, parms);
+  Core.addComponent = function(parms) {
+    var compOptions = parms.compOptions;
+    var map = parms.map;
+    var type = Util.getComponentType(parms.type);
+    if ($.type(compOptions) == "array") {
+      return _multiAdd(map, type, compOptions);
     }
-    if ($.type(parms) == "object") {
-      if (_validateParms(map, type, parms)) {
-        var newCompArray = new gmap[type + "Array"](map);
-        newCompArray[parms.id] = _add(map, type, parms);
+    if ($.type(compOptions) == "object") {
+      if (_validateParms(map, type, compOptions)) {
+        var newCompArray = _createNewCompArray(type, map);
+        newCompArray[compOptions.id] = _add(map, type, compOptions);
         return newCompArray;
       }
     }
   };
-  function _add(map, type, parms) {
-    parms = Util.convertCompOptions(type, parms);
-    var options = _mergeDefaults(map, type, parms);
-    return map.Components[type][parms.id] = new gmap[type](parms.id, options);
+  function _add(map, type, compOptions) {
+    compOptions = Util.convertCompOptions({
+      compType: type,
+      compOptions: compOptions
+    });
+    var comp = new gmap[type]({
+      id: compOptions.id,
+      options: _mergeDefaults(map, type, compOptions)
+    });
+    return map.Components[type][compOptions.id] = comp;
   }
-  function _multiAdd(map, type, parmsArray) {
-    var newCompArray = new gmap[type + "Array"](map);
-    for (var i = 0, i_end = parmsArray.length; i < i_end; i++) {
-      var parms = parmsArray[i];
-      if (_validateParms(map, type, parms)) {
-        newCompArray[parms.id] = _add(map, type, parms);
+  function _multiAdd(map, type, compOptionsArray) {
+    var newCompArray = _createNewCompArray(type, map);
+    for (var i = 0, i_end = compOptionsArray.length; i < i_end; i++) {
+      var compOptions = compOptionsArray[i];
+      if (_validateParms(map, type, compOptions)) {
+        newCompArray[compOptions.id] = _add(map, type, compOptions);
       }
     }
     return newCompArray;
+  }
+  function _createNewCompArray(type, map) {
+    return new gmap[type + "Array"]({
+      map: map
+    });
   }
   function _mergeDefaults(map, type, parms) {
     var defaults = map.Config[type + "Options"] || {};
@@ -596,6 +624,11 @@ var gmap = function gmap(config) {
     options.map = map.Obj;
     delete options.id;
     return options;
+  }
+  function _noParmsFound(reqParms, parms) {
+    return reqParms.map(function(key) {
+      return parms[key] != undefined && parms[key] !== "";
+    }).indexOf(true) == -1;
   }
   function _validateParms(map, type, parms) {
     for (var i = 0, i_end = RequiredParms[type].length; i < i_end; i++) {
@@ -617,11 +650,6 @@ var gmap = function gmap(config) {
     }
     return true;
   }
-  function _noParmsFound(reqParms, parms) {
-    return reqParms.map(function(key) {
-      return parms[key] != undefined && parms[key] !== "";
-    }).indexOf(true) == -1;
-  }
   return Core;
 }(gmap.Core || (gmap.Core = {}), gmap.Util);
 
@@ -638,9 +666,10 @@ var gmap = function gmap(config) {
       return _getBoundsByPath(comp);
     }
   };
-  Core.getBounds = function(compArray, ids) {
-    ids = Util.toArray(ids);
+  Core.getBounds = function(parms) {
     var bounds = new google.maps.LatLngBounds();
+    var compArray = parms.compArray;
+    var ids = Util.toArray(parms.ids);
     for (var i = 0, i_end = ids.length; i < i_end; i++) {
       var comp = compArray[ids[i]];
       if (comp) {
@@ -649,26 +678,35 @@ var gmap = function gmap(config) {
     }
     return bounds;
   };
-  Core.getCenter = function(compArray, ids) {
-    return Core.getBounds(compArray, ids).getCenter();
+  Core.getCenter = function(parms) {
+    var bounds = Core.getBounds({
+      compArray: parms.compArray,
+      ids: parms.ids
+    });
+    return bounds.getCenter();
   };
-  Core.setBounds = function(map, parms) {
-    if ($.type(parms) == "object") {
-      var bounds = _getBoundsByComponents(map.Components, parms);
+  Core.setBounds = function(parms) {
+    var comps = parms.comps;
+    var map = parms.map;
+    if ($.type(comps) == "object") {
+      var bounds = _getBoundsByComponents(map.Components, comps);
       map.Obj.fitBounds(bounds);
-    } else if (parms == "init" || parms == "initial") {
+    } else if (comps == "init" || comps == "initial") {
       map.Obj.fitBounds(map.Init.Bounds);
       map.Obj.setZoom(map.Init.Options.zoom);
     }
     return map;
   };
-  function _getBoundsByComponents(mapComps, parms) {
+  function _getBoundsByComponents(mapComps, comps) {
     var bounds = new google.maps.LatLngBounds();
-    var types = Object.keys(parms);
+    var types = Object.keys(comps);
     for (var i = 0, i_end = types.length; i < i_end; i++) {
       var type = Util.getComponentType(types[i]);
-      var ids = _getIds(mapComps[type], parms[types[i]]);
-      bounds.union(Core.getBounds(mapComps[type], ids));
+      var ids = _getIds(mapComps[type], comps[types[i]]);
+      bounds.union(Core.getBounds({
+        compArray: mapComps[type],
+        ids: ids
+      }));
     }
     return bounds;
   }
@@ -688,16 +726,18 @@ var gmap = function gmap(config) {
     bounds.extend(comp.Obj.getPosition());
     return bounds;
   }
-  function _getIds(comp, ids) {
-    return ids == null || ids == "all" ? Util.getIds(comp) : ids;
+  function _getIds(compArray, ids) {
+    return ids == null || ids == "all" ? Util.getIds(compArray) : ids;
   }
   return Core;
 }(gmap.Core || (gmap.Core = {}), gmap.Util);
 
 !function(Core, Util) {
   "use strict";
-  Core.getPath = function(compArray, ids, delimited) {
-    ids = Util.toArray(ids);
+  Core.getPath = function(parms) {
+    var compArray = parms.compArray;
+    var delimited = parms.delimited;
+    var ids = Util.toArray(parms.ids);
     var retVal = {};
     for (var i = 0, i_end = ids.length; i < i_end; i++) {
       var id = ids[i];
@@ -709,8 +749,10 @@ var gmap = function gmap(config) {
     }
     return _formatRetVal(retVal);
   };
-  Core.getPosition = function(compArray, ids, delimited) {
-    ids = Util.toArray(ids);
+  Core.getPosition = function(parms) {
+    var compArray = parms.compArray;
+    var delimited = parms.delimited;
+    var ids = Util.toArray(parms.ids);
     var retVal = {};
     for (var i = 0, i_end = ids.length; i < i_end; i++) {
       var id = ids[i];
@@ -747,14 +789,14 @@ var gmap = function gmap(config) {
       return !comp.Obj.getVisible();
     }
   };
-  Core.hide = function(compArray, ids) {
-    return _display(compArray, ids, Action.HIDE);
+  Core.hide = function(parms) {
+    return _display(parms.compArray, parms.ids, Action.HIDE);
   };
-  Core.show = function(compArray, ids) {
-    return _display(compArray, ids, Action.SHOW);
+  Core.show = function(parms) {
+    return _display(parms.compArray, parms.ids, Action.SHOW);
   };
-  Core.toggle = function(compArray, ids) {
-    return _display(compArray, ids, Action.TOGGLE);
+  Core.toggle = function(parms) {
+    return _display(parms.compArray, parms.ids, Action.TOGGLE);
   };
   function _display(compArray, ids, action) {
     if ($.isArray(ids)) {
@@ -765,7 +807,9 @@ var gmap = function gmap(config) {
     }
   }
   function _multiDisplay(compArray, ids, action) {
-    var newCompArray = new gmap[compArray.Type](compArray.Map);
+    var newCompArray = new gmap[compArray.Type]({
+      map: compArray.Map
+    });
     for (var i = 0, i_end = ids.length; i < i_end; i++) {
       var comp = compArray[ids[i]];
       if (comp) {
@@ -801,40 +845,49 @@ var gmap = function gmap(config) {
       return _removeType(comp, type);
     }
   };
-  Core.addListener = function(compArray, ids, type, fn) {
-    type = Util.getEventType(type);
-    return _listener(compArray, ids, type, fn, Action.ADD);
+  Core.addListener = function(parms) {
+    var compArray = parms.compArray;
+    var func = parms.func;
+    var ids = parms.ids;
+    var type = Util.getEventType(parms.type);
+    return _listener(compArray, ids, type, func, Action.ADD);
   };
-  Core.removeAllListeners = function(compArray, ids) {
+  Core.removeAllListeners = function(parms) {
+    var compArray = parms.compArray;
+    var ids = parms.ids;
     return _listener(compArray, ids, null, null, Action.REMOVE_ALL);
   };
-  Core.removeListenerType = function(compArray, ids, type) {
-    type = Util.getEventType(type);
+  Core.removeListenerType = function(parms) {
+    var compArray = parms.compArray;
+    var ids = parms.ids;
+    var type = Util.getEventType(parms.type);
     return _listener(compArray, ids, type, null, Action.REMOVE_TYPE);
   };
-  function _listener(compArray, ids, type, fn, action) {
+  function _listener(compArray, ids, type, func, action) {
     if (compArray.Type == ComponentType.MAP) {
-      return Execute[action](compArray, type, fn);
+      return Execute[action](compArray, type, func);
     }
     if ($.isArray(ids)) {
-      return _multiListener(compArray, ids, type, fn, action);
+      return _multiListener(compArray, ids, type, func, action);
     }
     if (compArray[ids]) {
-      return Execute[action](compArray[ids], type, fn);
+      return Execute[action](compArray[ids], type, func);
     }
   }
-  function _multiListener(compArray, ids, type, fn, action) {
-    var newCompArray = new gmap[compArray.Type](compArray.Map);
+  function _multiListener(compArray, ids, type, func, action) {
+    var newCompArray = new gmap[compArray.Type]({
+      map: compArray.Map
+    });
     for (var i = 0, i_end = ids.length; i < i_end; i++) {
       var comp = compArray[ids[i]];
       if (comp) {
-        newCompArray[ids[i]] = Execute[action](comp, type, fn);
+        newCompArray[ids[i]] = Execute[action](comp, type, func);
       }
     }
     return newCompArray;
   }
-  function _add(comp, type, fn) {
-    google.maps.event.addListener(comp.Obj, type, fn);
+  function _add(comp, type, func) {
+    google.maps.event.addListener(comp.Obj, type, func);
     return comp;
   }
   function _removeAll(comp) {
@@ -850,7 +903,9 @@ var gmap = function gmap(config) {
 
 !function(Core) {
   "use strict";
-  Core.remove = function(compArray, ids) {
+  Core.remove = function(parms) {
+    var compArray = parms.compArray;
+    var ids = parms.ids;
     if ($.isArray(ids)) {
       return _multiRemove(compArray, ids);
     }
@@ -864,7 +919,9 @@ var gmap = function gmap(config) {
     return comp;
   }
   function _multiRemove(compArray, ids) {
-    var newCompArray = new gmap[compArray.Type](compArray.Map);
+    var newCompArray = new gmap[compArray.Type]({
+      map: compArray.Map
+    });
     for (var i = 0, i_end = ids.length; i < i_end; i++) {
       var comp = compArray[ids[i]];
       if (comp) {
@@ -878,16 +935,18 @@ var gmap = function gmap(config) {
 
 !function(Core, ComponentType) {
   "use strict";
-  Core.reset = function(comp, ids) {
-    if (comp.Type == ComponentType.MAP) {
-      comp.Obj.fitBounds(comp.Init.Bounds);
-      return _reset(comp);
+  Core.reset = function(parms) {
+    var compArray = parms.compArray;
+    var ids = parms.ids;
+    if (compArray.Type == ComponentType.MAP) {
+      compArray.Obj.fitBounds(compArray.Init.Bounds);
+      return _reset(compArray);
     }
     if ($.isArray(ids)) {
-      return _multiReset(comp, ids);
+      return _multiReset(compArray, ids);
     }
-    if (comp[ids]) {
-      return _reset(comp[ids]);
+    if (compArray[ids]) {
+      return _reset(compArray[ids]);
     }
   };
   function _reset(comp) {
@@ -895,7 +954,9 @@ var gmap = function gmap(config) {
     return comp;
   }
   function _multiReset(compArray, ids) {
-    var newCompArray = new gmap[compArray.Type](compArray.Map);
+    var newCompArray = new gmap[compArray.Type]({
+      map: compArray.Map
+    });
     for (var i = 0, i_end = ids.length; i < i_end; i++) {
       var comp = compArray[ids[i]];
       if (comp) {
@@ -909,11 +970,16 @@ var gmap = function gmap(config) {
 
 !function(Core, Util) {
   "use strict";
-  Core.search = function(map, type, ids) {
+  Core.search = function(parms) {
+    var map = parms.map;
+    var ids = parms.ids;
+    var type = parms.type;
     var compArray = map.Components[type];
     if (ids) {
-      var exclude = _getIdsToExclude(compArray, Util.toArray(ids));
-      return Util.copy(compArray, exclude);
+      return Util.copy({
+        compArray: compArray,
+        exclude: _getIdsToExclude(compArray, Util.toArray(ids))
+      });
     }
     return compArray;
   };
@@ -930,22 +996,29 @@ var gmap = function gmap(config) {
 
 !function(Core, Util, ComponentType) {
   "use strict";
-  Core.update = function(comp, ids, options) {
-    if (options == undefined) {
+  Core.update = function(parms) {
+    var compArray = parms.compArray;
+    var compOptions = parms.compOptions;
+    var ids = parms.ids;
+    var type = compArray.ChildType || compArray.Type;
+    if (compOptions == undefined) {
       return Util.throwError({
         method: "update",
-        message: "Must supply " + (comp.ChildType || comp.Type) + " options"
+        message: "Must supply " + type + " options"
       });
     }
-    options = Util.convertCompOptions(comp.Type, options);
-    if (comp.Type == ComponentType.MAP) {
-      return _update(comp, options);
+    compOptions = Util.convertCompOptions({
+      compType: type,
+      compOptions: compOptions
+    });
+    if (type == ComponentType.MAP) {
+      return _update(compArray, compOptions);
     }
     if ($.isArray(ids)) {
-      return _multiUpdate(comp, ids, options);
+      return _multiUpdate(compArray, ids, compOptions);
     }
-    if (comp[ids]) {
-      return _update(comp[ids], options);
+    if (compArray[ids]) {
+      return _update(compArray[ids], compOptions);
     }
   };
   function _update(comp, options) {
@@ -953,7 +1026,9 @@ var gmap = function gmap(config) {
     return comp;
   }
   function _multiUpdate(compArray, ids, options) {
-    var newCompArray = new gmap[compArray.Type](compArray.Map);
+    var newCompArray = new gmap[compArray.Type]({
+      map: compArray.Map
+    });
     for (var i = 0, i_end = ids.length; i < i_end; i++) {
       var comp = compArray[ids[i]];
       if (comp) {
@@ -968,17 +1043,33 @@ var gmap = function gmap(config) {
 !function(gmap, Core, ComponentType) {
   "use strict";
   gmap.prototype = {
-    addListener: function addListener(type, fn) {
-      return Core.addListener(this, null, type, fn);
+    addListener: function addListener(parms) {
+      return Core.addListener({
+        compArray: this,
+        func: parms.func,
+        type: parms.type
+      });
     },
-    addLabel: function addLabel(parms) {
-      return Core.addComponent(this, ComponentType.LABEL, parms);
+    addLabel: function addLabel(compOptions) {
+      return Core.addComponent({
+        compOptions: compOptions,
+        map: this,
+        type: ComponentType.LABEL
+      });
     },
-    addMarker: function addMarker(parms) {
-      return Core.addComponent(this, ComponentType.MARKER, parms);
+    addMarker: function addMarker(compOptions) {
+      return Core.addComponent({
+        compOptions: compOptions,
+        map: this,
+        type: ComponentType.MARKER
+      });
     },
-    addPolygon: function addPolygon(parms) {
-      return Core.addComponent(this, ComponentType.POLYGON, parms);
+    addPolygon: function addPolygon(compOptions) {
+      return Core.addComponent({
+        compOptions: compOptions,
+        map: this,
+        type: ComponentType.POLYGON
+      });
     },
     getBounds: function getBounds() {
       return this.Obj.getBounds();
@@ -990,44 +1081,75 @@ var gmap = function gmap(config) {
       return this.Obj.getZoom();
     },
     labels: function labels(ids) {
-      return Core.search(this, ComponentType.LABEL, ids);
+      return Core.search({
+        ids: ids,
+        map: this,
+        type: ComponentType.LABEL
+      });
     },
     markers: function markers(ids) {
-      return Core.search(this, ComponentType.MARKER, ids);
+      return Core.search({
+        ids: ids,
+        map: this,
+        type: ComponentType.MARKER
+      });
     },
     polygons: function polygons(ids) {
-      return Core.search(this, ComponentType.POLYGON, ids);
+      return Core.search({
+        ids: ids,
+        map: this,
+        type: ComponentType.POLYGON
+      });
     },
     removeAllListeners: function removeAllListeners() {
-      return Core.removeAllListeners(this);
+      return Core.removeAllListeners({
+        compArray: this
+      });
     },
     removeListenerType: function removeListenerType(type) {
-      return Core.removeListenerType(this, null, type);
+      return Core.removeListenerType({
+        compArray: this,
+        type: type
+      });
     },
     reset: function reset() {
-      return Core.reset(this);
+      return Core.reset({
+        compArray: this
+      });
     },
-    setBounds: function setBounds(parms) {
-      return Core.setBounds(this, parms);
+    setBounds: function setBounds(comps) {
+      return Core.setBounds({
+        map: this,
+        comps: comps
+      });
     },
     setCenter: function setCenter(center) {
       if (center != null) {
-        return Core.update(this, null, {
-          center: center
+        return Core.update({
+          compArray: this,
+          compOptions: {
+            center: center
+          }
         });
       }
       return this;
     },
     setZoom: function setZoom(zoom) {
       if (zoom != null) {
-        return Core.update(this, null, {
-          zoom: zoom
+        return Core.update({
+          compArray: this,
+          compOptions: {
+            zoom: zoom
+          }
         });
       }
       return this;
     },
-    update: function update(options) {
-      return Core.update(this, null, options);
+    update: function update(compOptions) {
+      return Core.update({
+        compArray: this,
+        compOptions: compOptions
+      });
     }
   };
   return gmap;
@@ -1078,8 +1200,11 @@ var gmap = function gmap(config) {
     }
     var path = [];
     for (var i = 0, i_end = ShapeDegrees[type].length; i < i_end; i++) {
-      var deg = ShapeDegrees[type][i];
-      path.push(Util.getDestinationPoint(parms.center, deg, parms.size));
+      path.push(Util.getDestinationPoint({
+        bearing: ShapeDegrees[type][i],
+        distance: parms.size,
+        latLng: parms.center
+      }));
     }
     return path;
   }
@@ -1088,9 +1213,10 @@ var gmap = function gmap(config) {
 
 !function(Util) {
   "use strict";
-  Util.getDestinationPoint = function(latLng, bearing, distance) {
-    bearing = _toRad(bearing);
-    distance = distance / 6371;
+  Util.getDestinationPoint = function(parms) {
+    var bearing = _toRad(parms.bearing);
+    var distance = parms.distance / 6371;
+    var latLng = parms.latLng;
     var src_lat = _toRad(latLng.lat());
     var src_lng = _toRad(latLng.lng());
     var dest_lat = Math.asin(Math.sin(src_lat) * Math.cos(distance) + Math.cos(src_lat) * Math.sin(distance) * Math.cos(bearing));
@@ -1116,9 +1242,13 @@ var gmap = function gmap(config) {
 
 !function(gmap) {
   "use strict";
-  var BaseComponent = function BaseComponent(id, options, obj, type) {
+  var BaseComponent = function BaseComponent(parms) {
     _classCallCheck(this, BaseComponent);
-    var map = options.map.GMaps.Parent;
+    var id = parms.id;
+    var map = parms.options.map.GMaps.Parent;
+    var obj = parms.obj;
+    var options = parms.options;
+    var type = parms.type;
     this.Id = id;
     this.Init = {
       Options: options
@@ -1140,49 +1270,84 @@ var gmap = function gmap(config) {
 !function(gmap, Core, Util) {
   "use strict";
   var BaseComponentArray = function() {
-    function BaseComponentArray(map, type, childType) {
+    function BaseComponentArray(parms) {
       _classCallCheck(this, BaseComponentArray);
-      this.ChildType = childType;
-      this.Map = map;
-      this.Type = type;
+      this.ChildType = parms.childType;
+      this.Map = parms.map;
+      this.Type = parms.type;
     }
     BaseComponentArray.prototype.getBounds = function getBounds() {
-      return Core.getBounds(this, this.getIds());
+      return Core.getBounds({
+        compArray: this,
+        ids: this.getIds()
+      });
     };
     BaseComponentArray.prototype.getCenter = function getCenter() {
-      return Core.getCenter(this, this.getIds());
+      return Core.getCenter({
+        compArray: this,
+        ids: this.getIds()
+      });
     };
     BaseComponentArray.prototype.getGoogleObjects = function getGoogleObjects() {
-      return Util.getGoogleObjects(this);
+      return Util.getGoogleObjects({
+        compArray: this
+      });
     };
     BaseComponentArray.prototype.getIds = function getIds() {
-      return Util.getIds(this);
+      return Util.getIds({
+        compArray: this
+      });
     };
     BaseComponentArray.prototype.hide = function hide() {
-      return Core.hide(this, this.getIds());
+      return Core.hide({
+        compArray: this,
+        ids: this.getIds()
+      });
     };
     BaseComponentArray.prototype.others = function others() {
-      return Util.copy(this.Map.Components[this.ChildType], this.getIds());
+      return Util.copy({
+        compArray: this.Map.Components[this.ChildType],
+        exclude: this.getIds()
+      });
     };
     BaseComponentArray.prototype.remove = function remove() {
-      return Core.remove(this, this.getIds());
+      return Core.remove({
+        compArray: this,
+        ids: this.getIds()
+      });
     };
     BaseComponentArray.prototype.reset = function reset() {
-      return Core.reset(this, this.getIds());
+      return Core.reset({
+        compArray: this,
+        ids: this.getIds()
+      });
     };
     BaseComponentArray.prototype.show = function show() {
-      return Core.show(this, this.getIds());
+      return Core.show({
+        compArray: this,
+        ids: this.getIds()
+      });
     };
     BaseComponentArray.prototype.toggle = function toggle() {
-      return Core.toggle(this, this.getIds());
+      return Core.toggle({
+        compArray: this,
+        ids: this.getIds()
+      });
     };
-    BaseComponentArray.prototype.update = function update(options) {
-      return Core.update(this, this.getIds(), options);
+    BaseComponentArray.prototype.update = function update(compOptions) {
+      return Core.update({
+        compArray: this,
+        compOptions: compOptions,
+        ids: this.getIds()
+      });
     };
     BaseComponentArray.prototype.zoom = function zoom() {
-      var parms = {};
-      parms[this.ChildType] = this.getIds();
-      Core.setBounds(this.Map, parms);
+      var comps = {};
+      comps[this.ChildType] = this.getIds();
+      Core.setBounds({
+        map: this.Map,
+        comps: comps
+      });
       return this;
     };
     return BaseComponentArray;
@@ -1356,10 +1521,14 @@ var gmap = function gmap(config) {
   "use strict";
   var Label = function(_gmap$BaseComponent) {
     _inherits(Label, _gmap$BaseComponent);
-    function Label(id, options) {
+    function Label(parms) {
       _classCallCheck(this, Label);
-      var obj = new gmap.GoogleLabel(options);
-      return _possibleConstructorReturn(this, _gmap$BaseComponent.call(this, id, options, obj, ComponentType.LABEL));
+      return _possibleConstructorReturn(this, _gmap$BaseComponent.call(this, {
+        id: parms.id,
+        obj: new gmap.GoogleLabel(parms.options),
+        options: parms.options,
+        type: ComponentType.LABEL
+      }));
     }
     return Label;
   }(gmap.BaseComponent);
@@ -1371,15 +1540,26 @@ var gmap = function gmap(config) {
   "use strict";
   var LabelArray = function(_gmap$BaseComponentAr) {
     _inherits(LabelArray, _gmap$BaseComponentAr);
-    function LabelArray(map) {
+    function LabelArray(parms) {
       _classCallCheck(this, LabelArray);
-      return _possibleConstructorReturn(this, _gmap$BaseComponentAr.call(this, map, ComponentType.LABEL_ARRAY, ComponentType.LABEL));
+      return _possibleConstructorReturn(this, _gmap$BaseComponentAr.call(this, {
+        childType: ComponentType.LABEL,
+        map: parms.map,
+        type: ComponentType.LABEL_ARRAY
+      }));
     }
     LabelArray.prototype.getPosition = function getPosition() {
-      return Core.getPosition(this, this.getIds());
+      return Core.getPosition({
+        compArray: this,
+        ids: this.getIds()
+      });
     };
     LabelArray.prototype.getPositionString = function getPositionString() {
-      return Core.getPosition(this, this.getIds(), true);
+      return Core.getPosition({
+        compArray: this,
+        delimited: true,
+        ids: this.getIds()
+      });
     };
     return LabelArray;
   }(gmap.BaseComponentArray);
@@ -1391,10 +1571,14 @@ var gmap = function gmap(config) {
   "use strict";
   var Marker = function(_gmap$BaseComponent2) {
     _inherits(Marker, _gmap$BaseComponent2);
-    function Marker(id, options) {
+    function Marker(parms) {
       _classCallCheck(this, Marker);
-      var obj = new google.maps.Marker(options);
-      return _possibleConstructorReturn(this, _gmap$BaseComponent2.call(this, id, options, obj, ComponentType.MARKER));
+      return _possibleConstructorReturn(this, _gmap$BaseComponent2.call(this, {
+        id: parms.id,
+        obj: new google.maps.Marker(parms.options),
+        options: parms.options,
+        type: ComponentType.MARKER
+      }));
     }
     return Marker;
   }(gmap.BaseComponent);
@@ -1406,24 +1590,47 @@ var gmap = function gmap(config) {
   "use strict";
   var MarkerArray = function(_gmap$BaseComponentAr2) {
     _inherits(MarkerArray, _gmap$BaseComponentAr2);
-    function MarkerArray(map) {
+    function MarkerArray(parms) {
       _classCallCheck(this, MarkerArray);
-      return _possibleConstructorReturn(this, _gmap$BaseComponentAr2.call(this, map, ComponentType.MARKER_ARRAY, ComponentType.MARKER));
+      return _possibleConstructorReturn(this, _gmap$BaseComponentAr2.call(this, {
+        childType: ComponentType.MARKER,
+        map: parms.map,
+        type: ComponentType.MARKER_ARRAY
+      }));
     }
-    MarkerArray.prototype.addListener = function addListener(type, fn) {
-      return Core.addListener(this, this.getIds(), type, fn);
+    MarkerArray.prototype.addListener = function addListener(parms) {
+      return Core.addListener({
+        compArray: this,
+        func: parms.func,
+        ids: this.getIds(),
+        type: parms.type
+      });
     };
     MarkerArray.prototype.getPosition = function getPosition() {
-      return Core.getPosition(this, this.getIds());
+      return Core.getPosition({
+        compArray: this,
+        ids: this.getIds()
+      });
     };
     MarkerArray.prototype.getPositionString = function getPositionString() {
-      return Core.getPosition(this, this.getIds(), true);
+      return Core.getPosition({
+        compArray: this,
+        delimited: true,
+        ids: this.getIds()
+      });
     };
     MarkerArray.prototype.removeAllListeners = function removeAllListeners() {
-      return Core.removeAllListeners(this, this.getIds());
+      return Core.removeAllListeners({
+        compArray: this,
+        ids: this.getIds()
+      });
     };
     MarkerArray.prototype.removeListenerType = function removeListenerType(type) {
-      return Core.removeListenerType(this, this.getIds(), type);
+      return Core.removeListenerType({
+        compArray: this,
+        ids: this.getIds(),
+        type: type
+      });
     };
     return MarkerArray;
   }(gmap.BaseComponentArray);
@@ -1435,10 +1642,14 @@ var gmap = function gmap(config) {
   "use strict";
   var Polygon = function(_gmap$BaseComponent3) {
     _inherits(Polygon, _gmap$BaseComponent3);
-    function Polygon(id, options) {
+    function Polygon(parms) {
       _classCallCheck(this, Polygon);
-      var obj = new google.maps.Polygon(options);
-      return _possibleConstructorReturn(this, _gmap$BaseComponent3.call(this, id, options, obj, ComponentType.POLYGON));
+      return _possibleConstructorReturn(this, _gmap$BaseComponent3.call(this, {
+        id: parms.id,
+        obj: new google.maps.Polygon(parms.options),
+        options: parms.options,
+        type: ComponentType.POLYGON
+      }));
     }
     return Polygon;
   }(gmap.BaseComponent);
@@ -1450,24 +1661,47 @@ var gmap = function gmap(config) {
   "use strict";
   var PolygonArray = function(_gmap$BaseComponentAr3) {
     _inherits(PolygonArray, _gmap$BaseComponentAr3);
-    function PolygonArray(map) {
+    function PolygonArray(parms) {
       _classCallCheck(this, PolygonArray);
-      return _possibleConstructorReturn(this, _gmap$BaseComponentAr3.call(this, map, ComponentType.POLYGON_ARRAY, ComponentType.POLYGON));
+      return _possibleConstructorReturn(this, _gmap$BaseComponentAr3.call(this, {
+        childType: ComponentType.POLYGON,
+        map: parms.map,
+        type: ComponentType.POLYGON_ARRAY
+      }));
     }
-    PolygonArray.prototype.addListener = function addListener(type, fn) {
-      return Core.addListener(this, this.getIds(), type, fn);
+    PolygonArray.prototype.addListener = function addListener(parms) {
+      return Core.addListener({
+        compArray: this,
+        func: parms.func,
+        ids: this.getIds(),
+        type: parms.type
+      });
     };
     PolygonArray.prototype.getPath = function getPath() {
-      return Core.getPath(this, this.getIds());
+      return Core.getPath({
+        compArray: this,
+        ids: this.getIds()
+      });
     };
     PolygonArray.prototype.getPathString = function getPathString() {
-      return Core.getPath(this, this.getIds(), true);
+      return Core.getPath({
+        compArray: this,
+        delimited: true,
+        ids: this.getIds()
+      });
     };
     PolygonArray.prototype.removeAllListeners = function removeAllListeners() {
-      return Core.removeAllListeners(this, this.getIds());
+      return Core.removeAllListeners({
+        compArray: this,
+        ids: this.getIds()
+      });
     };
     PolygonArray.prototype.removeListenerType = function removeListenerType(type) {
-      return Core.removeListenerType(this, this.getIds(), type);
+      return Core.removeListenerType({
+        compArray: this,
+        ids: this.getIds(),
+        type: type
+      });
     };
     return PolygonArray;
   }(gmap.BaseComponentArray);
@@ -1475,4 +1709,4 @@ var gmap = function gmap(config) {
   return gmap;
 }(gmap, gmap.Core, gmap.Const.ComponentType);
 
-gmap.Version = "1.5.2-alpha";
+gmap.Version = "1.6.0-alpha";

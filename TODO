@@ -12,14 +12,15 @@ Components:
   ☐ Allow options to be case insensitive
 
 
-General:
-  ☐ Update all functions to take a single object as a parameter
-
-
 Shapes:
   ☐ Remove shape suffix and move methods to Shape namespace
 
 
 Testing:
   ☐ Create mock google.maps service for testing
+
+
+Util:
+  ☐ Create function for multi actions (_multiDisplay, _multiRemove, etc..)
+
   
