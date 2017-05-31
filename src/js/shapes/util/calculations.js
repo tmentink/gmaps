@@ -7,15 +7,15 @@
 
 
   // ----------------------------------------------------------------------
-  // Public Functions
+  // Public Methods
   // ----------------------------------------------------------------------
 
-  Util.getDestinationPoint = function(latLng, bearing, distance) {
-    bearing = _toRad(bearing)
-    distance = distance / 6371
-
-    const src_lat = _toRad(latLng.lat())
-    const src_lng = _toRad(latLng.lng())
+  Util.getDestinationPoint = function(parms) {
+    const bearing  = _toRad(parms.bearing)
+    const distance = parms.distance / 6371
+    const latLng   = parms.latLng
+    const src_lat  = _toRad(latLng.lat())
+    const src_lng  = _toRad(latLng.lng())
 
     const dest_lat = Math.asin(Math.sin(src_lat) * Math.cos(distance) +
                                Math.cos(src_lat) * Math.sin(distance) *

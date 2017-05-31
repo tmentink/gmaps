@@ -12,20 +12,36 @@
 
   gmap.prototype = {
 
-    addListener(type, fn) {
-      return Core.addListener(this, null, type, fn)
+    addListener(parms) {
+      return Core.addListener({
+        compArray : this,
+        func      : parms.func,
+        type      : parms.type
+      })
     },
 
-    addLabel: function(parms) {
-      return Core.addComponent(this, ComponentType.LABEL, parms)
+    addLabel: function(compOptions) {
+      return Core.addComponent({
+        compOptions : compOptions,
+        map         : this,
+        type        : ComponentType.LABEL
+      })
     },
 
-    addMarker: function(parms) {
-      return Core.addComponent(this, ComponentType.MARKER, parms)
+    addMarker: function(compOptions) {
+      return Core.addComponent({
+        compOptions : compOptions,
+        map         : this,
+        type        : ComponentType.MARKER
+      })
     },
 
-    addPolygon: function(parms) {
-      return Core.addComponent(this, ComponentType.POLYGON, parms)
+    addPolygon: function(compOptions) {
+      return Core.addComponent({
+        compOptions : compOptions,
+        map         : this,
+        type        : ComponentType.POLYGON
+      })
     },
 
     getBounds: function() {
@@ -41,49 +57,76 @@
     },
 
     labels: function(ids) {
-      return Core.search(this, ComponentType.LABEL, ids)
+      return Core.search({
+        ids  : ids,
+        map  : this,
+        type : ComponentType.LABEL
+      })
     },
 
     markers: function(ids) {
-      return Core.search(this, ComponentType.MARKER, ids)
+      return Core.search({
+        ids  : ids,
+        map  : this,
+        type : ComponentType.MARKER
+      })
     },
 
     polygons: function(ids) {
-      return Core.search(this, ComponentType.POLYGON, ids)
+      return Core.search({
+        ids  : ids,
+        map  : this,
+        type : ComponentType.POLYGON
+      })
     },
 
     removeAllListeners: function() {
-      return Core.removeAllListeners(this)
+      return Core.removeAllListeners({ compArray: this })
     },
 
     removeListenerType: function(type) {
-      return Core.removeListenerType(this, null, type)
+      return Core.removeListenerType({
+        compArray : this,
+        type      : type
+      })
     },
 
     reset: function() {
-      return Core.reset(this)
+      return Core.reset({ compArray: this })
     },
 
-    setBounds: function(parms) {
-      return Core.setBounds(this, parms)
+    setBounds: function(comps) {
+      return Core.setBounds({
+        map   : this,
+        comps : comps
+      })
     },
 
     setCenter: function(center) {
       if (center != null) {
-        return Core.update(this, null, { center: center })
+        return Core.update({
+          compArray   : this,
+          compOptions : { center: center }
+        })
       }
       return this
     },
 
     setZoom: function(zoom) {
       if (zoom != null) {
-        return Core.update(this, null, { zoom: zoom })
+        return Core.update({
+          compArray   : this,
+          compOptions : { zoom: zoom }
+        })
       }
       return this
     },
 
-    update: function(options) {
-      return Core.update(this, null, options)
+    update: function(compOptions) {
+      return Core.update({
+        compArray   : this,
+        compOptions : compOptions
+      })
     }
 
   }

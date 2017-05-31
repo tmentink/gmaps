@@ -7,21 +7,24 @@
 
 
   // ----------------------------------------------------------------------
-  // Public Functions
+  // Public Methods
   // ----------------------------------------------------------------------
 
-  Core.reset = function(comp, ids) {
-    if (comp.Type == ComponentType.MAP) {
-      comp.Obj.fitBounds(comp.Init.Bounds)
-      return _reset(comp)
+  Core.reset = function(parms) {
+    const compArray = parms.compArray
+    const ids       = parms.ids
+
+    if (compArray.Type == ComponentType.MAP) {
+      compArray.Obj.fitBounds(compArray.Init.Bounds)
+      return _reset(compArray)
     }
 
     if ($.isArray(ids)) {
-      return _multiReset(comp, ids)
+      return _multiReset(compArray, ids)
     }
 
-    if (comp[ids]) {
-      return _reset(comp[ids])
+    if (compArray[ids]) {
+      return _reset(compArray[ids])
     }
   }
 
@@ -36,10 +39,10 @@
   }
 
   function _multiReset(compArray, ids) {
-    const newCompArray = new gmap[compArray.Type](compArray.Map)
+    const newCompArray = new gmap[compArray.Type]({ map: compArray.Map })
 
     for (var i = 0, i_end = ids.length; i < i_end; i++) {
-      let comp = compArray[ids[i]]
+      const comp = compArray[ids[i]]
 
       if (comp) {
         newCompArray[ids[i]] = _reset(comp)

@@ -7,14 +7,20 @@
 
 
   // ----------------------------------------------------------------------
-  // Public Functions
+  // Public Methods
   // ----------------------------------------------------------------------
 
-  Core.search = function(map, type, ids) {
+  Core.search = function(parms) {
+    const map       = parms.map
+    const ids       = parms.ids
+    const type      = parms.type
     const compArray = map.Components[type]
+
     if (ids) {
-      const exclude = _getIdsToExclude(compArray, Util.toArray(ids))
-      return Util.copy(compArray, exclude)
+      return Util.copy({
+        compArray : compArray,
+        exclude   : _getIdsToExclude(compArray, Util.toArray(ids))
+      })
     }
     return compArray
   }
@@ -28,7 +34,7 @@
     // ensure ids are strings
     ids = ids.toString().split(",")
 
-    const allIDs = compArray.getIds()
+    const allIDs  = compArray.getIds()
     const exclude = allIDs.filter(function(i) {
       return ids.indexOf(i) === -1
     })

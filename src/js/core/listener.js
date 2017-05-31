@@ -11,9 +11,9 @@
   // ----------------------------------------------------------------------
 
   const Action = {
-    ADD:         "add",
-    REMOVE_ALL:  "remove_all",
-    REMOVE_TYPE: "remove_type",
+    ADD         : "add",
+    REMOVE_ALL  : "remove_all",
+    REMOVE_TYPE : "remove_type",
   }
 
   const Execute = {
@@ -30,20 +30,30 @@
 
 
   // ----------------------------------------------------------------------
-  // Public Functions
+  // Public Methods
   // ----------------------------------------------------------------------
 
-  Core.addListener = function(compArray, ids, type, fn) {
-    type = Util.getEventType(type)
-    return _listener(compArray, ids, type, fn, Action.ADD)
+  Core.addListener = function(parms) {
+    const compArray = parms.compArray
+    const func      = parms.func
+    const ids       = parms.ids
+    const type      = Util.getEventType(parms.type)
+
+    return _listener(compArray, ids, type, func, Action.ADD)
   }
 
-  Core.removeAllListeners = function(compArray, ids) {
+  Core.removeAllListeners = function(parms) {
+    const compArray = parms.compArray
+    const ids       = parms.ids
+
     return _listener(compArray, ids, null, null, Action.REMOVE_ALL)
   }
 
-  Core.removeListenerType = function(compArray, ids, type) {
-    type = Util.getEventType(type)
+  Core.removeListenerType = function(parms) {
+    const compArray = parms.compArray
+    const ids       = parms.ids
+    const type      = Util.getEventType(parms.type)
+
     return _listener(compArray, ids, type, null, Action.REMOVE_TYPE)
   }
 
@@ -52,36 +62,36 @@
   // Private Functions
   // ----------------------------------------------------------------------
 
-  function _listener(compArray, ids, type, fn, action) {
+  function _listener(compArray, ids, type, func, action) {
     if (compArray.Type == ComponentType.MAP) {
-      return Execute[action](compArray, type, fn)
+      return Execute[action](compArray, type, func)
     }
 
     if ($.isArray(ids)) {
-      return _multiListener(compArray, ids, type, fn, action)
+      return _multiListener(compArray, ids, type, func, action)
     }
 
     if (compArray[ids]) {
-      return Execute[action](compArray[ids], type, fn)
+      return Execute[action](compArray[ids], type, func)
     }
   }
 
-  function _multiListener(compArray, ids, type, fn, action) {
-    const newCompArray = new gmap[compArray.Type](compArray.Map)
+  function _multiListener(compArray, ids, type, func, action) {
+    const newCompArray = new gmap[compArray.Type]({ map: compArray.Map })
 
     for (var i = 0, i_end = ids.length; i < i_end; i++) {
-      let comp = compArray[ids[i]]
+      const comp = compArray[ids[i]]
 
       if (comp) {
-        newCompArray[ids[i]] = Execute[action](comp, type, fn)
+        newCompArray[ids[i]] = Execute[action](comp, type, func)
       }
     }
 
     return newCompArray
   }
 
-  function _add(comp, type, fn) {
-    google.maps.event.addListener(comp.Obj, type, fn)
+  function _add(comp, type, func) {
+    google.maps.event.addListener(comp.Obj, type, func)
     return comp
   }
 

@@ -12,8 +12,12 @@
 
   class PolygonArray extends gmap.BaseComponentArray {
 
-    constructor(map) {
-      super(map, ComponentType.POLYGON_ARRAY, ComponentType.POLYGON)
+    constructor(parms) {
+      super({
+        childType : ComponentType.POLYGON,
+        map       : parms.map,
+        type      : ComponentType.POLYGON_ARRAY
+      })
     }
 
 
@@ -21,24 +25,43 @@
     // Public Methods
     // --------------------------------------------------------------------
 
-    addListener(type, fn) {
-      return Core.addListener(this, this.getIds(), type, fn)
+    addListener(parms) {
+      return Core.addListener({
+        compArray : this,
+        func      : parms.func,
+        ids       : this.getIds(),
+        type      : parms.type
+      })
     }
 
     getPath() {
-      return Core.getPath(this, this.getIds())
+      return Core.getPath({
+        compArray : this,
+        ids       : this.getIds()
+      })
     }
 
     getPathString() {
-      return Core.getPath(this, this.getIds(), true)
+      return Core.getPath({
+        compArray : this,
+        delimited : true,
+        ids       : this.getIds()
+      })
     }
 
     removeAllListeners() {
-      return Core.removeAllListeners(this, this.getIds())
+      return Core.removeAllListeners({
+        compArray : this,
+        ids       : this.getIds()
+      })
     }
 
     removeListenerType(type) {
-      return Core.removeListenerType(this, this.getIds(), type)
+      return Core.removeListenerType({
+        compArray : this,
+        ids       : this.getIds(),
+        type      : type
+      })
     }
 
   }

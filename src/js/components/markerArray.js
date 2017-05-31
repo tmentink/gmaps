@@ -12,8 +12,12 @@
 
   class MarkerArray extends gmap.BaseComponentArray {
 
-    constructor(map) {
-      super(map, ComponentType.MARKER_ARRAY, ComponentType.MARKER)
+    constructor(parms) {
+      super({
+        childType : ComponentType.MARKER,
+        map       : parms.map,
+        type      : ComponentType.MARKER_ARRAY
+      })
     }
 
 
@@ -21,24 +25,43 @@
     // Public Methods
     // --------------------------------------------------------------------
 
-    addListener(type, fn) {
-      return Core.addListener(this, this.getIds(), type, fn)
+    addListener(parms) {
+      return Core.addListener({
+        compArray : this,
+        func      : parms.func,
+        ids       : this.getIds(),
+        type      : parms.type
+      })
     }
 
     getPosition() {
-      return Core.getPosition(this, this.getIds())
+      return Core.getPosition({
+        compArray : this,
+        ids       : this.getIds()
+      })
     }
 
     getPositionString() {
-      return Core.getPosition(this, this.getIds(), true)
+      return Core.getPosition({
+        compArray : this,
+        delimited : true,
+        ids       : this.getIds()
+      })
     }
 
     removeAllListeners() {
-      return Core.removeAllListeners(this, this.getIds())
+      return Core.removeAllListeners({
+        compArray : this,
+        ids       : this.getIds()
+      })
     }
 
     removeListenerType(type) {
-      return Core.removeListenerType(this, this.getIds(), type)
+      return Core.removeListenerType({
+        compArray : this,
+        ids       : this.getIds(),
+        type      : type
+      })
     }
 
   }

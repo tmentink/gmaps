@@ -15,8 +15,10 @@
       parms.center = Util.toLatLng(parms.center)
     },
     path: function(parms) {
-      parms.paths = Util.toLatLngArray(parms.paths || parms.path)
-      delete parms.path
+      if (parms.paths || parms.path) {
+        parms.paths = Util.toLatLngArray(parms.paths || parms.path)
+        delete parms.path
+      }
     },
     position: function(parms) {
       parms.position = Util.toLatLng(parms.position)
@@ -28,59 +30,61 @@
 
   const ConvertableOptions = {
     Label: {
-      position: Conversions.position,
-      text:     Conversions.text
+      position : Conversions.position,
+      text     : Conversions.text
     },
     Map: {
-      center:   Conversions.center
+      center   : Conversions.center
     },
     Marker: {
-      position: Conversions.position
+      position : Conversions.position
     },
     Polygon: {
-      path:     Conversions.path,
-      paths:    Conversions.path
+      path     : Conversions.path,
+      paths    : Conversions.path
     }
   }
 
 
   // ----------------------------------------------------------------------
-  // Public Functions
+  // Public Methods
   // ----------------------------------------------------------------------
 
-  Util.convertCompOptions = function(type, parms) {
-    type = type.replace("Array", "")
+  Util.convertCompOptions = function(parms) {
+    const compOptions = parms.compOptions
+    const compType    = parms.compType.replace("Array", "")
 
-    Object.keys(ConvertableOptions[type]).forEach(function(key) {
-      ConvertableOptions[type][key](parms)
+    Object.keys(ConvertableOptions[compType]).forEach(function(key) {
+      ConvertableOptions[compType][key](compOptions)
     })
 
-    return parms
+    return compOptions
   }
 
-  Util.copy = function(compArray, exclude) {
-    exclude = _addPrototypesToArray(compArray, exclude)
+  Util.copy = function(parms) {
+    const compArray = parms.compArray
+    const exclude   = _addPrototypesToArray(compArray, parms.exclude)
 
     const copy = $.extend(true, {}, compArray)
     for (var i = 0, i_end = exclude.length; i < i_end; i++) {
       delete copy[exclude[i]]
     }
 
-    const new_comp = new gmap[compArray.Type]()
+    const new_comp = new gmap[compArray.Type]({ map: compArray.Map })
     return $.extend(new_comp, copy)
   }
 
-  Util.getGoogleObjects = function(compArray) {
-    const ids = Util.getIds(compArray)
-    const googleObjects = ids.map(function(id) {
+  Util.getGoogleObjects = function(parms) {
+    const compArray = parms.compArray
+    const ids       = Util.getIds(compArray)
+
+    return ids.map(function(id) {
       return compArray[id].Obj
     })
-
-    return googleObjects
   }
 
-  Util.getIds = function(compArray) {
-    const ids = Object.keys(compArray)
+  Util.getIds = function(parms) {
+    const ids = Object.keys(parms.compArray)
     return _removeComponentProperties(ids)
   }
 
@@ -91,7 +95,7 @@
 
   function _addPrototypesToArray(compArray, array) {
     const proto      = Object.keys(Object.getPrototypeOf(compArray))
-    const base_proto = Object.keys(Object.getPrototypeOf(new gmap.BaseComponentArray("", "")))
+    const base_proto = Object.keys(Object.getPrototypeOf(new gmap.BaseComponentArray({})))
 
     array = proto.concat(array)
     array = base_proto.concat(array)

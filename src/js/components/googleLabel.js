@@ -11,29 +11,29 @@
   // ----------------------------------------------------------------------
 
   const Property = {
-    ALIGN:         "align",
-    FONT_COLOR:    "fontColor",
-    FONT_FAMILY:   "fontFamily",
-    FONT_SIZE:     "fontSize",
-    MAX_ZOOM:      "maxZoom",
-    MIN_ZOOM:      "minZoom",
-    POSITION:      "position",
-    STROKE_WEIGHT: "strokeWeight",
-    STROKE_COLOR:  "strokeColor",
-    VISIBLE:       "visible",
-    TEXT:          "text",
-    Z_INDEX:       "zIndex"
+    ALIGN         : "align",
+    FONT_COLOR    : "fontColor",
+    FONT_FAMILY   : "fontFamily",
+    FONT_SIZE     : "fontSize",
+    MAX_ZOOM      : "maxZoom",
+    MIN_ZOOM      : "minZoom",
+    POSITION      : "position",
+    STROKE_WEIGHT : "strokeWeight",
+    STROKE_COLOR  : "strokeColor",
+    VISIBLE       : "visible",
+    TEXT          : "text",
+    Z_INDEX       : "zIndex"
   }
 
   const Default = {
-    ALIGN:         "center",
-    FONT_COLOR:    "#000",
-    FONT_FAMILY:   "sans-serif",
-    FONT_SIZE:     14,
-    STROKE_WEIGHT: 2,
-    STROKE_COLOR:  "#FFF",
-    VISIBLE:       true,
-    Z_INDEX:       1e3
+    ALIGN         : "center",
+    FONT_COLOR    : "#000",
+    FONT_FAMILY   : "sans-serif",
+    FONT_SIZE     : 14,
+    STROKE_WEIGHT : 2,
+    STROKE_COLOR  : "#FFF",
+    VISIBLE       : true,
+    Z_INDEX       : 1e3
   }
 
 

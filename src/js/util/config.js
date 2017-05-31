@@ -20,15 +20,15 @@
 
 
   // ----------------------------------------------------------------------
-  // Public Functions
+  // Public Methods
   // ----------------------------------------------------------------------
 
   Util.renameConfigOptions = function(userConfig) {
     Object.keys(userConfig).forEach(function(key) {
       Util.renameProperty({
-        obj: userConfig,
-        oldName: key,
-        newName: Util.getConfigOption(key)
+        newName : Util.getConfigOption(key),
+        obj     : userConfig,
+        oldName : key
       })
     })
     return userConfig

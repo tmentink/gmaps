@@ -11,15 +11,18 @@ const gmap = function(config) {
     Util.renameConfigOptions(config)
   }
   config = Util.mergeWithGlobalConfig(config)
-  config.MapOptions = Util.convertCompOptions(ComponentType.MAP, config.MapOptions)
+  config.MapOptions = Util.convertCompOptions({
+    compType    : ComponentType.MAP,
+    compOptions : config.MapOptions
+  })
 
   // check if element with MapId exists
   const mapContainer = document.getElementById(config.MapId)
   if (!mapContainer) {
     return Util.throwError({
-      method: "new gmap",
-      message: "Could not find an element with an Id of " + config.MapId,
-      obj: config
+      method  : "new gmap",
+      message : "Could not find an element with an Id of " + config.MapId,
+      obj     : config
     })
   }
 
@@ -29,21 +32,21 @@ const gmap = function(config) {
   // ----------------------------------------------------------------------
 
   this.Components = {
-    Label:   new gmap.LabelArray(this),
-    Marker:  new gmap.MarkerArray(this),
-    Polygon: new gmap.PolygonArray(this)
+    Label   : new gmap.LabelArray({ map: this }),
+    Marker  : new gmap.MarkerArray({ map: this }),
+    Polygon : new gmap.PolygonArray({ map: this })
   }
   this.Config = config
-  this.Init = {
-    Bounds:  undefined,
-    Options: config.MapOptions
+  this.Init   = {
+    Bounds  : undefined,
+    Options : config.MapOptions
   }
   this.Obj = new google.maps.Map(mapContainer, config.MapOptions)
   this.Obj["GMaps"] = {
-    Id:      config.MapId,
-    Map:     this,
-    Parent:  this,
-    Version: gmap.Version
+    Id      : config.MapId,
+    Map     : this,
+    Parent  : this,
+    Version : gmap.Version
   }
   this.Type    = ComponentType.MAP
   this.Version = gmap.Version

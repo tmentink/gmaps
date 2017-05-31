@@ -7,19 +7,21 @@
 
 
   // ----------------------------------------------------------------------
-  // Public Functions
+  // Public Methods
   // ----------------------------------------------------------------------
 
-  Core.getPath = function(compArray, ids, delimited) {
-    ids = Util.toArray(ids)
+  Core.getPath = function(parms) {
+    const compArray = parms.compArray
+    const delimited = parms.delimited
+    const ids       = Util.toArray(parms.ids)
+    const retVal    = {}
 
-    const retVal = {}
     for (var i = 0, i_end = ids.length; i < i_end; i++) {
-      let id = ids[i]
-      let comp = compArray[id]
+      const id   = ids[i]
+      const comp = compArray[id]
 
       if (comp) {
-        let path = comp.Obj.getPath()
+        const path = comp.Obj.getPath()
         retVal[id] = delimited ? Util.toDelimitedString(path) : path
       }
     }
@@ -27,17 +29,19 @@
     return _formatRetVal(retVal)
   }
 
-  Core.getPosition = function(compArray, ids, delimited) {
-    ids = Util.toArray(ids)
+  Core.getPosition = function(parms) {
+    const compArray = parms.compArray
+    const delimited = parms.delimited
+    const ids       = Util.toArray(parms.ids)
+    const retVal    = {}
 
-    const retVal = {}
     for (var i = 0, i_end = ids.length; i < i_end; i++) {
-      let id = ids[i]
-      let comp = compArray[id]
+      const id   = ids[i]
+      const comp = compArray[id]
 
       if (comp) {
-        let position = comp.Obj.getPosition()
-        retVal[id] = delimited ? Util.toDelimitedString(position) : position
+        const position = comp.Obj.getPosition()
+        retVal[id]     = delimited ? Util.toDelimitedString(position) : position
       }
     }
 

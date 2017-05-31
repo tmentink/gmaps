@@ -24,33 +24,43 @@
 
 
   // ----------------------------------------------------------------------
-  // Public Functions
+  // Public Methods
   // ----------------------------------------------------------------------
 
-  Core.getBounds = function(compArray, ids) {
-    ids = Util.toArray(ids)
+  Core.getBounds = function(parms) {
+    const bounds    = new google.maps.LatLngBounds()
+    const compArray = parms.compArray
+    const ids       = Util.toArray(parms.ids)
 
-    const bounds = new google.maps.LatLngBounds()
     for (var i = 0, i_end = ids.length; i < i_end; i++) {
-      let comp = compArray[ids[i]]
+      const comp = compArray[ids[i]]
 
       if (comp) {
         bounds.union(BoundsFunction[compArray.ChildType](comp))
       }
     }
+
     return bounds
   }
 
-  Core.getCenter = function(compArray, ids) {
-    return Core.getBounds(compArray, ids).getCenter()
+  Core.getCenter = function(parms) {
+    const bounds = Core.getBounds({
+      compArray : parms.compArray,
+      ids       : parms.ids
+    })
+
+    return bounds.getCenter()
   }
 
-  Core.setBounds = function(map, parms) {
-    if ($.type(parms) == "object") {
-      const bounds = _getBoundsByComponents(map.Components, parms)
+  Core.setBounds = function(parms) {
+    const comps = parms.comps
+    const map   = parms.map
+
+    if ($.type(comps) == "object") {
+      const bounds = _getBoundsByComponents(map.Components, comps)
       map.Obj.fitBounds(bounds)
     }
-    else if (parms == "init" || parms == "initial") {
+    else if (comps == "init" || comps == "initial") {
       map.Obj.fitBounds(map.Init.Bounds)
       map.Obj.setZoom(map.Init.Options.zoom)
     }
@@ -63,15 +73,18 @@
   // Private Functions
   // ----------------------------------------------------------------------
 
-  function _getBoundsByComponents(mapComps, parms) {
+  function _getBoundsByComponents(mapComps, comps) {
     const bounds = new google.maps.LatLngBounds()
+    const types  = Object.keys(comps)
 
-    const types = Object.keys(parms)
     for (var i = 0, i_end = types.length; i < i_end; i++) {
-      let type = Util.getComponentType(types[i])
-      let ids = _getIds(mapComps[type], parms[types[i]])
+      const type = Util.getComponentType(types[i])
+      const ids  = _getIds(mapComps[type], comps[types[i]])
 
-      bounds.union(Core.getBounds(mapComps[type], ids))
+      bounds.union(Core.getBounds({
+        compArray : mapComps[type],
+        ids       : ids
+      }))
     }
 
     return bounds
@@ -79,10 +92,10 @@
 
   function _getBoundsByPath(comp) {
     const bounds = new google.maps.LatLngBounds()
-    const paths = comp.Obj.getPaths()
+    const paths  = comp.Obj.getPaths()
 
     for (var i = 0, i_end = paths.length; i < i_end; i++) {
-      let path = paths.getAt(i)
+      const path = paths.getAt(i)
 
       for (var j = 0, j_end = path.getLength(); j < j_end; j++) {
         bounds.extend(path.getAt(j))
@@ -98,8 +111,8 @@
     return bounds
   }
 
-  function _getIds(comp, ids) {
-    return ids == null || ids == "all" ? Util.getIds(comp) : ids
+  function _getIds(compArray, ids) {
+    return ids == null || ids == "all" ? Util.getIds(compArray) : ids
   }
 
 

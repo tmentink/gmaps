@@ -12,20 +12,24 @@
 
   class BaseComponent {
 
-    constructor(id, options, obj, type){
-      const map = options.map.GMaps.Parent
+    constructor(parms){
+      const id      = parms.id
+      const map     = parms.options.map.GMaps.Parent
+      const obj     = parms.obj
+      const options = parms.options
+      const type    = parms.type
 
-      this.Id = id
+      this.Id   = id
       this.Init = {
-        Options: options
+        Options : options
       }
-      this.Map = map
-      this.Obj = obj
+      this.Map  = map
+      this.Obj  = obj
       this.Obj["GMaps"] = {
-        Id:      id,
-        Map:     map,
-        Parent:  this,
-        Version: gmap.Version
+        Id      : id,
+        Map     : map,
+        Parent  : this,
+        Version : gmap.Version
       }
       this.Type = type
     }

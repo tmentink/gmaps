@@ -11,9 +11,9 @@
   // ----------------------------------------------------------------------
 
   const Action = {
-    HIDE:   "hide",
-    SHOW:   "show",
-    TOGGLE: "toggle"
+    HIDE   : "hide",
+    SHOW   : "show",
+    TOGGLE : "toggle"
   }
 
   const Visibility = {
@@ -30,19 +30,19 @@
 
 
   // ----------------------------------------------------------------------
-  // Public Functions
+  // Public Methods
   // ----------------------------------------------------------------------
 
-  Core.hide = function(compArray, ids) {
-    return _display(compArray, ids, Action.HIDE)
+  Core.hide = function(parms) {
+    return _display(parms.compArray, parms.ids, Action.HIDE)
   }
 
-  Core.show = function(compArray, ids) {
-    return _display(compArray, ids, Action.SHOW)
+  Core.show = function(parms) {
+    return _display(parms.compArray, parms.ids, Action.SHOW)
   }
 
-  Core.toggle = function(compArray, ids) {
-    return _display(compArray, ids, Action.TOGGLE)
+  Core.toggle = function(parms) {
+    return _display(parms.compArray, parms.ids, Action.TOGGLE)
   }
 
 
@@ -61,10 +61,10 @@
   }
 
   function _multiDisplay(compArray, ids, action) {
-    const newCompArray = new gmap[compArray.Type](compArray.Map)
+    const newCompArray = new gmap[compArray.Type]({ map: compArray.Map })
 
     for (var i = 0, i_end = ids.length; i < i_end; i++) {
-      let comp = compArray[ids[i]]
+      const comp = compArray[ids[i]]
 
       if (comp) {
         newCompArray[ids[i]] = _setVisibility(comp, action)

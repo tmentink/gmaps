@@ -12,9 +12,13 @@
 
   class Label extends gmap.BaseComponent {
 
-    constructor(id, options) {
-      const obj = new gmap.GoogleLabel(options)
-      super(id, options, obj, ComponentType.LABEL)
+    constructor(parms) {
+      super({
+        id      : parms.id,
+        obj     : new gmap.GoogleLabel(parms.options),
+        options : parms.options,
+        type    : ComponentType.LABEL
+      })
     }
 
   }

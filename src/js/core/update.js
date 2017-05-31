@@ -7,28 +7,37 @@
 
 
   // ----------------------------------------------------------------------
-  // Public Functions
+  // Public Methods
   // ----------------------------------------------------------------------
 
-  Core.update = function(comp, ids, options) {
-    if (options == undefined) {
+  Core.update = function(parms) {
+    const compArray = parms.compArray
+    let compOptions = parms.compOptions
+    const ids       = parms.ids
+    const type      = compArray.ChildType || compArray.Type
+
+    if (compOptions == undefined) {
       return Util.throwError({
-        method: "update",
-        message: "Must supply " + (comp.ChildType || comp.Type) + " options"
+        method  : "update",
+        message : "Must supply " + type + " options"
       })
     }
-    options = Util.convertCompOptions(comp.Type, options)
 
-    if (comp.Type == ComponentType.MAP) {
-      return _update(comp, options)
+    compOptions = Util.convertCompOptions({
+      compType    : type,
+      compOptions : compOptions
+    })
+
+    if (type == ComponentType.MAP) {
+      return _update(compArray, compOptions)
     }
 
     if ($.isArray(ids)) {
-      return _multiUpdate(comp, ids, options)
+      return _multiUpdate(compArray, ids, compOptions)
     }
 
-    if (comp[ids]) {
-      return _update(comp[ids], options)
+    if (compArray[ids]) {
+      return _update(compArray[ids], compOptions)
     }
   }
 
@@ -43,10 +52,10 @@
   }
 
   function _multiUpdate(compArray, ids, options) {
-    const newCompArray = new gmap[compArray.Type](compArray.Map)
+    const newCompArray = new gmap[compArray.Type]({ map: compArray.Map })
 
     for (var i = 0, i_end = ids.length; i < i_end; i++) {
-      let comp = compArray[ids[i]]
+      const comp = compArray[ids[i]]
 
       if (comp) {
         newCompArray[ids[i]] = _update(comp, options)

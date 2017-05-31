@@ -12,9 +12,13 @@
 
   class Polygon extends gmap.BaseComponent {
 
-    constructor(id, options) {
-      const obj = new google.maps.Polygon(options)
-      super(id, options, obj, ComponentType.POLYGON)
+    constructor(parms) {
+      super({
+        id      : parms.id,
+        obj     : new google.maps.Polygon(parms.options),
+        options : parms.options,
+        type    : ComponentType.POLYGON
+      })
     }
 
   }

@@ -7,13 +7,13 @@
 
 
   // ----------------------------------------------------------------------
-  // Public Functions
+  // Public Methods
   // ----------------------------------------------------------------------
 
   Util.renameProperty = function(parms) {
+    const newName = parms.newName
     const obj     = parms.obj
     const oldName = parms.oldName
-    const newName = parms.newName
 
     if (oldName == newName) {
       return

@@ -2,7 +2,6 @@
 // GMaps: components/baseComponentArray.js
 // ------------------------------------------------------------------------
 
-
 !((gmap, Core, Util) => {
   "use strict"
 
@@ -13,10 +12,10 @@
 
   class BaseComponentArray {
 
-    constructor(map, type, childType) {
-      this.ChildType = childType
-      this.Map = map
-      this.Type = type
+    constructor(parms) {
+      this.ChildType = parms.childType
+      this.Map       = parms.map
+      this.Type      = parms.type
     }
 
 
@@ -25,54 +24,86 @@
     // --------------------------------------------------------------------
 
     getBounds() {
-      return Core.getBounds(this, this.getIds())
+      return Core.getBounds({
+        compArray : this,
+        ids       : this.getIds()
+      })
     }
 
     getCenter() {
-      return Core.getCenter(this, this.getIds())
+      return Core.getCenter({
+        compArray : this,
+        ids       : this.getIds()
+      })
     }
 
     getGoogleObjects() {
-      return Util.getGoogleObjects(this)
+      return Util.getGoogleObjects({ compArray: this })
     }
 
     getIds() {
-      return Util.getIds(this)
+      return Util.getIds({ compArray: this })
     }
 
     hide() {
-      return Core.hide(this, this.getIds())
+      return Core.hide({
+        compArray : this,
+        ids       : this.getIds()
+      })
     }
 
     others() {
-      return Util.copy(this.Map.Components[this.ChildType], this.getIds())
+      return Util.copy({
+        compArray : this.Map.Components[this.ChildType],
+        exclude   : this.getIds()
+      })
     }
 
     remove() {
-      return Core.remove(this, this.getIds())
+      return Core.remove({
+        compArray : this,
+        ids       : this.getIds()
+      })
     }
 
     reset() {
-      return Core.reset(this, this.getIds())
+      return Core.reset({
+        compArray : this,
+        ids       : this.getIds()
+      })
     }
 
     show() {
-      return Core.show(this, this.getIds())
+      return Core.show({
+        compArray : this,
+        ids       : this.getIds()
+      })
     }
 
     toggle() {
-      return Core.toggle(this, this.getIds())
+      return Core.toggle({
+        compArray : this,
+        ids       : this.getIds()
+      })
     }
 
-    update(options) {
-      return Core.update(this, this.getIds(), options)
+    update(compOptions) {
+      return Core.update({
+        compArray   : this,
+        compOptions : compOptions,
+        ids         : this.getIds()
+      })
     }
 
     zoom() {
-      let parms = {}
-      parms[this.ChildType] = this.getIds()
+      const comps = {}
+      comps[this.ChildType] = this.getIds()
 
-      Core.setBounds(this.Map, parms)
+      Core.setBounds({
+        map   : this.Map,
+        comps : comps
+      })
+
       return this
     }
 

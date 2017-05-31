@@ -7,10 +7,13 @@
 
 
   // ----------------------------------------------------------------------
-  // Public Functions
+  // Public Methods
   // ----------------------------------------------------------------------
 
-  Core.remove = function(compArray, ids) {
+  Core.remove = function(parms) {
+    const compArray = parms.compArray
+    const ids       = parms.ids
+
     if ($.isArray(ids)) {
       return _multiRemove(compArray, ids)
     }
@@ -35,10 +38,10 @@
   }
 
   function _multiRemove(compArray, ids) {
-    const newCompArray = new gmap[compArray.Type](compArray.Map)
+    const newCompArray = new gmap[compArray.Type]({ map: compArray.Map })
 
     for (var i = 0, i_end = ids.length; i < i_end; i++) {
-      let comp = compArray[ids[i]]
+      const comp = compArray[ids[i]]
 
       if (comp) {
         newCompArray[ids[i]] = _remove(comp)

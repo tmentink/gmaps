@@ -12,8 +12,12 @@
 
   class LabelArray extends gmap.BaseComponentArray {
 
-    constructor(map) {
-      super(map, ComponentType.LABEL_ARRAY, ComponentType.LABEL)
+    constructor(parms) {
+      super({
+        childType : ComponentType.LABEL,
+        map       : parms.map,
+        type      : ComponentType.LABEL_ARRAY
+      })
     }
 
 
@@ -22,11 +26,18 @@
     // --------------------------------------------------------------------
 
     getPosition() {
-      return Core.getPosition(this, this.getIds())
+      return Core.getPosition({
+        compArray : this,
+        ids       : this.getIds()
+      })
     }
 
     getPositionString() {
-      return Core.getPosition(this, this.getIds(), true)
+      return Core.getPosition({
+        compArray : this,
+        delimited : true,
+        ids       : this.getIds()
+      })
     }
 
   }

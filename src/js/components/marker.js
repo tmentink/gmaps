@@ -12,9 +12,13 @@
 
   class Marker extends gmap.BaseComponent {
 
-    constructor(id, options) {
-      const obj = new google.maps.Marker(options)
-      super(id, options, obj, ComponentType.MARKER)
+    constructor(parms) {
+      super({
+        id      : parms.id,
+        obj     : new google.maps.Marker(parms.options),
+        options : parms.options,
+        type    : ComponentType.MARKER
+      })
     }
 
   }

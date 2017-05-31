@@ -7,18 +7,18 @@
 
 
   // ----------------------------------------------------------------------
-  // Public Functions
+  // Public Methods
   // ----------------------------------------------------------------------
 
-  Util.toArray = function(value) {
-    if ($.type(value) == "number") {
-      value = value.toString().split()
+  Util.toArray = function(val) {
+    if ($.type(val) == "number") {
+      val = val.toString().split()
     }
-    else if ($.type(value) == "string") {
-      value = value.split()
+    else if ($.type(val) == "string") {
+      val = val.split()
     }
 
-    return value
+    return val
   }
 
   Util.toDelimitedString = function(obj) {
@@ -50,7 +50,7 @@
   Util.toLatLngArray = function(val) {
     if ($.type(val) == "string") {
       const latLngArray = []
-      const coordPairs = val.split(Config.Delimiter.LatLng || "|")
+      const coordPairs  = val.split(Config.Delimiter.LatLng || "|")
 
       for (var i = 0, i_end = coordPairs.length; i < i_end; i++) {
         latLngArray.push(Util.toLatLng(coordPairs[i]))
