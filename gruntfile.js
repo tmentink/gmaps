@@ -21,7 +21,7 @@ module.exports = function(grunt) {
     // --------------------------------------------------------------------
     // Grunt Tasks
     // --------------------------------------------------------------------
-    
+
     babel: {
       js: {
         files: {
@@ -68,13 +68,13 @@ module.exports = function(grunt) {
       dev: {
         options: {
           banner: "<%= banner %>",
-          beautify: {
-            beautify: true,
-            indent_level: 2,
-          },
+          beautify: true,
           compress: false,
           mangle: false,
-          preserveComments: /\*/
+          output: {
+            indent_level: 2,
+            comments: /\*/
+          }
         },
         src: "<%= concat.gmaps.dest %>",
         dest: "dist/<%= pkg.name %>.js",
@@ -90,7 +90,7 @@ module.exports = function(grunt) {
     watch: {
       js: {
         files: ["src/js/**/*.js"],
-        tasks: ["concat", "babel", "uglify:dev"]
+        tasks: ["concat", "stamp", "babel", "uglify:dev", "clean"]
       }
     }
   })
