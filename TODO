@@ -10,6 +10,11 @@ Add Remaining Components:
 Components:
   ☐ Consider adding methods to single components
   ☐ Allow options to be case insensitive
+  ☐ Add onClick, onDragStart, etc... options
+
+
+Constants:
+  ☐ Add MapEvents, MarkerEvents, etc... similar to MapTypeId
 
 
 Shapes:
