@@ -36,6 +36,13 @@
       })
     },
 
+    fitBounds: function(comps) {
+      return Core.fitBounds({
+        map   : this,
+        comps : comps
+      })
+    },
+
     getBounds: function() {
       return this.Obj.getBounds()
     },
@@ -89,13 +96,6 @@
 
     reset: function() {
       return Core.reset({ compArray: this })
-    },
-
-    setBounds: function(comps) {
-      return Core.setBounds({
-        map   : this,
-        comps : comps
-      })
     },
 
     setCenter: function(center) {

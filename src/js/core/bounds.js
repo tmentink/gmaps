@@ -27,6 +27,22 @@ var Core = ((Core) => {
   // Public Methods
   // ----------------------------------------------------------------------
 
+  Core.fitBounds = function(parms) {
+    const comps = parms.comps
+    const map   = parms.map
+
+    if ($.type(comps) == "object") {
+      const bounds = _getBoundsByComponents(map.Components, comps)
+      map.Obj.fitBounds(bounds)
+    }
+    else if (comps == "init" || comps == "initial") {
+      map.Obj.fitBounds(map.Init.Bounds)
+      map.Obj.setZoom(map.Init.Options.zoom)
+    }
+
+    return map
+  }
+
   Core.getBounds = function(parms) {
     const bounds    = new google.maps.LatLngBounds()
     const compArray = parms.compArray
@@ -50,22 +66,6 @@ var Core = ((Core) => {
     })
 
     return bounds.getCenter()
-  }
-
-  Core.setBounds = function(parms) {
-    const comps = parms.comps
-    const map   = parms.map
-
-    if ($.type(comps) == "object") {
-      const bounds = _getBoundsByComponents(map.Components, comps)
-      map.Obj.fitBounds(bounds)
-    }
-    else if (comps == "init" || comps == "initial") {
-      map.Obj.fitBounds(map.Init.Bounds)
-      map.Obj.setZoom(map.Init.Options.zoom)
-    }
-
-    return map
   }
 
 

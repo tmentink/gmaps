@@ -99,7 +99,7 @@ var Components = ((Components) => {
       const comps = {}
       comps[this.ChildType] = this.getIds()
 
-      Core.setBounds({
+      Core.fitBounds({
         map   : this.Map,
         comps : comps
       })
