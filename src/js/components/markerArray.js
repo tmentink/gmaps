@@ -25,12 +25,12 @@
     // Public Methods
     // --------------------------------------------------------------------
 
-    addListener(parms) {
+    on(type, func) {
       return Core.addListener({
         compArray : this,
-        func      : parms.func,
+        func      : func,
         ids       : this.getIds(),
-        type      : parms.type
+        type      : type
       })
     }
 
@@ -49,15 +49,8 @@
       })
     }
 
-    removeAllListeners() {
-      return Core.removeAllListeners({
-        compArray : this,
-        ids       : this.getIds()
-      })
-    }
-
-    removeListenerType(type) {
-      return Core.removeListenerType({
+    off(type) {
+      return Core.removeListener({
         compArray : this,
         ids       : this.getIds(),
         type      : type

@@ -12,14 +12,6 @@
 
   gmap.prototype = {
 
-    addListener(parms) {
-      return Core.addListener({
-        compArray : this,
-        func      : parms.func,
-        type      : parms.type
-      })
-    },
-
     addLabel: function(compOptions) {
       return Core.addComponent({
         compOptions : compOptions,
@@ -72,22 +64,26 @@
       })
     },
 
+    on: function(type, func) {
+      return Core.addListener({
+        compArray : this,
+        func      : func,
+        type      : type
+      })
+    },
+
+    off: function(type) {
+      return Core.removeListener({
+        compArray : this,
+        type      : type
+      })
+    },
+
     polygons: function(ids) {
       return Core.search({
         ids  : ids,
         map  : this,
         type : ComponentType.POLYGON
-      })
-    },
-
-    removeAllListeners: function() {
-      return Core.removeAllListeners({ compArray: this })
-    },
-
-    removeListenerType: function(type) {
-      return Core.removeListenerType({
-        compArray : this,
-        type      : type
       })
     },
 

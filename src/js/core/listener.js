@@ -42,19 +42,13 @@
     return _listener(compArray, ids, type, func, Action.ADD)
   }
 
-  Core.removeAllListeners = function(parms) {
-    const compArray = parms.compArray
-    const ids       = parms.ids
-
-    return _listener(compArray, ids, null, null, Action.REMOVE_ALL)
-  }
-
-  Core.removeListenerType = function(parms) {
+  Core.removeListener = function(parms) {
     const compArray = parms.compArray
     const ids       = parms.ids
     const type      = Util.getEventType(parms.type)
+    const action    = type != "all" ? Action.REMOVE_TYPE : Action.REMOVE_ALL
 
-    return _listener(compArray, ids, type, null, Action.REMOVE_TYPE)
+    return _listener(compArray, ids, type, null, action)
   }
 
 
