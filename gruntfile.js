@@ -60,7 +60,7 @@ module.exports = function(grunt) {
       gmaps: {
         options: {
           banner: "<%= dependencyCheck %><%= closure.start %>",
-          footer: "gmap.Version='<%= version %>'<%= closure.end %>"
+          footer: "gmap.version='<%= version %>'<%= closure.end %>"
         },
         files: {
           src: "<%= concat.gmaps.dest %>"

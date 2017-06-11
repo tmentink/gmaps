@@ -41,14 +41,14 @@
       Options : config.MapOptions
     }
     this.Obj = new google.maps.Map(mapContainer, config.MapOptions)
-    this.Obj["GMaps"] = {
-      Id      : config.MapId,
-      Map     : this,
-      Parent  : this,
-      Version : gmap.Version
+    this.Obj["gmaps"] = {
+      id      : config.MapId,
+      map     : this,
+      parent  : this,
+      version : gmap.version
     }
     this.Type    = Const.ComponentType.MAP
-    this.Version = gmap.Version
+    this.Version = gmap.version
 
     // save bounds after map has finished loading
     google.maps.event.addListenerOnce(this.Obj, Const.EventType.TILES_LOADED, () => {

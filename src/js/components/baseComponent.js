@@ -14,7 +14,7 @@ var Components = ((Components) => {
 
     constructor(parms){
       const id      = parms.id
-      const map     = parms.options.map.GMaps.Parent
+      const map     = parms.options.map.gmaps.parent
       const obj     = parms.obj
       const options = parms.options
       const type    = parms.type
@@ -25,11 +25,11 @@ var Components = ((Components) => {
       }
       this.Map  = map
       this.Obj  = obj
-      this.Obj["GMaps"] = {
-        Id      : id,
-        Map     : map,
-        Parent  : this,
-        Version : gmap.Version
+      this.Obj["gmaps"] = {
+        id      : id,
+        map     : map,
+        parent  : this,
+        version : gmap.version
       }
       this.Type = type
     }
