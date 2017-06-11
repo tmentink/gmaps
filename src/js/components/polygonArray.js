@@ -2,7 +2,7 @@
 // GMaps: components/polygonArray.js
 // ------------------------------------------------------------------------
 
-!((gmap, Core, ComponentType) => {
+var Components = ((Components, ComponentType) => {
   "use strict"
 
 
@@ -10,7 +10,7 @@
   // Class Definition
   // ----------------------------------------------------------------------
 
-  class PolygonArray extends gmap.BaseComponentArray {
+  class PolygonArray extends Components.BaseComponentArray {
 
     constructor(parms) {
       super({
@@ -64,7 +64,7 @@
   // Namespace
   // ----------------------------------------------------------------------
 
-  gmap.PolygonArray = PolygonArray
+  Components.PolygonArray = PolygonArray
 
-  return gmap
-})(gmap, gmap.Core, gmap.Const.ComponentType)
+  return Components
+})(Components || (Components = {}), Const.ComponentType)

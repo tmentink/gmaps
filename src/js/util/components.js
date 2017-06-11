@@ -2,7 +2,7 @@
 // GMaps: util/components.js
 // ------------------------------------------------------------------------
 
-!((Util, Const) => {
+var Util = ((Util) => {
   "use strict"
 
 
@@ -70,7 +70,7 @@
       delete copy[exclude[i]]
     }
 
-    const new_comp = new gmap[compArray.Type]({ map: compArray.Map })
+    const new_comp = new Components[compArray.Type]({ map: compArray.Map })
     return $.extend(new_comp, copy)
   }
 
@@ -95,7 +95,7 @@
 
   function _addPrototypesToArray(compArray, array) {
     const proto      = Object.keys(Object.getPrototypeOf(compArray))
-    const base_proto = Object.keys(Object.getPrototypeOf(new gmap.BaseComponentArray({})))
+    const base_proto = Object.keys(Object.getPrototypeOf(new Components.BaseComponentArray({})))
 
     array = proto.concat(array)
     array = base_proto.concat(array)
@@ -115,4 +115,4 @@
 
 
   return Util
-})(gmap.Util || (gmap.Util = {}), gmap.Const)
+})(Util || (Util = {}))

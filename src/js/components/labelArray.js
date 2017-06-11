@@ -2,7 +2,7 @@
 // GMaps: components/labelArray.js
 // ------------------------------------------------------------------------
 
-!((gmap, Core, ComponentType) => {
+var Components = ((Components, ComponentType) => {
   "use strict"
 
 
@@ -10,7 +10,7 @@
   // Class Definition
   // ----------------------------------------------------------------------
 
-  class LabelArray extends gmap.BaseComponentArray {
+  class LabelArray extends Components.BaseComponentArray {
 
     constructor(parms) {
       super({
@@ -47,7 +47,7 @@
   // Namespace
   // ----------------------------------------------------------------------
 
-  gmap.LabelArray = LabelArray
+  Components.LabelArray = LabelArray
 
-  return gmap
-})(gmap, gmap.Core, gmap.Const.ComponentType)
+  return Components
+})(Components || (Components = {}), Const.ComponentType)

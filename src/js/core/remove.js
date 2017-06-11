@@ -2,7 +2,7 @@
 // GMaps: core/remove.js
 // ------------------------------------------------------------------------
 
-!((Core) => {
+var Core = ((Core) => {
   "use strict"
 
 
@@ -38,7 +38,7 @@
   }
 
   function _multiRemove(compArray, ids) {
-    const newCompArray = new gmap[compArray.Type]({ map: compArray.Map })
+    const newCompArray = new Components[compArray.Type]({ map: compArray.Map })
 
     for (var i = 0, i_end = ids.length; i < i_end; i++) {
       const comp = compArray[ids[i]]
@@ -53,4 +53,4 @@
 
 
   return Core
-})(gmap.Core || (gmap.Core = {}))
+})(Core || (Core = {}))

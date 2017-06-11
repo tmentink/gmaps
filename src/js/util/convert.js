@@ -2,7 +2,7 @@
 // GMaps: util/convert.js
 // ------------------------------------------------------------------------
 
-!((Util, Config) => {
+var Util = ((Util, Config) => {
   "use strict"
 
 
@@ -94,4 +94,4 @@
 
 
   return Util
-})(gmap.Util || (gmap.Util = {}), gmap.Config)
+})(Util || (Util = {}), gmap.Config)

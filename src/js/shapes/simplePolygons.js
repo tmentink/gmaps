@@ -2,7 +2,7 @@
 // GMaps: shapes/simplePolygons.js
 // ------------------------------------------------------------------------
 
-!((gmap, Util) => {
+!((gmap) => {
   "use strict"
 
 
@@ -84,4 +84,4 @@
 
 
   return gmap
-})(gmap, gmap.Util)
+})(gmap)

@@ -2,7 +2,7 @@
 // GMaps: components/markerArray.js
 // ------------------------------------------------------------------------
 
-!((gmap, Core, ComponentType) => {
+var Components = ((Components, ComponentType) => {
   "use strict"
 
 
@@ -10,7 +10,7 @@
   // Class Definition
   // ----------------------------------------------------------------------
 
-  class MarkerArray extends gmap.BaseComponentArray {
+  class MarkerArray extends Components.BaseComponentArray {
 
     constructor(parms) {
       super({
@@ -64,7 +64,7 @@
   // Namespace
   // ----------------------------------------------------------------------
 
-  gmap.MarkerArray = MarkerArray
+  Components.MarkerArray = MarkerArray
 
-  return gmap
-})(gmap, gmap.Core, gmap.Const.ComponentType)
+  return Components
+})(Components || (Components = {}), Const.ComponentType)

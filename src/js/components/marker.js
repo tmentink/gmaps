@@ -2,7 +2,7 @@
 // GMaps: components/marker.js
 // ------------------------------------------------------------------------
 
-!((gmap, ComponentType) => {
+var Components = ((Components, ComponentType) => {
   "use strict"
 
 
@@ -10,7 +10,7 @@
   // Class Definition
   // ----------------------------------------------------------------------
 
-  class Marker extends gmap.BaseComponent {
+  class Marker extends Components.BaseComponent {
 
     constructor(parms) {
       super({
@@ -28,7 +28,7 @@
   // Namespace
   // ----------------------------------------------------------------------
 
-  gmap.Marker = Marker
+  Components.Marker = Marker
 
-  return gmap
-})(gmap, gmap.Const.ComponentType)
+  return Components
+})(Components || (Components = {}), Const.ComponentType)

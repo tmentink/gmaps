@@ -2,7 +2,7 @@
 // GMaps: components/label.js
 // ------------------------------------------------------------------------
 
-!((gmap, ComponentType) => {
+var Components = ((Components, ComponentType) => {
   "use strict"
 
 
@@ -10,12 +10,12 @@
   // Class Definition
   // ----------------------------------------------------------------------
 
-  class Label extends gmap.BaseComponent {
+  class Label extends Components.BaseComponent {
 
     constructor(parms) {
       super({
         id      : parms.id,
-        obj     : new gmap.GoogleLabel(parms.options),
+        obj     : new Components.GoogleLabel(parms.options),
         options : parms.options,
         type    : ComponentType.LABEL
       })
@@ -28,7 +28,7 @@
   // Namespace
   // ----------------------------------------------------------------------
 
-  gmap.Label = Label
+  Components.Label = Label
 
-  return gmap
-})(gmap, gmap.Const.ComponentType)
+  return Components
+})(Components || (Components = {}), Const.ComponentType)

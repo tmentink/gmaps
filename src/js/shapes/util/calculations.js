@@ -2,7 +2,7 @@
 // GMaps: shapes/util/calculations.js
 // ------------------------------------------------------------------------
 
-!((Util) => {
+var Util = ((Util) => {
   "use strict"
 
 
@@ -52,4 +52,4 @@
 
 
   return Util
-})(gmap.Util || (gmap.Util = {}))
+})(Util || (Util = {}))

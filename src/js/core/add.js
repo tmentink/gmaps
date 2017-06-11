@@ -2,7 +2,7 @@
 // GMaps: core/add.js
 // ------------------------------------------------------------------------
 
-!((Core, Util) => {
+var Core = ((Core) => {
   "use strict"
 
 
@@ -50,7 +50,7 @@
       compOptions : compOptions
     })
 
-    const comp = new gmap[type]({
+    const comp = new Components[type]({
       id      : compOptions.id,
       options : _mergeDefaults(map, type, compOptions)
     })
@@ -73,7 +73,7 @@
   }
 
   function _createNewCompArray(type, map) {
-    return new gmap[type + "Array"]({ map: map })
+    return new Components[type + "Array"]({ map: map })
   }
 
   function _mergeDefaults(map, type, parms) {
@@ -119,4 +119,4 @@
 
 
   return Core
-})(gmap.Core || (gmap.Core = {}), gmap.Util)
+})(Core || (Core = {}))

@@ -2,7 +2,7 @@
 // GMaps: components/googleLabel.js
 // ------------------------------------------------------------------------
 
-!((gmap) => {
+var Components = ((Components) => {
   "use strict"
 
 
@@ -209,7 +209,7 @@
   // Namespace
   // ----------------------------------------------------------------------
 
-  gmap.GoogleLabel = googleLabel
+  Components.GoogleLabel = googleLabel
 
-  return gmap
-})(gmap)
+  return Components
+})(Components || (Components = {}))

@@ -2,7 +2,7 @@
 // GMaps: constants.js
 // ------------------------------------------------------------------------
 
-!((Const) => {
+var Const = ((Const) => {
   "use strict"
 
 
@@ -73,4 +73,4 @@
 
 
   return Const
-})(gmap.Const || (gmap.Const = {}))
+})(Const || (Const = {}))

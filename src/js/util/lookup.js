@@ -2,7 +2,7 @@
 // GMaps: util/lookup.js
 // ------------------------------------------------------------------------
 
-!((Util, Const) => {
+var Util = ((Util) => {
   "use strict"
 
 
@@ -90,4 +90,4 @@
 
 
   return Util
-})(gmap.Util || (gmap.Util = {}), gmap.Const)
+})(Util || (Util = {}))

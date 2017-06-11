@@ -2,7 +2,7 @@
 // GMaps: prototype.js
 // ------------------------------------------------------------------------
 
-!((gmap, Core, ComponentType) => {
+!((ComponentType) => {
   "use strict"
 
 
@@ -129,4 +129,4 @@
 
 
   return gmap
-})(gmap, gmap.Core, gmap.Const.ComponentType)
+})(Const.ComponentType)

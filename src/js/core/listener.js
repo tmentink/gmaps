@@ -2,7 +2,7 @@
 // GMaps: core/listener.js
 // ------------------------------------------------------------------------
 
-!((Core, Util, ComponentType) => {
+var Core = ((Core, ComponentType) => {
   "use strict"
 
 
@@ -71,7 +71,7 @@
   }
 
   function _multiListener(compArray, ids, type, func, action) {
-    const newCompArray = new gmap[compArray.Type]({ map: compArray.Map })
+    const newCompArray = new Components[compArray.Type]({ map: compArray.Map })
 
     for (var i = 0, i_end = ids.length; i < i_end; i++) {
       const comp = compArray[ids[i]]
@@ -101,4 +101,4 @@
 
 
   return Core
-})(gmap.Core || (gmap.Core = {}), gmap.Util, gmap.Const.ComponentType)
+})(Core || (Core = {}), Const.ComponentType)

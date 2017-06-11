@@ -2,7 +2,7 @@
 // GMaps: core/coordinates.js
 // ------------------------------------------------------------------------
 
-!((Core, Util) => {
+var Core = ((Core) => {
   "use strict"
 
 
@@ -60,4 +60,4 @@
 
 
   return Core
-})(gmap.Core || (gmap.Core = {}), gmap.Util)
+})(Core || (Core = {}))

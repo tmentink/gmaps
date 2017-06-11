@@ -2,7 +2,7 @@
 // GMaps: components/baseComponent.js
 // ------------------------------------------------------------------------
 
-!((gmap) => {
+var Components = ((Components) => {
   "use strict"
 
 
@@ -41,7 +41,7 @@
   // Namespace
   // ----------------------------------------------------------------------
 
-  gmap.BaseComponent = BaseComponent
+  Components.BaseComponent = BaseComponent
 
-  return gmap
-})(gmap)
+  return Components
+})(Components || (Components = {}))

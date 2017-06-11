@@ -2,7 +2,7 @@
 // GMaps: components/polygon.js
 // ------------------------------------------------------------------------
 
-!((gmap, ComponentType) => {
+var Components = ((Components, ComponentType) => {
   "use strict"
 
 
@@ -10,7 +10,7 @@
   // Class Definition
   // ----------------------------------------------------------------------
 
-  class Polygon extends gmap.BaseComponent {
+  class Polygon extends Components.BaseComponent {
 
     constructor(parms) {
       super({
@@ -28,7 +28,7 @@
   // Namespace
   // ----------------------------------------------------------------------
 
-  gmap.Polygon = Polygon
+  Components.Polygon = Polygon
 
-  return gmap
-})(gmap, gmap.Const.ComponentType)
+  return Components
+})(Components || (Components = {}), Const.ComponentType)

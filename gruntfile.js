@@ -16,7 +16,10 @@ module.exports = function(grunt) {
     dependencyCheck: "if (typeof google === 'undefined' || typeof google.maps === 'undefined') {\n" +
                      "throw new Error('<%= pkg.name %>.js requires Google Maps JavaScript API v3.')\n" +
                      "};\n",
-
+    closure: {
+      start: "!function() {\n",
+      end: "}()"
+    },
 
     // --------------------------------------------------------------------
     // Grunt Tasks
@@ -56,8 +59,8 @@ module.exports = function(grunt) {
     stamp: {
       gmaps: {
         options: {
-          banner: "<%= dependencyCheck %>",
-          footer: "gmap.Version='<%= version %>'"
+          banner: "<%= dependencyCheck %><%= closure.start %>",
+          footer: "gmap.Version='<%= version %>'<%= closure.end %>"
         },
         files: {
           src: "<%= concat.gmaps.dest %>"
@@ -98,6 +101,6 @@ module.exports = function(grunt) {
   require("load-grunt-tasks")(grunt)
   require("time-grunt")(grunt)
 
-  grunt.registerTask("default", ["eslint", "concat", "stamp", "babel", "uglify", "clean"])
+  grunt.registerTask("default", ["eslint", "concat", "babel", "stamp", "uglify", "clean"])
   grunt.registerTask("lint", ["eslint"])
 }
