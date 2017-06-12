@@ -61,6 +61,11 @@ var Util = ((Util, Config) => {
     return val
   }
 
+  Util.toLowerCase = function(val) {
+    const regex = /\s+|\_+/g
+    return val.toLowerCase().replace(regex, "")
+  }
+
 
   // ----------------------------------------------------------------------
   // Private Functions

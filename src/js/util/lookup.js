@@ -71,20 +71,18 @@ var Util = ((Util) => {
   // Public Methods
   // ----------------------------------------------------------------------
 
-  const regex = /\s+|\_+/g
-
   Util.getConfigOption = function(option) {
-    option = option.toLowerCase().replace(regex, "")
+    option = Util.toLowerCase(option)
     return ConfigAlias[option] || option
   }
 
   Util.getComponentType = function(type) {
-    type = type.toLowerCase().replace(regex, "")
+    type = Util.toLowerCase(type)
     return ComponentTypeAlias[type] || type
   }
 
   Util.getEventType = function(event) {
-    event = event.toLowerCase().replace(regex, "")
+    event = Util.toLowerCase(event)
     return EventTypeAlias[event] || event
   }
 
