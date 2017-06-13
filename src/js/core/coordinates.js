@@ -7,12 +7,29 @@ var Core = ((Core) => {
 
 
   // ----------------------------------------------------------------------
+  // Constants
+  // ----------------------------------------------------------------------
+
+  const CoordinateFunctions = {
+    Label: function(obj) {
+      return obj.getPosition()
+    },
+    Marker: function(obj) {
+      return obj.getPosition()
+    },
+    Polygon: function(obj) {
+      return obj.getPaths()
+    }
+  }
+
+
+  // ----------------------------------------------------------------------
   // Public Methods
   // ----------------------------------------------------------------------
 
-  Core.getPath = function(parms) {
+  Core.getCoordinates = function(parms) {
     const compArray = parms.compArray
-    const delimited = parms.delimited
+    const stringify = parms.stringify
     const ids       = Util.toArray(parms.ids)
     const retVal    = {}
 
@@ -21,27 +38,8 @@ var Core = ((Core) => {
       const comp = compArray[id]
 
       if (comp) {
-        const path = comp.Obj.getPath()
-        retVal[id] = delimited ? Util.toDelimitedString(path) : path
-      }
-    }
-
-    return _formatRetVal(retVal)
-  }
-
-  Core.getPosition = function(parms) {
-    const compArray = parms.compArray
-    const delimited = parms.delimited
-    const ids       = Util.toArray(parms.ids)
-    const retVal    = {}
-
-    for (var i = 0, i_end = ids.length; i < i_end; i++) {
-      const id   = ids[i]
-      const comp = compArray[id]
-
-      if (comp) {
-        const position = comp.Obj.getPosition()
-        retVal[id]     = delimited ? Util.toDelimitedString(position) : position
+        const coords = CoordinateFunctions[comp.Type](comp.Obj)
+        retVal[id]   = stringify ? Util.toString(coords) : coords
       }
     }
 

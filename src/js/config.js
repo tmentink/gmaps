@@ -15,6 +15,8 @@
     LatLngArray : "~"
   }
 
+  Config.DelimitedStrings = true
+
   Config.LabelOptions = {
     align        : "center",
     fontColor    : "#000",

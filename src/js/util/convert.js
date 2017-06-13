@@ -21,27 +21,9 @@ var Util = ((Util, Config) => {
     return val
   }
 
-  Util.toDelimitedString = function(obj) {
-    if (obj instanceof google.maps.LatLng) {
-      return obj.toUrlValue(Config.UrlPrecision)
-    }
-
-    if (obj instanceof google.maps.MVCArray) {
-      if (obj.getAt(0) instanceof google.maps.MVCArray) {
-        return _multiDelimitedString(obj)
-      }
-      else {
-        return _delimitedString(obj)
-      }
-    }
-
-    return null
-  }
-
   Util.toLatLng = function(val) {
     if ($.type(val) == "string") {
-      const points = val.split(",")
-      return new google.maps.LatLng(parseFloat(points[0]), parseFloat(points[1]))
+      return Config.DelimitedStrings ? _strToLatLng(val) : JSON.parse(val)
     }
 
     return val
@@ -49,16 +31,33 @@ var Util = ((Util, Config) => {
 
   Util.toLatLngArray = function(val) {
     if ($.type(val) == "string") {
-      const latLngArray = []
-      const coordPairs  = val.split(Config.Delimiter.LatLng || "|")
-
-      for (var i = 0, i_end = coordPairs.length; i < i_end; i++) {
-        latLngArray.push(Util.toLatLng(coordPairs[i]))
-      }
-      return latLngArray
+      return Config.DelimitedStrings ? _strToLatLngArray(val) : JSON.parse(val)
     }
 
     return val
+  }
+
+  Util.toString = function(val) {
+    if (val instanceof google.maps.LatLng) {
+      return Config.DelimitedStrings ?
+        val.toUrlValue(Config.UrlPrecision) :
+        JSON.stringify(val)
+    }
+
+    if (val instanceof google.maps.MVCArray) {
+      if (val.getAt(0) instanceof google.maps.MVCArray) {
+        return Config.DelimitedStrings ?
+          _toMultiDelimitedString(val) :
+          _toMultiJSONString(val)
+      }
+      else {
+        return Config.DelimitedStrings ?
+          _toDelimitedString(val) :
+          JSON.stringify(val.getArray())
+      }
+    }
+
+    return null
   }
 
   Util.toLowerCase = function(val) {
@@ -71,7 +70,22 @@ var Util = ((Util, Config) => {
   // Private Functions
   // ----------------------------------------------------------------------
 
-  function _delimitedString(MVCArray) {
+  function _strToLatLng(str) {
+    const points = str.split(",")
+    return new google.maps.LatLng(parseFloat(points[0]), parseFloat(points[1]))
+  }
+
+  function _strToLatLngArray(str) {
+    const latLngArray = []
+    const coordPairs  = str.split(Config.Delimiter.LatLng || "|")
+
+    for (var i = 0, i_end = coordPairs.length; i < i_end; i++) {
+      latLngArray.push(Util.toLatLng(coordPairs[i]))
+    }
+    return latLngArray
+  }
+
+  function _toDelimitedString(MVCArray) {
     let str = ""
 
     MVCArray.forEach(function(el, i) {
@@ -84,17 +98,27 @@ var Util = ((Util, Config) => {
     return str
   }
 
-  function _multiDelimitedString(MVCArray) {
+  function _toMultiDelimitedString(MVCArray) {
     let str = ""
 
     MVCArray.forEach(function(el, i) {
       if (i > 0) {
         str += Config.Delimiter.LatLngArray || "~"
       }
-      str += _delimitedString(el)
+      str += _toDelimitedString(el)
     })
 
     return str
+  }
+
+  function _toMultiJSONString(MVCArray) {
+    let arr = []
+
+    MVCArray.forEach(function(el) {
+      arr.push(el.getArray())
+    })
+
+    return JSON.stringify(arr)
   }
 
 

@@ -35,16 +35,16 @@ var Components = ((Components, ComponentType) => {
     }
 
     getPath() {
-      return Core.getPath({
+      return Core.getCoordinates({
         compArray : this,
         ids       : this.getIds()
       })
     }
 
     getPathString() {
-      return Core.getPath({
+      return Core.getCoordinates({
         compArray : this,
-        delimited : true,
+        stringify : true,
         ids       : this.getIds()
       })
     }

@@ -26,16 +26,16 @@ var Components = ((Components, ComponentType) => {
     // --------------------------------------------------------------------
 
     getPosition() {
-      return Core.getPosition({
+      return Core.getCoordinates({
         compArray : this,
         ids       : this.getIds()
       })
     }
 
     getPositionString() {
-      return Core.getPosition({
+      return Core.getCoordinates({
         compArray : this,
-        delimited : true,
+        stringify : true,
         ids       : this.getIds()
       })
     }
