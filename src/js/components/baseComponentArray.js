@@ -38,11 +38,15 @@ var Components = ((Components) => {
     }
 
     getGoogleObjects() {
-      return Util.getGoogleObjects({ compArray: this })
+      return Util.getGoogleObjects({
+        compArray: this
+      })
     }
 
     getIds() {
-      return Util.getIds({ compArray: this })
+      return Util.getIds({
+        compArray: this
+      })
     }
 
     hide() {

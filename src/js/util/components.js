@@ -75,11 +75,12 @@ var Util = ((Util) => {
   }
 
   Util.getGoogleObjects = function(parms) {
-    const compArray = parms.compArray
-    const ids       = Util.getIds(compArray)
+    const ids = Util.getIds({
+      compArray: parms.compArray
+    })
 
     return ids.map(function(id) {
-      return compArray[id].Obj
+      return parms.compArray[id].Obj
     })
   }
 
