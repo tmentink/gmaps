@@ -91,11 +91,10 @@ var Components = ((Components) => {
     if (!latLng) {
       return
     }
-    const pos = projection.fromLatLngToDivPixel(latLng)
-
-    const style = this.canvas_.style
-    style["top"] = pos.y + "px"
-    style["left"] = pos.x + "px"
+    const pos           = projection.fromLatLngToDivPixel(latLng)
+    const style         = this.canvas_.style
+    style["top"]        = pos.y + "px"
+    style["left"]       = pos.x + "px"
     style["visibility"] = this.getVisible_()
   }
 
@@ -110,7 +109,8 @@ var Components = ((Components) => {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     ctx.strokeStyle = this.get(Property.STROKE_COLOR)
     ctx.fillStyle   = this.get(Property.FONT_COLOR)
-    ctx.font        = this.get(Property.FONT_SIZE) + "px " + this.get(Property.FONT_FAMILY)
+    ctx.font        = this.get(Property.FONT_SIZE) + "px " +
+                      this.get(Property.FONT_FAMILY)
 
     const strokeWeight = Number(this.get(Property.STROKE_WEIGHT))
 
@@ -124,9 +124,9 @@ var Components = ((Components) => {
       ctx.fillText(text, strokeWeight, strokeWeight)
 
       const textMeasure = ctx.measureText(text)
-      const textWidth = textMeasure.width + strokeWeight
-      style.marginLeft = this.getMarginLeft_(textWidth) + "px"
-      style.marginTop = "-0.4em"
+      const textWidth   = textMeasure.width + strokeWeight
+      style.marginLeft  = this.getMarginLeft_(textWidth) + "px"
+      style.marginTop   = "-0.4em"
     }
   }
 
@@ -169,12 +169,12 @@ var Components = ((Components) => {
   }
 
   googleLabel.prototype.onAdd = function() {
-    const canvas = this.canvas_ = document.createElement("canvas")
-    const style = canvas.style
-    style.position = "absolute"
+    const canvas     = this.canvas_ = document.createElement("canvas")
+    const style      = canvas.style
+    style.position   = "absolute"
 
-    const ctx = canvas.getContext("2d")
-    ctx.lineJoin = "round"
+    const ctx        = canvas.getContext("2d")
+    ctx.lineJoin     = "round"
     ctx.textBaseline = "top"
 
     this.drawCanvas_()

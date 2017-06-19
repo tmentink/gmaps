@@ -26,11 +26,11 @@ var Core = ((Core) => {
     const map         = parms.map
     const type        = Util.getComponentType(parms.type)
 
-    if ($.type(compOptions) == "array") {
+    if ($.type(compOptions) === "array") {
       return _multiAdd(map, type, compOptions)
     }
 
-    if ($.type(compOptions) == "object") {
+    if ($.type(compOptions) === "object") {
       if (_validateParms(map, type, compOptions)) {
         const newCompArray = _createNewCompArray(type, map)
         newCompArray[compOptions.id] = _add(map, type, compOptions)
@@ -89,8 +89,8 @@ var Core = ((Core) => {
 
   function _noParmsFound(reqParms, parms) {
     return reqParms.map(function(key) {
-      return parms[key] != undefined && parms[key] !== ""
-    }).indexOf(true) == -1
+      return parms[key] !== undefined && parms[key] !== ""
+    }).indexOf(true) === -1
   }
 
   function _validateParms(map, type, parms) {

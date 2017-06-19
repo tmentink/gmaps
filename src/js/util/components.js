@@ -96,7 +96,9 @@ var Util = ((Util) => {
 
   function _addPrototypesToArray(compArray, array) {
     const proto      = Object.keys(Object.getPrototypeOf(compArray))
-    const base_proto = Object.keys(Object.getPrototypeOf(new Components.BaseComponentArray({})))
+    const base_proto = Object.keys(
+      Object.getPrototypeOf(new Components.BaseComponentArray({}))
+    )
 
     array = proto.concat(array)
     array = base_proto.concat(array)

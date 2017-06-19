@@ -16,7 +16,7 @@ var Core = ((Core, ComponentType) => {
     const ids       = parms.ids
     const type      = compArray.ChildType || compArray.Type
 
-    if (compOptions == undefined) {
+    if (compOptions === undefined) {
       return Util.throwError({
         method  : "update",
         message : "Must supply " + type + " options"
@@ -28,7 +28,7 @@ var Core = ((Core, ComponentType) => {
       compOptions : compOptions
     })
 
-    if (type == ComponentType.MAP) {
+    if (type === ComponentType.MAP) {
       return _update(compArray, compOptions)
     }
 

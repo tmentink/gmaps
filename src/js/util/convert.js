@@ -11,10 +11,10 @@ var Util = ((Util, Config) => {
   // ----------------------------------------------------------------------
 
   Util.toArray = function(val) {
-    if ($.type(val) == "number") {
+    if ($.type(val) === "number") {
       val = val.toString().split()
     }
-    else if ($.type(val) == "string") {
+    else if ($.type(val) === "string") {
       val = val.split()
     }
 
@@ -22,7 +22,7 @@ var Util = ((Util, Config) => {
   }
 
   Util.toLatLng = function(val) {
-    if ($.type(val) == "string") {
+    if ($.type(val) === "string") {
       return Config.DelimitedStrings ? _strToLatLng(val) : JSON.parse(val)
     }
 
@@ -30,7 +30,7 @@ var Util = ((Util, Config) => {
   }
 
   Util.toLatLngArray = function(val) {
-    if ($.type(val) == "string") {
+    if ($.type(val) === "string") {
       return Config.DelimitedStrings ? _strToLatLngArray(val) : JSON.parse(val)
     }
 

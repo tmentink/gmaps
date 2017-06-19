@@ -14,7 +14,7 @@ var Core = ((Core, ComponentType) => {
     const compArray = parms.compArray
     const ids       = parms.ids
 
-    if (compArray.Type == ComponentType.MAP) {
+    if (compArray.Type === ComponentType.MAP) {
       compArray.Obj.fitBounds(compArray.Init.Bounds)
       return _reset(compArray)
     }

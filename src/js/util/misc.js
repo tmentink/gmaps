@@ -15,7 +15,7 @@ var Util = ((Util) => {
     const obj     = parms.obj
     const oldName = parms.oldName
 
-    if (oldName == newName) {
+    if (oldName === newName) {
       return
     }
 

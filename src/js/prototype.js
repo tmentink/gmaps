@@ -99,7 +99,7 @@
     },
 
     setCenter: function(center) {
-      if (center != null) {
+      if (center !== null) {
         return Core.update({
           compArray   : this,
           compOptions : { center: center }
@@ -109,7 +109,7 @@
     },
 
     setZoom: function(zoom) {
-      if (zoom != null) {
+      if (zoom !== null) {
         return Core.update({
           compArray   : this,
           compOptions : { zoom: zoom }

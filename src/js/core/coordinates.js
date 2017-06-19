@@ -53,7 +53,7 @@ var Core = ((Core) => {
 
   function _formatRetVal(retVal) {
     const keys = Object.keys(retVal)
-    return keys.length == 1 ? retVal[keys[0]] : retVal
+    return keys.length === 1 ? retVal[keys[0]] : retVal
   }
 
 

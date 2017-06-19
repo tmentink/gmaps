@@ -17,12 +17,16 @@ var Util = ((Util) => {
     const src_lat  = _toRad(latLng.lat())
     const src_lng  = _toRad(latLng.lng())
 
-    const dest_lat = Math.asin(Math.sin(src_lat) * Math.cos(distance) +
-                               Math.cos(src_lat) * Math.sin(distance) *
-                               Math.cos(bearing))
+    const dest_lat = Math.asin(
+      Math.sin(src_lat) * Math.cos(distance) +
+      Math.cos(src_lat) * Math.sin(distance) *
+      Math.cos(bearing)
+    )
 
-    const dest_lng = src_lng + Math.atan2(Math.sin(bearing) * Math.sin(distance) * Math.cos(src_lat),
-                                          Math.cos(distance) - Math.sin(src_lat) * Math.sin(dest_lat))
+    const dest_lng = src_lng + Math.atan2(
+      Math.sin(bearing) * Math.sin(distance) * Math.cos(src_lat),
+      Math.cos(distance) - Math.sin(src_lat) * Math.sin(dest_lat)
+    )
 
     if (isNaN(src_lng) || isNaN(dest_lng)) {
       return null

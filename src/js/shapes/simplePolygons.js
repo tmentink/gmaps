@@ -67,7 +67,7 @@
     parms.center = parms.center || map.getCenter()
     parms.size   = parms.size || Util.getSizeFromZoom(map.getZoom())
 
-    if ($.type(parms.center) == "string") {
+    if ($.type(parms.center) === "string") {
       parms.center = Util.toLatLng(parms.center)
     }
 

@@ -39,7 +39,7 @@ var Util = ((Util, GlobalConfig) => {
 
     // delete any options that don't exist in LocalConfig
     Object.keys(userConfig).forEach(function(key) {
-      if (LocalConfig.indexOf(key) == -1) {
+      if (LocalConfig.indexOf(key) === -1) {
         delete userConfig[key]
       }
     })

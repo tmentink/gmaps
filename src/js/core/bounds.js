@@ -31,11 +31,11 @@ var Core = ((Core) => {
     const comps = parms.comps
     const map   = parms.map
 
-    if ($.type(comps) == "object") {
+    if ($.type(comps) === "object") {
       const bounds = _getBoundsByComponents(map.Components, comps)
       map.Obj.fitBounds(bounds)
     }
-    else if (comps == "init" || comps == "initial") {
+    else if (comps === "init" || comps === "initial") {
       map.Obj.fitBounds(map.Init.Bounds)
       map.Obj.setZoom(map.Init.Options.zoom)
     }
@@ -112,7 +112,7 @@ var Core = ((Core) => {
   }
 
   function _getIds(compArray, ids) {
-    return ids == null || ids == "all" ?
+    return ids === null || ids === "all" ?
       Util.getIds({ compArray: compArray }) : ids
   }
 

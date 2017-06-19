@@ -46,7 +46,7 @@ var Core = ((Core, ComponentType) => {
     const compArray = parms.compArray
     const ids       = parms.ids
     const type      = Util.getEventType(parms.type)
-    const action    = type != "all" ? Action.REMOVE_TYPE : Action.REMOVE_ALL
+    const action    = type !== "all" ? Action.REMOVE_TYPE : Action.REMOVE_ALL
 
     return _listener(compArray, ids, type, null, action)
   }
@@ -57,7 +57,7 @@ var Core = ((Core, ComponentType) => {
   // ----------------------------------------------------------------------
 
   function _listener(compArray, ids, type, func, action) {
-    if (compArray.Type == ComponentType.MAP) {
+    if (compArray.Type === ComponentType.MAP) {
       return Execute[action](compArray, type, func)
     }
 
