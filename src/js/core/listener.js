@@ -65,8 +65,9 @@ var Core = ((Core, ComponentType) => {
       return _multiListener(compArray, ids, type, func, action)
     }
 
-    if (compArray[ids]) {
-      return Execute[action](compArray[ids], type, func)
+    const comp = compArray.find(ids)
+    if (comp) {
+      return Execute[action](comp, type, func)
     }
   }
 
@@ -74,10 +75,9 @@ var Core = ((Core, ComponentType) => {
     const newCompArray = new Components[compArray.Type]({ map: compArray.Map })
 
     for (var i = 0, i_end = ids.length; i < i_end; i++) {
-      const comp = compArray[ids[i]]
-
+      const comp = compArray.find(ids[i])
       if (comp) {
-        newCompArray[ids[i]] = Execute[action](comp, type, func)
+        newCompArray.push(Execute[action](comp, type, func))
       }
     }
 

@@ -63,30 +63,28 @@ var Util = ((Util) => {
 
   Util.copy = function(parms) {
     const compArray = parms.compArray
-    const exclude   = _addPrototypesToArray(compArray, parms.exclude)
+    const new_comp  = new Components[compArray.Type]({ map: compArray.Map })
+    const proto     = _getPrototypes(compArray)
+    const copy      = $.extend(true, new_comp, compArray)
 
-    const copy = $.extend(true, {}, compArray)
-    for (var i = 0, i_end = exclude.length; i < i_end; i++) {
-      delete copy[exclude[i]]
+    // remove proto from copy
+    for (var i = 0, i_end = proto.length; i < i_end; i++) {
+      delete copy[proto[i]]
     }
 
-    const new_comp = new Components[compArray.Type]({ map: compArray.Map })
-    return $.extend(new_comp, copy)
+    return copy
   }
 
   Util.getGoogleObjects = function(parms) {
-    const ids = Util.getIds({
-      compArray: parms.compArray
-    })
-
-    return ids.map(function(id) {
-      return parms.compArray[id].Obj
+    return parms.compArray.Data.map(function(comp) {
+      return comp.Obj
     })
   }
 
   Util.getIds = function(parms) {
-    const ids = Object.keys(parms.compArray)
-    return _removeComponentProperties(ids)
+    return parms.compArray.Data.map(function(comp) {
+      return comp.Id
+    })
   }
 
 
@@ -94,26 +92,13 @@ var Util = ((Util) => {
   // Private Functions
   // ----------------------------------------------------------------------
 
-  function _addPrototypesToArray(compArray, array) {
+  function _getPrototypes(compArray) {
     const proto      = Object.keys(Object.getPrototypeOf(compArray))
     const base_proto = Object.keys(
       Object.getPrototypeOf(new Components.BaseComponentArray({}))
     )
 
-    array = proto.concat(array)
-    array = base_proto.concat(array)
-    return array
-  }
-
-  function _removeComponentProperties(ids) {
-    Object.keys(Const.ComponentProperty).forEach(function(key) {
-      const index = ids.indexOf(Const.ComponentProperty[key])
-      if (index !== -1) {
-        ids.splice(index, 1)
-      }
-    })
-
-    return ids
+    return proto.concat(base_proto)
   }
 
 

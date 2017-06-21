@@ -11,17 +11,18 @@ var Core = ((Core) => {
   // ----------------------------------------------------------------------
 
   Core.search = function(parms) {
-    const map       = parms.map
     const ids       = parms.ids
+    const map       = parms.map
+    const matching  = parms.matching
     const type      = parms.type
     const compArray = map.Components[type]
 
     if (ids) {
-      return Util.copy({
-        compArray : compArray,
-        exclude   : _getIdsToExclude(compArray, Util.toArray(ids))
-      })
+      const newCompArray = new Components[compArray.Type]({ map: map })
+      newCompArray.Data  = _getDataByIds(compArray, Util.toArray(ids), matching)
+      return newCompArray
     }
+
     return compArray
   }
 
@@ -30,15 +31,11 @@ var Core = ((Core) => {
   // Private Functions
   // ----------------------------------------------------------------------
 
-  function _getIdsToExclude(compArray, ids) {
-    // ensure ids are strings
-    ids = ids.toString().split(",")
-
-    const allIDs  = compArray.getIds()
-    const exclude = allIDs.filter(function(i) {
-      return ids.indexOf(i) === -1
+  function _getDataByIds(compArray, ids, matching) {
+    return compArray.Data.filter(function(comp) {
+      return matching === true ?
+        ids.indexOf(comp.Id) !== -1 : ids.indexOf(comp.Id) === -1
     })
-    return exclude
   }
 
 

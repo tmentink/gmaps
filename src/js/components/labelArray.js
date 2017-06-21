@@ -14,7 +14,6 @@ var Components = ((Components, ComponentType) => {
 
     constructor(parms) {
       super({
-        childType : ComponentType.LABEL,
         map       : parms.map,
         type      : ComponentType.LABEL_ARRAY
       })

@@ -11,11 +11,8 @@ var Util = ((Util, Config) => {
   // ----------------------------------------------------------------------
 
   Util.toArray = function(val) {
-    if ($.type(val) === "number") {
-      val = val.toString().split()
-    }
-    else if ($.type(val) === "string") {
-      val = val.split()
+    if ($.isArray(val) === false) {
+      return [val]
     }
 
     return val

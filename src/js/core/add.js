@@ -33,7 +33,7 @@ var Core = ((Core) => {
     if ($.type(compOptions) === "object") {
       if (_validateParms(map, type, compOptions)) {
         const newCompArray = _createNewCompArray(type, map)
-        newCompArray[compOptions.id] = _add(map, type, compOptions)
+        newCompArray.push(_add(map, type, compOptions))
         return newCompArray
       }
     }
@@ -55,7 +55,8 @@ var Core = ((Core) => {
       options : _mergeDefaults(map, type, compOptions)
     })
 
-    return map.Components[type][compOptions.id] = comp
+    map.Components[type].push(comp)
+    return comp
   }
 
   function _multiAdd(map, type, compOptionsArray) {
@@ -65,7 +66,7 @@ var Core = ((Core) => {
       const compOptions = compOptionsArray[i]
 
       if (_validateParms(map, type, compOptions)) {
-        newCompArray[compOptions.id] = _add(map, type, compOptions)
+        newCompArray.push(_add(map, type, compOptions))
       }
     }
 
@@ -106,7 +107,7 @@ var Core = ((Core) => {
       }
     }
 
-    if (map.Components[type][parms.id]) {
+    if (map.Components[type].includes(parms.id)) {
       return Util.throwError({
         method  : "add" + type,
         message : "A " + type + " with an id of " + parms.id + " already exists",

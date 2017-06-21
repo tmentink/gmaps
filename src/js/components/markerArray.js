@@ -14,7 +14,6 @@ var Components = ((Components, ComponentType) => {
 
     constructor(parms) {
       super({
-        childType : ComponentType.MARKER,
         map       : parms.map,
         type      : ComponentType.MARKER_ARRAY
       })

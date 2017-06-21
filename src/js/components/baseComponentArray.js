@@ -13,15 +13,27 @@ var Components = ((Components) => {
   class BaseComponentArray {
 
     constructor(parms) {
-      this.ChildType = parms.childType
-      this.Map       = parms.map
-      this.Type      = parms.type
+      this.Data = []
+      this.Map  = parms.map
+      this.Type = parms.type
     }
 
 
     // --------------------------------------------------------------------
     // Public Methods
     // --------------------------------------------------------------------
+
+    copy() {
+      return Util.copy({
+        compArray : this
+      })
+    }
+
+    find(id) {
+      return this.Data.find(function(comp) {
+        return comp.Id === id
+      })
+    }
 
     getBounds() {
       return Core.getBounds({
@@ -35,6 +47,10 @@ var Components = ((Components) => {
         compArray : this,
         ids       : this.getIds()
       })
+    }
+
+    getChildType() {
+      return this.Type.replace("Array", "")
     }
 
     getGoogleObjects() {
@@ -56,10 +72,20 @@ var Components = ((Components) => {
       })
     }
 
+    includes(id) {
+      return this.find(id) !== undefined
+    }
+
+    push(comp) {
+      return this.Data.push(comp)
+    }
+
     others() {
-      return Util.copy({
-        compArray : this.Map.Components[this.ChildType],
-        exclude   : this.getIds()
+      return Core.search({
+        ids      : this.getIds(),
+        map      : this.Map,
+        matching : false,
+        type     : this.getChildType()
       })
     }
 
@@ -101,7 +127,7 @@ var Components = ((Components) => {
 
     zoom() {
       const comps = {}
-      comps[this.ChildType] = this.getIds()
+      comps[this.getChildType()] = this.getIds()
 
       Core.fitBounds({
         map   : this.Map,

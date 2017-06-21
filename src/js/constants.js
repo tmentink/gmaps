@@ -20,12 +20,6 @@ var Const = ((Const) => {
     URL_PRECISION   : "UrlPrecision"
   }
 
-  Const.ComponentProperty = {
-    CHILD_TYPE : "ChildType",
-    MAP        : "Map",
-    TYPE       : "Type"
-  }
-
   Const.ComponentType = {
     LABEL         : "Label",
     LABEL_ARRAY   : "LabelArray",

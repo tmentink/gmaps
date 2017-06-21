@@ -36,8 +36,9 @@ var Core = ((Core, ComponentType) => {
       return _multiUpdate(compArray, ids, compOptions)
     }
 
-    if (compArray[ids]) {
-      return _update(compArray[ids], compOptions)
+    const comp = compArray.find(ids)
+    if (comp) {
+      return _update(comp, compOptions)
     }
   }
 
@@ -55,10 +56,9 @@ var Core = ((Core, ComponentType) => {
     const newCompArray = new Components[compArray.Type]({ map: compArray.Map })
 
     for (var i = 0, i_end = ids.length; i < i_end; i++) {
-      const comp = compArray[ids[i]]
-
+      const comp = compArray.find(ids[i])
       if (comp) {
-        newCompArray[ids[i]] = _update(comp, options)
+        newCompArray.push(_update(comp, options))
       }
     }
 

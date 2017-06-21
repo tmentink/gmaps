@@ -57,17 +57,19 @@
 
     labels: function(ids) {
       return Core.search({
-        ids  : ids,
-        map  : this,
-        type : ComponentType.LABEL
+        ids      : ids,
+        map      : this,
+        matching : true,
+        type     : ComponentType.LABEL
       })
     },
 
     markers: function(ids) {
       return Core.search({
-        ids  : ids,
-        map  : this,
-        type : ComponentType.MARKER
+        ids      : ids,
+        map      : this,
+        matching : true,
+        type     : ComponentType.MARKER
       })
     },
 
@@ -88,9 +90,10 @@
 
     polygons: function(ids) {
       return Core.search({
-        ids  : ids,
-        map  : this,
-        type : ComponentType.POLYGON
+        ids      : ids,
+        map      : this,
+        matching : true,
+        type     : ComponentType.POLYGON
       })
     },
 

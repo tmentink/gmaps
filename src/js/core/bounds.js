@@ -49,10 +49,9 @@ var Core = ((Core) => {
     const ids       = Util.toArray(parms.ids)
 
     for (var i = 0, i_end = ids.length; i < i_end; i++) {
-      const comp = compArray[ids[i]]
-
+      const comp = compArray.find(ids[i])
       if (comp) {
-        bounds.union(BoundsFunction[compArray.ChildType](comp))
+        bounds.union(BoundsFunction[compArray.getChildType()](comp))
       }
     }
 

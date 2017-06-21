@@ -18,8 +18,9 @@ var Core = ((Core) => {
       return _multiRemove(compArray, ids)
     }
 
-    if (compArray[ids]) {
-      return _remove(compArray[ids])
+    const comp = compArray.find(ids)
+    if (comp) {
+      return _remove(comp)
     }
   }
 
@@ -29,22 +30,20 @@ var Core = ((Core) => {
   // ----------------------------------------------------------------------
 
   function _remove(comp) {
+    const compArray = comp.Map.Components[comp.Type]
+    const index     = compArray.Data.indexOf(comp)
+
     comp.Obj.setMap(null)
-
-    // since you cant delete local variables in strict mode
-    delete comp.Map.Components[comp.Type][comp.Id]
-
-    return comp
+    return compArray.Data.splice(index, 1)
   }
 
   function _multiRemove(compArray, ids) {
     const newCompArray = new Components[compArray.Type]({ map: compArray.Map })
 
     for (var i = 0, i_end = ids.length; i < i_end; i++) {
-      const comp = compArray[ids[i]]
-
+      const comp = compArray.find(ids[i])
       if (comp) {
-        newCompArray[ids[i]] = _remove(comp)
+        newCompArray.push(_remove(comp))
       }
     }
 

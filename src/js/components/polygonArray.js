@@ -14,7 +14,6 @@ var Components = ((Components, ComponentType) => {
 
     constructor(parms) {
       super({
-        childType : ComponentType.POLYGON,
         map       : parms.map,
         type      : ComponentType.POLYGON_ARRAY
       })
