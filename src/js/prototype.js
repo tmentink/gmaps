@@ -99,21 +99,15 @@
     },
 
     setCenter: function(center) {
-      if (center !== null) {
-        return Core.update({
-          compArray   : this,
-          compOptions : { center: center }
-        })
+      if (center !== undefined) {
+        this.Obj.setCenter(Util.toLatLng(center))
       }
       return this
     },
 
     setZoom: function(zoom) {
-      if (zoom !== null) {
-        return Core.update({
-          compArray   : this,
-          compOptions : { zoom: zoom }
-        })
+      if (zoom !== undefined) {
+        this.Obj.setZoom(zoom)
       }
       return this
     },
