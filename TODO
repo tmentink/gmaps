@@ -8,15 +8,13 @@ Add Remaining Components:
 
 
 Components:
-  ☐ Consider adding methods to single components
+  ☐ Add methods to single components?
   ☐ Allow options to be case insensitive
   ☐ Add onClick, onDragStart, etc... options
   
 
 ComponentArray:
-  ☐ Save components inside an array vs as an object key
-  ☐ Update search to use Array.filter vs Util.copy
-  ☐ Add pop method which accepts a number to pop multiple
+  ☐ Add pop method which also accepts a number for multiple?
 
 
 Constants:
@@ -26,6 +24,7 @@ Constants:
 Map:
   ☐ Single add method which takes a string and options object
   ☐ Single remove method which takes a string and an array of ids
+  ☐ Fix fitBounds to accept LatLngBounds
 
 
 Shapes:
