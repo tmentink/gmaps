@@ -12,27 +12,11 @@
 
   gmap.prototype = {
 
-    addLabel: function(compOptions) {
+    add: function(type, compOptions) {
       return Core.addComponent({
         compOptions : compOptions,
         map         : this,
-        type        : ComponentType.LABEL
-      })
-    },
-
-    addMarker: function(compOptions) {
-      return Core.addComponent({
-        compOptions : compOptions,
-        map         : this,
-        type        : ComponentType.MARKER
-      })
-    },
-
-    addPolygon: function(compOptions) {
-      return Core.addComponent({
-        compOptions : compOptions,
-        map         : this,
-        type        : ComponentType.POLYGON
+        type        : type
       })
     },
 
@@ -95,6 +79,16 @@
         matching : true,
         type     : ComponentType.POLYGON
       })
+    },
+
+    remove: function(type, ids) {
+      Core.remove({
+        ids  : ids,
+        map  : this,
+        type : type
+      })
+
+      return this
     },
 
     reset: function() {

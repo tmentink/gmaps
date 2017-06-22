@@ -11,16 +11,29 @@ var Core = ((Core) => {
   // ----------------------------------------------------------------------
 
   Core.remove = function(parms) {
-    const compArray = parms.compArray
-    const ids       = parms.ids
+    let ids    = parms.ids
+    const map  = parms.map
+    const type = Util.getComponentType(parms.type)
 
-    if ($.isArray(ids)) {
-      return _multiRemove(compArray, ids)
+    if (Util.validMapComponent(type)) {
+      const compArray = map.Components[type]
+      ids = ids || compArray.getIds()
+
+      if ($.isArray(ids)) {
+        return _multiRemove(compArray, ids)
+      }
+
+      const comp = compArray.find(ids)
+      if (comp) {
+        return _remove(comp)
+      }
     }
-
-    const comp = compArray.find(ids)
-    if (comp) {
-      return _remove(comp)
+    else {
+      return Util.throwError({
+        method  : "remove",
+        message : `${type} is not a valid map component`,
+        obj     : {type: type}
+      })
     }
   }
 

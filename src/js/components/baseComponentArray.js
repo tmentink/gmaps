@@ -89,13 +89,6 @@ var Components = ((Components) => {
       })
     }
 
-    remove() {
-      return Core.remove({
-        compArray : this,
-        ids       : this.getIds()
-      })
-    }
-
     reset() {
       return Core.reset({
         compArray : this,

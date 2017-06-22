@@ -45,6 +45,12 @@ var Util = ((Util) => {
     }
   }
 
+  const MapComponents = [
+    Const.ComponentType.LABEL,
+    Const.ComponentType.MARKER,
+    Const.ComponentType.POLYGON
+  ]
+
 
   // ----------------------------------------------------------------------
   // Public Methods
@@ -85,6 +91,10 @@ var Util = ((Util) => {
     return parms.compArray.Data.map(function(comp) {
       return comp.Id
     })
+  }
+
+  Util.validMapComponent = function(type) {
+    return MapComponents.includes(type)
   }
 
 

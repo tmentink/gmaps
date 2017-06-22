@@ -26,16 +26,26 @@ var Core = ((Core) => {
     const map         = parms.map
     const type        = Util.getComponentType(parms.type)
 
-    if ($.type(compOptions) === "array") {
-      return _multiAdd(map, type, compOptions)
-    }
+    if (Util.validMapComponent(type)) {
 
-    if ($.type(compOptions) === "object") {
-      if (_validateParms(map, type, compOptions)) {
-        const newCompArray = _createNewCompArray(type, map)
-        newCompArray.push(_add(map, type, compOptions))
-        return newCompArray
+      if ($.type(compOptions) === "array") {
+        return _multiAdd(map, type, compOptions)
       }
+
+      if ($.type(compOptions) === "object") {
+        if (_validateParms(map, type, compOptions)) {
+          const newCompArray = _createNewCompArray(type, map)
+          newCompArray.push(_add(map, type, compOptions))
+          return newCompArray
+        }
+      }
+    }
+    else {
+      return Util.throwError({
+        method  : "add",
+        message : `${type} is not a valid map component`,
+        obj     : {type: type}
+      })
     }
   }
 
@@ -88,31 +98,41 @@ var Core = ((Core) => {
     return options
   }
 
-  function _noParmsFound(reqParms, parms) {
+
+  // ----------------------------------------------------------------------
+  // Validation Functions
+  // ----------------------------------------------------------------------
+
+  function _requiredParmsAreEmpty(reqParms, parms) {
     return reqParms.map(function(key) {
-      return parms[key] !== undefined && parms[key] !== ""
+      return parms[key] !== ""
+          && parms[key] !== null
+          && parms[key] !== undefined
     }).indexOf(true) === -1
   }
 
   function _validateParms(map, type, parms) {
+
+    // Check if Id already exists
+    if (map.Components[type].includes(parms.id) === true) {
+      return Util.throwError({
+        method  : "add",
+        message : `A ${type} with an id of ${parms.id} already exists`,
+        obj     : parms
+      })
+    }
+
+    // Check if all required parms have values
     for (var i = 0, i_end = RequiredParms[type].length; i < i_end; i++) {
       const reqParm = Util.toArray(RequiredParms[type][i])
 
-      if (_noParmsFound(reqParm, parms)) {
+      if (_requiredParmsAreEmpty(reqParm, parms)) {
         return Util.throwError({
-          method  : "add" + type,
-          message : reqParm.join(" or ") + " must have a value",
+          method  : "add",
+          message : `${reqParm.join(" or ")} must have a value`,
           obj     : parms
         })
       }
-    }
-
-    if (map.Components[type].includes(parms.id)) {
-      return Util.throwError({
-        method  : "add" + type,
-        message : "A " + type + " with an id of " + parms.id + " already exists",
-        obj     : parms
-      })
     }
 
     return true
