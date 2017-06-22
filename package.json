@@ -1,7 +1,7 @@
 {
   "name": "gmaps",
-  "version": "2.1.0",
-  "description": "google maps made easy",
+  "version": "3.0.0",
+  "description": "The way maps were meant to be made",
   "main": "dist/gmaps.js",
   "scripts": {
     "test-all": "mocha test/unit --recursive"

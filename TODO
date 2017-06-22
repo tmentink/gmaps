@@ -15,6 +15,7 @@ Components:
 
 ComponentArray:
   ☐ Add pop method which also accepts a number for multiple?
+  ☐ Add condition for toggle similar to jQuery
 
 
 Constants:
@@ -22,8 +23,6 @@ Constants:
 
 
 Map:
-  ☐ Single add method which takes a string and options object
-  ☐ Single remove method which takes a string and an array of ids
   ☐ Fix fitBounds to accept LatLngBounds
 
 

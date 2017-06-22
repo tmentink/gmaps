@@ -1,5 +1,5 @@
 /*!
- * GMaps v2.1.0-alpha (https://github.com/tmentink/gmaps)
+ * GMaps v3.0.0-alpha (https://github.com/tmentink/gmaps)
  * Copyright 2017 Trent Mentink
  * Licensed under MIT
  */
@@ -330,6 +330,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
         paths: Conversions.path
       }
     };
+    var MapComponents = [ Const.ComponentType.LABEL, Const.ComponentType.MARKER, Const.ComponentType.POLYGON ];
     Util.convertCompOptions = function(parms) {
       var compOptions = parms.compOptions;
       var compType = parms.compType.replace("Array", "");
@@ -359,6 +360,9 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       return parms.compArray.Data.map(function(comp) {
         return comp.Id;
       });
+    };
+    Util.validMapComponent = function(type) {
+      return MapComponents.includes(type);
     };
     function _getPrototypes(compArray) {
       var proto = Object.keys(Object.getPrototypeOf(compArray));
@@ -569,15 +573,25 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       var compOptions = parms.compOptions;
       var map = parms.map;
       var type = Util.getComponentType(parms.type);
-      if ($.type(compOptions) === "array") {
-        return _multiAdd(map, type, compOptions);
-      }
-      if ($.type(compOptions) === "object") {
-        if (_validateParms(map, type, compOptions)) {
-          var newCompArray = _createNewCompArray(type, map);
-          newCompArray.push(_add(map, type, compOptions));
-          return newCompArray;
+      if (Util.validMapComponent(type)) {
+        if ($.type(compOptions) === "array") {
+          return _multiAdd(map, type, compOptions);
         }
+        if ($.type(compOptions) === "object") {
+          if (_validateParms(map, type, compOptions)) {
+            var newCompArray = _createNewCompArray(type, map);
+            newCompArray.push(_add(map, type, compOptions));
+            return newCompArray;
+          }
+        }
+      } else {
+        return Util.throwError({
+          method: "add",
+          message: type + " is not a valid map component",
+          obj: {
+            type: type
+          }
+        });
       }
     };
     function _add(map, type, compOptions) {
@@ -614,28 +628,28 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       delete options.id;
       return options;
     }
-    function _noParmsFound(reqParms, parms) {
+    function _requiredParmsAreEmpty(reqParms, parms) {
       return reqParms.map(function(key) {
-        return parms[key] !== undefined && parms[key] !== "";
+        return parms[key] !== "" && parms[key] !== null && parms[key] !== undefined;
       }).indexOf(true) === -1;
     }
     function _validateParms(map, type, parms) {
+      if (map.Components[type].includes(parms.id) === true) {
+        return Util.throwError({
+          method: "add",
+          message: "A " + type + " with an id of " + parms.id + " already exists",
+          obj: parms
+        });
+      }
       for (var i = 0, i_end = RequiredParms[type].length; i < i_end; i++) {
         var reqParm = Util.toArray(RequiredParms[type][i]);
-        if (_noParmsFound(reqParm, parms)) {
+        if (_requiredParmsAreEmpty(reqParm, parms)) {
           return Util.throwError({
-            method: "add" + type,
+            method: "add",
             message: reqParm.join(" or ") + " must have a value",
             obj: parms
           });
         }
-      }
-      if (map.Components[type].includes(parms.id)) {
-        return Util.throwError({
-          method: "add" + type,
-          message: "A " + type + " with an id of " + parms.id + " already exists",
-          obj: parms
-        });
       }
       return true;
     }
@@ -884,14 +898,27 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
   var Core = function(Core) {
     "use strict";
     Core.remove = function(parms) {
-      var compArray = parms.compArray;
       var ids = parms.ids;
-      if ($.isArray(ids)) {
-        return _multiRemove(compArray, ids);
-      }
-      var comp = compArray.find(ids);
-      if (comp) {
-        return _remove(comp);
+      var map = parms.map;
+      var type = Util.getComponentType(parms.type);
+      if (Util.validMapComponent(type)) {
+        var compArray = map.Components[type];
+        ids = ids || compArray.getIds();
+        if ($.isArray(ids)) {
+          return _multiRemove(compArray, ids);
+        }
+        var comp = compArray.find(ids);
+        if (comp) {
+          return _remove(comp);
+        }
+      } else {
+        return Util.throwError({
+          method: "remove",
+          message: type + " is not a valid map component",
+          obj: {
+            type: type
+          }
+        });
       }
     };
     function _remove(comp) {
@@ -1022,25 +1049,11 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
   !function(ComponentType) {
     "use strict";
     gmap.prototype = {
-      addLabel: function addLabel(compOptions) {
+      add: function add(type, compOptions) {
         return Core.addComponent({
           compOptions: compOptions,
           map: this,
-          type: ComponentType.LABEL
-        });
-      },
-      addMarker: function addMarker(compOptions) {
-        return Core.addComponent({
-          compOptions: compOptions,
-          map: this,
-          type: ComponentType.MARKER
-        });
-      },
-      addPolygon: function addPolygon(compOptions) {
-        return Core.addComponent({
-          compOptions: compOptions,
-          map: this,
-          type: ComponentType.POLYGON
+          type: type
         });
       },
       fitBounds: function fitBounds(comps) {
@@ -1094,6 +1107,14 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
           matching: true,
           type: ComponentType.POLYGON
         });
+      },
+      remove: function remove(type, ids) {
+        Core.remove({
+          ids: ids,
+          map: this,
+          type: type
+        });
+        return this;
       },
       reset: function reset() {
         return Core.reset({
@@ -1292,12 +1313,6 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
           map: this.Map,
           matching: false,
           type: this.getChildType()
-        });
-      };
-      BaseComponentArray.prototype.remove = function remove() {
-        return Core.remove({
-          compArray: this,
-          ids: this.getIds()
         });
       };
       BaseComponentArray.prototype.reset = function reset() {
@@ -1670,5 +1685,5 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     Components.PolygonArray = PolygonArray;
     return Components;
   }(Components || (Components = {}), Const.ComponentType);
-  gmap.version = "2.1.0-alpha";
+  gmap.version = "3.0.0-alpha";
 }();
