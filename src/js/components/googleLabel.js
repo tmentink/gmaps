@@ -194,9 +194,9 @@ var Components = ((Components) => {
   }
 
   googleLabel.prototype.setVisibility = function() {
-    if (this["GMaps"]) {
+    if (this["gmaps"]) {
       if (this.getVisible()) {
-        this.setMap(this["GMaps"].Map.Obj)
+        this.setMap(this["gmaps"].map.Obj)
       }
       else {
         this.setMap(null)
