@@ -11,9 +11,9 @@ var Core = ((Core) => {
   // ----------------------------------------------------------------------
 
   const RequiredParms = {
-    Label   : [ "id", "position" ],
-    Marker  : [ "id", "position" ],
-    Polygon : [ "id", ["path", "paths"] ]
+    Label   : [ "position" ],
+    Marker  : [ "position" ],
+    Polygon : [ ["path", "paths"] ]
   }
 
 
@@ -60,6 +60,10 @@ var Core = ((Core) => {
       compOptions : compOptions
     })
 
+    if (compOptions.id === undefined) {
+      compOptions.id = _getAutoId(map, type)
+    }
+
     const comp = new Components[type]({
       id      : compOptions.id,
       options : _mergeDefaults(map, type, compOptions)
@@ -85,6 +89,11 @@ var Core = ((Core) => {
 
   function _createNewCompArray(type, map) {
     return new Components[type + "Array"]({ map: map })
+  }
+
+  function _getAutoId(map, type) {
+    const id = map.Components[type].Seed++
+    return `__${id}__`
   }
 
   function _mergeDefaults(map, type, parms) {

@@ -15,6 +15,7 @@ var Components = ((Components) => {
     constructor(parms) {
       this.Data = []
       this.Map  = parms.map
+      this.Seed = 0
       this.Type = parms.type
     }
 
