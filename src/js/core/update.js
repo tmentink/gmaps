@@ -14,12 +14,12 @@ var Core = ((Core, ComponentType) => {
     const compArray = parms.compArray
     let compOptions = parms.compOptions
     const ids       = parms.ids
-    const type      = compArray.ChildType || compArray.Type
+    const type      = compArray.Type.replace("Array", "")
 
     if (compOptions === undefined) {
       return Util.throwError({
         method  : "update",
-        message : "Must supply " + type + " options"
+        message : `Must supply ${type}Options`
       })
     }
 

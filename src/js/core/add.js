@@ -11,7 +11,7 @@ var Core = ((Core) => {
   // ----------------------------------------------------------------------
 
   const RequiredParms = {
-    Label   : [ "position" ],
+    Label   : [ "position", "text" ],
     Marker  : [ "position" ],
     Polygon : [ ["path", "paths"] ]
   }

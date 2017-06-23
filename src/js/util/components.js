@@ -12,7 +12,9 @@ var Util = ((Util) => {
 
   const Conversions = {
     center: function(parms) {
-      parms.center = Util.toLatLng(parms.center)
+      if (parms.center) {
+        parms.center = Util.toLatLng(parms.center)
+      }
     },
     path: function(parms) {
       if (parms.paths || parms.path) {
@@ -21,17 +23,15 @@ var Util = ((Util) => {
       }
     },
     position: function(parms) {
-      parms.position = Util.toLatLng(parms.position)
-    },
-    text: function(parms) {
-      parms.text = parms.text || parms.id
+      if (parms.position) {
+        parms.position = Util.toLatLng(parms.position)
+      }
     }
   }
 
   const ConvertableOptions = {
     Label: {
-      position : Conversions.position,
-      text     : Conversions.text
+      position : Conversions.position
     },
     Map: {
       center   : Conversions.center
