@@ -104,6 +104,14 @@ var Components = ((Components) => {
       })
     }
 
+    shift(count) {
+      return Core.shift({
+        count : count,
+        map   : this.Map,
+        type  : this.getChildType()
+      })
+    }
+
     show() {
       return Core.show({
         compArray : this,

@@ -7,6 +7,29 @@ var Core = ((Core) => {
 
 
   // ----------------------------------------------------------------------
+  // Constants
+  // ----------------------------------------------------------------------
+
+  const Action = {
+    POP    : "pop",
+    SHIFT  : "shift"
+  }
+
+  const RemoveFunction = {
+    pop: function(compArray) {
+      const comp = compArray.Data.pop()
+      comp.Obj.setMap(null)
+      return comp
+    },
+    shift: function(compArray) {
+      const comp = compArray.Data.shift()
+      comp.Obj.setMap(null)
+      return comp
+    }
+  }
+
+
+  // ----------------------------------------------------------------------
   // Public Methods
   // ----------------------------------------------------------------------
 
@@ -14,8 +37,7 @@ var Core = ((Core) => {
     const count = parms.count || 1
     const map   = parms.map
     const type  = Util.getComponentType(parms.type)
-
-    return _pop(map.Components[type], count)
+    return _pop(map.Components[type], count, Action.POP)
   }
 
   Core.remove = function(parms) {
@@ -45,6 +67,13 @@ var Core = ((Core) => {
     }
   }
 
+  Core.shift = function(parms) {
+    const count = parms.count || 1
+    const map   = parms.map
+    const type  = Util.getComponentType(parms.type)
+    return _pop(map.Components[type], count, Action.SHIFT)
+  }
+
 
   // ----------------------------------------------------------------------
   // Private Functions
@@ -71,13 +100,11 @@ var Core = ((Core) => {
     return newCompArray
   }
 
-  function _pop(compArray, count) {
+  function _pop(compArray, count, action) {
     const newCompArray = new Components[compArray.Type]({ map: compArray.Map })
 
     while (count > 0 && compArray.Data.length > 0) {
-      const comp = compArray.Data.pop()
-      comp.Obj.setMap(null)
-      newCompArray.push(comp)
+      newCompArray.push(RemoveFunction[action](compArray))
       count --
     }
 
