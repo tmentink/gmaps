@@ -10,24 +10,15 @@ Add Remaining Components:
 Components:
   ☐ Add methods to single components?
   ☐ Allow options to be case insensitive
-  ☐ Add onClick, onDragStart, etc... options
+  ☐ Add onClick, onDragStart, etc... options?
   
 
 ComponentArray:
-  ☐ Add pop method which also accepts a number for multiple?
-  ☐ Add condition for toggle similar to jQuery
-
-
-Constants:
-  ☐ Add MapEvents, MarkerEvents, etc... similar to MapTypeId
+  ☐ Add condition for toggle similar to jQuery?
 
 
 Map:
   ☐ Fix fitBounds to accept LatLngBounds
-
-
-Shapes:
-  ☐ Remove shape suffix and move methods to Shape namespace
 
 
 Testing:
@@ -35,6 +26,6 @@ Testing:
 
 
 Util:
-  ☐ Create function for multi actions (_multiDisplay, _multiRemove, etc..)
+  ☐ Create function for multi actions (_multiDisplay, _multiRemove, etc..)?
 
   
