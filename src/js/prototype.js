@@ -82,13 +82,11 @@
     },
 
     remove: function(type, ids) {
-      Core.remove({
+      return Core.remove({
         ids  : ids,
         map  : this,
         type : type
       })
-
-      return this
     },
 
     reset: function() {

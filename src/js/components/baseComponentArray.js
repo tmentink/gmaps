@@ -76,6 +76,14 @@ var Components = ((Components) => {
       return this.find(id) !== undefined
     }
 
+    pop(count) {
+      return Core.pop({
+        count : count,
+        map   : this.Map,
+        type  : this.getChildType()
+      })
+    }
+
     push(comp) {
       return this.Data.push(comp)
     }

@@ -10,6 +10,14 @@ var Core = ((Core) => {
   // Public Methods
   // ----------------------------------------------------------------------
 
+  Core.pop = function(parms) {
+    const count = parms.count || 1
+    const map   = parms.map
+    const type  = Util.getComponentType(parms.type)
+
+    return _pop(map.Components[type], count)
+  }
+
   Core.remove = function(parms) {
     let ids    = parms.ids
     const map  = parms.map
@@ -47,7 +55,7 @@ var Core = ((Core) => {
     const index     = compArray.Data.indexOf(comp)
 
     comp.Obj.setMap(null)
-    return compArray.Data.splice(index, 1)
+    return compArray.Data.splice(index, 1)[0]
   }
 
   function _multiRemove(compArray, ids) {
@@ -58,6 +66,19 @@ var Core = ((Core) => {
       if (comp) {
         newCompArray.push(_remove(comp))
       }
+    }
+
+    return newCompArray
+  }
+
+  function _pop(compArray, count) {
+    const newCompArray = new Components[compArray.Type]({ map: compArray.Map })
+
+    while (count > 0 && compArray.Data.length > 0) {
+      const comp = compArray.Data.pop()
+      comp.Obj.setMap(null)
+      newCompArray.push(comp)
+      count --
     }
 
     return newCompArray
