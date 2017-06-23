@@ -1,6 +1,6 @@
 {
   "name": "gmaps",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "description": "The way maps were meant to be made",
   "main": "dist/gmaps.js",
   "scripts": {

@@ -7,16 +7,6 @@ Add Remaining Components:
   ☐ Rectangle
 
 
-Components:
-  ☐ Add methods to single components?
-  ☐ Allow options to be case insensitive
-  ☐ Add onClick, onDragStart, etc... options?
-  
-
-ComponentArray:
-  ☐ Add condition for toggle similar to jQuery?
-
-
 Map:
   ☐ Fix fitBounds to accept LatLngBounds
 
@@ -27,5 +17,14 @@ Testing:
 
 Util:
   ☐ Create function for multi actions (_multiDisplay, _multiRemove, etc..)?
+
+
+Nice To Have Features:
+  Components:
+    ☐ Allow all options to be case insensitive
+    ☐ Add onClick, onDragStart, etc...
+
+  ComponentArray:
+    ☐ Add condition for toggle similar to jQuery?
 
   
