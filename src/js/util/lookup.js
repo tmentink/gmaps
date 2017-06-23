@@ -11,13 +11,14 @@ var Util = ((Util) => {
   // ----------------------------------------------------------------------
 
   const ConfigAlias = {
-    delimiter      : Const.Config.DELIMITER,
-    labeloptions   : Const.Config.LABEL_OPTIONS,
-    mapid          : Const.Config.MAP_ID,
-    mapoptions     : Const.Config.MAP_OPTIONS,
-    markeroptions  : Const.Config.MARKER_OPTIONS,
-    polygonoptions : Const.Config.POLYGON_OPTIONS,
-    urlprecision   : Const.Config.URL_PRECISION
+    delimitedstrings : Const.Config.DELIMITED_STRINGS,
+    delimiter        : Const.Config.DELIMITER,
+    labeloptions     : Const.Config.LABEL_OPTIONS,
+    mapid            : Const.Config.MAP_ID,
+    mapoptions       : Const.Config.MAP_OPTIONS,
+    markeroptions    : Const.Config.MARKER_OPTIONS,
+    polygonoptions   : Const.Config.POLYGON_OPTIONS,
+    urlprecision     : Const.Config.URL_PRECISION
   }
 
   const ComponentTypeAlias = {

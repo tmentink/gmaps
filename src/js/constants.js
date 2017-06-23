@@ -11,13 +11,14 @@ var Const = ((Const) => {
   // ----------------------------------------------------------------------
 
   Const.Config = {
-    DELIMITER       : "Delimiter",
-    LABEL_OPTIONS   : "LabelOptions",
-    MAP_ID          : "MapId",
-    MAP_OPTIONS     : "MapOptions",
-    MARKER_OPTIONS  : "MarkerOptions",
-    POLYGON_OPTIONS : "PolygonOptions",
-    URL_PRECISION   : "UrlPrecision"
+    DELIMITED_STRINGS : "DelimitedStrings",
+    DELIMITER         : "Delimiter",
+    LABEL_OPTIONS     : "LabelOptions",
+    MAP_ID            : "MapId",
+    MAP_OPTIONS       : "MapOptions",
+    MARKER_OPTIONS    : "MarkerOptions",
+    POLYGON_OPTIONS   : "PolygonOptions",
+    URL_PRECISION     : "UrlPrecision"
   }
 
   Const.ComponentType = {

@@ -10,12 +10,12 @@
   // Configuration Options
   // ----------------------------------------------------------------------
 
+  Config.DelimitedStrings = true
+
   Config.Delimiter = {
     LatLng      : "|",
     LatLngArray : "~"
   }
-
-  Config.DelimitedStrings = true
 
   Config.LabelOptions = {
     align        : "center",
