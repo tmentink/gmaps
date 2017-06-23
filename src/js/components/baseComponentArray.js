@@ -40,6 +40,10 @@ var Components = ((Components) => {
       })
     }
 
+    filter(fn) {
+      return this.Data.filter(fn)
+    }
+
     getBounds() {
       return Core.getBounds({
         compArray : this,
