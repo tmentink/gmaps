@@ -30,7 +30,11 @@ var Components = ((Components) => {
       })
     }
 
-    find(id) {
+    find(fn) {
+      return this.Data.find(fn)
+    }
+
+    findById(id) {
       return this.Data.find(function(comp) {
         return comp.Id === id
       })
@@ -74,7 +78,7 @@ var Components = ((Components) => {
     }
 
     includes(id) {
-      return this.find(id) !== undefined
+      return this.findById(id) !== undefined
     }
 
     pop(count) {

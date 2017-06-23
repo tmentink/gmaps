@@ -35,7 +35,7 @@ var Core = ((Core) => {
 
     for (var i = 0, i_end = ids.length; i < i_end; i++) {
       const id   = ids[i]
-      const comp = compArray.find(id)
+      const comp = compArray.findById(id)
       if (comp) {
         const coords = CoordinateFunctions[comp.Type](comp.Obj)
         retVal[id]   = stringify ? Util.toString(coords) : coords
