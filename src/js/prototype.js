@@ -57,17 +57,17 @@
       })
     },
 
-    on: function(type, func) {
-      return Core.addListener({
+    off: function(type) {
+      return Core.removeListener({
         compArray : this,
-        func      : func,
         type      : type
       })
     },
 
-    off: function(type) {
-      return Core.removeListener({
+    on: function(type, func) {
+      return Core.addListener({
         compArray : this,
+        func      : func,
         type      : type
       })
     },

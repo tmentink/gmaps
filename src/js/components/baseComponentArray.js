@@ -30,6 +30,10 @@ var Components = ((Components) => {
       })
     }
 
+    filter(fn) {
+      return this.Data.filter(fn)
+    }
+
     find(fn) {
       return this.Data.find(fn)
     }
@@ -38,10 +42,6 @@ var Components = ((Components) => {
       return this.Data.find(function(comp) {
         return comp.Id === id
       })
-    }
-
-    filter(fn) {
-      return this.Data.filter(fn)
     }
 
     getBounds() {
@@ -85,6 +85,15 @@ var Components = ((Components) => {
       return this.findById(id) !== undefined
     }
 
+    others() {
+      return Core.search({
+        ids      : this.getIds(),
+        map      : this.Map,
+        matching : false,
+        type     : this.getChildType()
+      })
+    }
+
     pop(count) {
       return Core.pop({
         count : count,
@@ -95,15 +104,6 @@ var Components = ((Components) => {
 
     push(comp) {
       return this.Data.push(comp)
-    }
-
-    others() {
-      return Core.search({
-        ids      : this.getIds(),
-        map      : this.Map,
-        matching : false,
-        type     : this.getChildType()
-      })
     }
 
     reset() {

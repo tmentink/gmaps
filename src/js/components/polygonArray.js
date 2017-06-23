@@ -24,15 +24,6 @@ var Components = ((Components, ComponentType) => {
     // Public Methods
     // --------------------------------------------------------------------
 
-    on(type, func) {
-      return Core.addListener({
-        compArray : this,
-        func      : func,
-        ids       : this.getIds(),
-        type      : type
-      })
-    }
-
     getPath() {
       return Core.getCoordinates({
         compArray : this,
@@ -51,6 +42,15 @@ var Components = ((Components, ComponentType) => {
     off(type) {
       return Core.removeListener({
         compArray : this,
+        ids       : this.getIds(),
+        type      : type
+      })
+    }
+
+    on(type, func) {
+      return Core.addListener({
+        compArray : this,
+        func      : func,
         ids       : this.getIds(),
         type      : type
       })
