@@ -35,6 +35,26 @@
       return this.Obj.getCenter()
     },
 
+    getClickableIcons: function() {
+      return this.Obj.getClickableIcons()
+    },
+
+    getDiv: function() {
+      return this.Obj.getDiv()
+    },
+
+    getMapTypeId: function() {
+      return this.Obj.getMapTypeId()
+    },
+
+    getProjection: function() {
+      return this.Obj.getProjection()
+    },
+
+    getStreetView: function() {
+      return this.Obj.getStreetView()
+    },
+
     getZoom: function() {
       return this.Obj.getZoom()
     },
@@ -97,6 +117,21 @@
       if (center !== undefined) {
         this.Obj.setCenter(Util.toLatLng(center))
       }
+      return this
+    },
+
+    setClickableIcons: function(bool) {
+      this.Obj.setClickableIcons(bool)
+      return this
+    },
+
+    setMapTypeId: function(mapTypeId) {
+      this.Obj.setMapTypeId(mapTypeId)
+      return this
+    },
+
+    setStreetView: function(streetView) {
+      this.Obj.setStreetView(streetView)
       return this
     },
 
