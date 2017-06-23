@@ -108,6 +108,7 @@ var Core = ((Core) => {
       return parms[key] !== ""
           && parms[key] !== null
           && parms[key] !== undefined
+          && parms[key] !== false
     }).indexOf(true) === -1
   }
 

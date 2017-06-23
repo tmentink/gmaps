@@ -54,12 +54,17 @@ var Util = ((Util, Config) => {
       }
     }
 
-    return null
+    return undefined
   }
 
   Util.toLowerCase = function(val) {
     const regex = /\s+|\_+/g
-    return val.toLowerCase().replace(regex, "")
+
+    if ($.type(val) === "string") {
+      return val.toLowerCase().replace(regex, "")
+    }
+
+    return undefined
   }
 
 
