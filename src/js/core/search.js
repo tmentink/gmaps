@@ -17,7 +17,7 @@ var Core = ((Core) => {
     const type      = parms.type
     const compArray = map.components[type]
 
-    const newCompArray = new Components[compArray.type]({ map: map })
+    const newCompArray = Util.getNewComponentArray(compArray)
     newCompArray.data  = ids !== undefined ?
       _getDataByIds(compArray, Util.toArray(ids), matching) : compArray.data.slice(0)
 

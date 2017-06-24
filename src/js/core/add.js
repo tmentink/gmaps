@@ -34,7 +34,7 @@ var Core = ((Core) => {
 
       if ($.type(compOptions) === "object") {
         if (_validateParms(map, type, compOptions)) {
-          const newCompArray = _createNewCompArray(type, map)
+          const newCompArray = Util.getNewComponentArray(type, map)
           newCompArray.push(_add(map, type, compOptions))
           return newCompArray
         }
@@ -74,7 +74,7 @@ var Core = ((Core) => {
   }
 
   function _multiAdd(map, type, compOptionsArray) {
-    const newCompArray = _createNewCompArray(type, map)
+    const newCompArray = Util.getNewComponentArray(type, map)
 
     for (var i = 0, i_end = compOptionsArray.length; i < i_end; i++) {
       const compOptions = compOptionsArray[i]
@@ -85,10 +85,6 @@ var Core = ((Core) => {
     }
 
     return newCompArray
-  }
-
-  function _createNewCompArray(type, map) {
-    return new Components[type + "Array"]({ map: map })
   }
 
   function _getAutoId(map, type) {

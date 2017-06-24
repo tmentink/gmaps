@@ -40,7 +40,7 @@ var Core = ((Core, ComponentType) => {
   }
 
   function _multiReset(compArray, ids) {
-    const newCompArray = new Components[compArray.type]({ map: compArray.map })
+    const newCompArray = Util.getNewComponentArray(compArray)
 
     for (var i = 0, i_end = ids.length; i < i_end; i++) {
       const comp = compArray.findById(ids[i])

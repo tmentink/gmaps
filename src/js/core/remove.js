@@ -88,7 +88,7 @@ var Core = ((Core) => {
   }
 
   function _multiRemove(compArray, ids) {
-    const newCompArray = new Components[compArray.type]({ map: compArray.map })
+    const newCompArray = Util.getNewComponentArray(compArray)
 
     for (var i = 0, i_end = ids.length; i < i_end; i++) {
       const comp = compArray.findById(ids[i])
@@ -101,7 +101,7 @@ var Core = ((Core) => {
   }
 
   function _pop(compArray, count, action) {
-    const newCompArray = new Components[compArray.type]({ map: compArray.map })
+    const newCompArray = Util.getNewComponentArray(compArray)
 
     while (count > 0 && compArray.data.length > 0) {
       newCompArray.push(RemoveFunction[action](compArray))

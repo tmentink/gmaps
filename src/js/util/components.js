@@ -212,7 +212,7 @@ var Util = ((Util, ComponentOption) => {
 
   Util.copy = function(parms) {
     const compArray = parms.compArray
-    const new_comp  = new Components[compArray.type]({ map: compArray.map })
+    const new_comp  = Util.getNewComponentArray(compArray)
     const proto     = _getPrototypes(compArray)
     const copy      = $.extend(true, new_comp, compArray)
 
@@ -234,6 +234,14 @@ var Util = ((Util, ComponentOption) => {
     return parms.compArray.data.map(function(comp) {
       return comp.id
     })
+  }
+
+  Util.getNewComponentArray = function(compArray, map) {
+    if ($.type(compArray) === "string") {
+      return new Components[`${compArray}Array`]({ map: map })
+    }
+
+    return new Components[compArray.type]({ map: compArray.map })
   }
 
   Util.renameComponentOptions = function(compOptions) {
