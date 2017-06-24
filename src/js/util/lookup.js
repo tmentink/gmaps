@@ -10,15 +10,15 @@ var Util = ((Util) => {
   // Constants
   // ----------------------------------------------------------------------
 
-  const ConfigAlias = {
-    delimitedstrings : Const.Config.DELIMITED_STRINGS,
-    delimiter        : Const.Config.DELIMITER,
-    labeloptions     : Const.Config.LABEL_OPTIONS,
-    mapid            : Const.Config.MAP_ID,
-    mapoptions       : Const.Config.MAP_OPTIONS,
-    markeroptions    : Const.Config.MARKER_OPTIONS,
-    polygonoptions   : Const.Config.POLYGON_OPTIONS,
-    urlprecision     : Const.Config.URL_PRECISION
+  const SettingsAlias = {
+    delimitedstrings : Const.Settings.DELIMITED_STRINGS,
+    delimiter        : Const.Settings.DELIMITER,
+    labeloptions     : Const.Settings.LABEL_OPTIONS,
+    mapid            : Const.Settings.MAP_ID,
+    mapoptions       : Const.Settings.MAP_OPTIONS,
+    markeroptions    : Const.Settings.MARKER_OPTIONS,
+    polygonoptions   : Const.Settings.POLYGON_OPTIONS,
+    urlprecision     : Const.Settings.URL_PRECISION
   }
 
   const ComponentOptionAlias = {
@@ -141,9 +141,9 @@ var Util = ((Util) => {
   // Public Methods
   // ----------------------------------------------------------------------
 
-  Util.getConfigOption = function(option) {
+  Util.getSetting = function(option) {
     option = Util.toLowerCase(option)
-    return ConfigAlias[option] || option
+    return SettingsAlias[option] || option
   }
 
   Util.getComponentOption = function(option) {

@@ -10,7 +10,7 @@ var Const = ((Const) => {
   // Global Constants
   // ----------------------------------------------------------------------
 
-  Const.Config = {
+  Const.Settings = {
     DELIMITED_STRINGS : "DelimitedStrings",
     DELIMITER         : "Delimiter",
     LABEL_OPTIONS     : "LabelOptions",

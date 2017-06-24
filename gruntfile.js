@@ -39,7 +39,7 @@ module.exports = function(grunt) {
       gmaps: {
         src: ["src/js/vendor/**/*.js",
               "src/js/constructor.js",
-              "src/js/config.js",
+              "src/js/settings.js",
               "src/js/constants.js",
               "src/js/util/**/*.js",
               "src/js/core/**/*.js",

@@ -5,23 +5,23 @@
 !(() => {
   "use strict"
 
-  const gmap = function(config) {
-    if ($.isPlainObject(config)) {
-      Util.renameConfigOptions(config)
+  const gmap = function(settings) {
+    if ($.isPlainObject(settings)) {
+      Util.renameSettings(settings)
     }
-    config = Util.mergeWithGlobalConfig(config)
-    config.MapOptions = Util.convertComponentOptions({
+    settings = Util.mergeWithGlobalSettings(settings)
+    settings.MapOptions = Util.convertComponentOptions({
       compType    : Const.ComponentType.MAP,
-      compOptions : config.MapOptions
+      compOptions : settings.MapOptions
     })
 
     // check if element with MapId exists
-    const mapContainer = document.getElementById(config.MapId)
+    const mapContainer = document.getElementById(settings.MapId)
     if (!mapContainer) {
       return Util.throwError({
         method  : "new gmap",
-        message : `Could not find an element with an Id of ${config.MapId}`,
-        obj     : config
+        message : `Could not find an element with an Id of ${settings.MapId}`,
+        obj     : settings
       })
     }
 
@@ -35,20 +35,20 @@
       Marker  : new Components.MarkerArray({ map: this }),
       Polygon : new Components.PolygonArray({ map: this })
     }
-    this.Config = config
     this.Init   = {
       Bounds  : undefined,
-      Options : config.MapOptions
+      Options : settings.MapOptions
     }
-    this.Obj = new google.maps.Map(mapContainer, config.MapOptions)
+    this.Obj = new google.maps.Map(mapContainer, settings.MapOptions)
     this.Obj["gmaps"] = {
-      id      : config.MapId,
+      id      : settings.MapId,
       map     : this,
       parent  : this,
       version : gmap.version
     }
-    this.Type    = Const.ComponentType.MAP
-    this.Version = gmap.version
+    this.Settings = settings
+    this.Type     = Const.ComponentType.MAP
+    this.Version  = gmap.version
 
     // save bounds after map has finished loading
     google.maps.event.addListenerOnce(this.Obj, Const.EventType.TILES_LOADED, () => {

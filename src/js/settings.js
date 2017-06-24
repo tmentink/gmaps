@@ -1,23 +1,23 @@
 // ------------------------------------------------------------------------
-// GMaps: config.js
+// GMaps: settings.js
 // ------------------------------------------------------------------------
 
-!((Config) => {
+!((Settings) => {
   "use strict"
 
 
   // ----------------------------------------------------------------------
-  // Configuration Options
+  // Global Settings
   // ----------------------------------------------------------------------
 
-  Config.DelimitedStrings = true
+  Settings.DelimitedStrings = true
 
-  Config.Delimiter = {
+  Settings.Delimiter = {
     LatLng      : "|",
     LatLngArray : "~"
   }
 
-  Config.LabelOptions = {
+  Settings.LabelOptions = {
     align        : "center",
     fontColor    : "#000",
     fontSize     : 14,
@@ -26,9 +26,9 @@
     visible      : true
   }
 
-  Config.MapId = "gmap"
+  Settings.MapId = "gmap"
 
-  Config.MapOptions = {
+  Settings.MapOptions = {
     center            : { lat: 37.5, lng: -120 },
     clickableIcons    : false,
     draggable         : true,
@@ -39,14 +39,14 @@
     zoom              : 6
   }
 
-  Config.MarkerOptions = {
+  Settings.MarkerOptions = {
     clickable : true,
     draggable : false,
     opacity   : 1,
     visible   : true
   }
 
-  Config.PolygonOptions = {
+  Settings.PolygonOptions = {
     clickable     : true,
     editable      : false,
     draggable     : false,
@@ -59,8 +59,8 @@
     visible       : true
   }
 
-  Config.UrlPrecision = 5
+  Settings.UrlPrecision = 5
 
 
-  return Config
-})(gmap.Config || (gmap.Config = {}))
+  return Settings
+})(gmap.Settings || (gmap.Settings = {}))

@@ -97,7 +97,7 @@ var Core = ((Core) => {
   }
 
   function _mergeDefaults(map, type, parms) {
-    const defaults = map.Config[type + "Options"] || {}
+    const defaults = map.Settings[type + "Options"] || {}
     const options  = $.extend({}, defaults, parms)
     options.map    = map.Obj
 
