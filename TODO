@@ -7,10 +7,6 @@ Add Remaining Components:
   ☐ Rectangle
 
 
-Map:
-  ☐ Fix fitBounds to accept LatLngBounds
-
-
 Testing:
   ☐ Create mock google.maps service for testing
 
@@ -20,11 +16,4 @@ Util:
 
 
 Nice To Have Features:
-  Components:
-    ☐ Allow all options to be case insensitive
-    ☐ Add onClick, onDragStart, etc...
-
-  ComponentArray:
-    ☐ Add condition for toggle similar to jQuery?
-
-  
+  ☐ Add condition for toggle similar to jQuery
