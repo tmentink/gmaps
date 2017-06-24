@@ -29,32 +29,37 @@
   Settings.mapId = "gmap"
 
   Settings.mapOptions = {
-    center            : { lat: 37.5, lng: -120 },
-    clickableIcons    : false,
-    draggable         : true,
-    gestureHandling   : "auto",
-    mapTypeControl    : false,
-    mapTypeId         : google.maps.MapTypeId.ROADMAP,
-    streetViewControl : false,
-    zoom              : 6
+    center                 : { lat: 37.5, lng: -120 },
+    clickableIcons         : false,
+    disableDoubleClickZoom : false,
+    gestureHandling        : "auto",
+    keyboardShortcuts      : true,
+    mapTypeControl         : false,
+    mapTypeId              : google.maps.MapTypeId.ROADMAP,
+    scrollwheel            : true,
+    streetViewControl      : false,
+    zoom                   : 6,
+    zoomControl            : false
   }
 
   Settings.markerOptions = {
-    clickable : true,
-    draggable : false,
-    opacity   : 1,
-    visible   : true
+    clickable   : true,
+    crossOnDrag : true,
+    draggable   : false,
+    opacity     : 1,
+    optimized   : true,
+    visible     : true
   }
 
   Settings.polygonOptions = {
     clickable     : true,
-    editable      : false,
     draggable     : false,
+    editable      : false,
     fillColor     : "#2185D0",
-    fillOpacity   : 0.8,
+    fillOpacity   : 0.75,
     geodesic      : false,
     strokeColor   : "#000",
-    strokeOpacity : 0.8,
+    strokeOpacity : 0.75,
     strokeWeight  : 1,
     visible       : true
   }
