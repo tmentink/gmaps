@@ -21,6 +21,75 @@ var Util = ((Util) => {
     urlprecision     : Const.Config.URL_PRECISION
   }
 
+  const ComponentOptionAlias = {
+    anchorpoint              : Const.ComponentOption.ANCHOR_POINT,
+    animation                : Const.ComponentOption.ANIMATION,
+    backgroundcolor          : Const.ComponentOption.BACKGROUND_COLOR,
+    bounds                   : Const.ComponentOption.BOUNDS,
+    center                   : Const.ComponentOption.CENTER,
+    clickable                : Const.ComponentOption.CLICKABLE,
+    clickableicons           : Const.ComponentOption.CLICKABLE_ICONS,
+    content                  : Const.ComponentOption.CONTENT,
+    crossondrag              : Const.ComponentOption.CROSS_ON_DRAG,
+    cursor                   : Const.ComponentOption.CURSOR,
+    disableautopan           : Const.ComponentOption.DISABLE_AUTO_PAN,
+    disabledefaultui         : Const.ComponentOption.DISABLE_DEFAULT_UI,
+    disabledoubleclickzoom   : Const.ComponentOption.DISABLE_DOUBLE_CLICK_ZOOM,
+    draggable                : Const.ComponentOption.DRAGGABLE,
+    draggablecursor          : Const.ComponentOption.DRAGGABLE_CURSOR,
+    draggingcursor           : Const.ComponentOption.DRAGGING_CURSOR,
+    editable                 : Const.ComponentOption.EDITABLE,
+    fillcolor                : Const.ComponentOption.FILL_COLOR,
+    fillopacity              : Const.ComponentOption.FILL_OPACITY,
+    fullscreencontrol        : Const.ComponentOption.FULLSCREEN_CONTROL,
+    fullscreencontroloptions : Const.ComponentOption.FULLSCREEN_CONTROL_OPTIONS,
+    geodesic                 : Const.ComponentOption.GEODESIC,
+    gesturehandling          : Const.ComponentOption.GESTURE_HANDLING,
+    heading                  : Const.ComponentOption.HEADING,
+    icon                     : Const.ComponentOption.ICON,
+    icons                    : Const.ComponentOption.ICONS,
+    keyboardshortcuts        : Const.ComponentOption.KEYBOARD_SHORTCUTS,
+    label                    : Const.ComponentOption.LABEL,
+    map                      : Const.ComponentOption.MAP,
+    maptypecontrol           : Const.ComponentOption.MAP_TYPE_CONTROL,
+    maptypecontroloptions    : Const.ComponentOption.MAP_TYPE_CONTROL_OPTIONS,
+    maptypeid                : Const.ComponentOption.MAP_TYPE_ID,
+    maxwidth                 : Const.ComponentOption.MAX_WIDTH,
+    maxzoom                  : Const.ComponentOption.MAX_ZOOM,
+    noclear                  : Const.ComponentOption.NO_CLEAR,
+    opacity                  : Const.ComponentOption.OPACITY,
+    optimized                : Const.ComponentOption.OPTIMIZED,
+    pancontrol               : Const.ComponentOption.PAN_CONTROL,
+    pancontroloptions        : Const.ComponentOption.PAN_CONTROL_OPTIONS,
+    path                     : Const.ComponentOption.PATH,
+    paths                    : Const.ComponentOption.PATHS,
+    pixeloffset              : Const.ComponentOption.PIXEL_OFFSET,
+    place                    : Const.ComponentOption.PLACE,
+    position                 : Const.ComponentOption.POSITION,
+    radius                   : Const.ComponentOption.RADIUS,
+    rotatecontrol            : Const.ComponentOption.ROTATE_CONTROL,
+    rotatecontroloptions     : Const.ComponentOption.ROTATE_CONTROL_OPTIONS,
+    scalecontrol             : Const.ComponentOption.SCALE_CONTROL,
+    scalecontroloptions      : Const.ComponentOption.SCALE_CONTROL_OPTIONS,
+    scrollwheel              : Const.ComponentOption.SCROLL_WHEEL,
+    shape                    : Const.ComponentOption.SHAPE,
+    streetview               : Const.ComponentOption.STREET_VIEW,
+    streetviewcontrol        : Const.ComponentOption.STREET_VIEW_CONTROL,
+    streetviewcontroloptions : Const.ComponentOption.STREET_VIEW_CONTROL_OPTIONS,
+    strokecolor              : Const.ComponentOption.STROKE_COLOR,
+    strokeopacity            : Const.ComponentOption.STROKE_OPACITY,
+    strokeposition           : Const.ComponentOption.STROKE_POSITION,
+    strokeweight             : Const.ComponentOption.STROKE_WEIGHT,
+    styles                   : Const.ComponentOption.STYLES,
+    tilt                     : Const.ComponentOption.TILT,
+    title                    : Const.ComponentOption.TITLE,
+    visible                  : Const.ComponentOption.VISIBLE,
+    zoom                     : Const.ComponentOption.ZOOM,
+    zoomcontrol              : Const.ComponentOption.ZOOM_CONTROL,
+    zoomcontroloptions       : Const.ComponentOption.ZOOM_CONTROL_OPTIONS,
+    zindex                   : Const.ComponentOption.Z_INDEX
+  }
+
   const ComponentTypeAlias = {
     label    : Const.ComponentType.LABEL,
     labels   : Const.ComponentType.LABEL,
@@ -75,6 +144,11 @@ var Util = ((Util) => {
   Util.getConfigOption = function(option) {
     option = Util.toLowerCase(option)
     return ConfigAlias[option] || option
+  }
+
+  Util.getComponentOption = function(option) {
+    option = Util.toLowerCase(option)
+    return ComponentOptionAlias[option] || option
   }
 
   Util.getComponentType = function(type) {
