@@ -74,6 +74,15 @@ var Components = ((Components) => {
       })
     }
 
+    getOptions(compOption) {
+      return Core.getOptions({
+        compArray  : this,
+        compOption : compOption,
+        compType   : this.getChildType(),
+        ids        : this.getIds()
+      })
+    }
+
     hide() {
       return Core.hide({
         compArray : this,
@@ -128,18 +137,20 @@ var Components = ((Components) => {
       })
     }
 
+    setOptions(compOptions, value) {
+      return Core.setOptions({
+        compArray   : this,
+        compOptions : compOptions,
+        compType    : this.getChildType(),
+        ids         : this.getIds(),
+        value       : value
+      })
+    }
+
     toggle() {
       return Core.toggle({
         compArray : this,
         ids       : this.getIds()
-      })
-    }
-
-    update(compOptions) {
-      return Core.update({
-        compArray   : this,
-        compOptions : compOptions,
-        ids         : this.getIds()
       })
     }
 

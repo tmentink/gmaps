@@ -55,7 +55,7 @@ var Core = ((Core) => {
   // ----------------------------------------------------------------------
 
   function _add(map, type, compOptions) {
-    compOptions = Util.convertCompOptions({
+    compOptions = Util.convertComponentOptions({
       compType    : type,
       compOptions : compOptions
     })

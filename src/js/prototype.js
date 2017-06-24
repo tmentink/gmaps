@@ -35,24 +35,20 @@
       return this.Obj.getCenter()
     },
 
-    getClickableIcons: function() {
-      return this.Obj.getClickableIcons()
+    getOptions: function(compOption) {
+      return Core.getOptions({
+        compArray  : this,
+        compOption : compOption,
+        compType   : this.Type
+      })
     },
 
     getDiv: function() {
       return this.Obj.getDiv()
     },
 
-    getMapTypeId: function() {
-      return this.Obj.getMapTypeId()
-    },
-
     getProjection: function() {
       return this.Obj.getProjection()
-    },
-
-    getStreetView: function() {
-      return this.Obj.getStreetView()
     },
 
     getZoom: function() {
@@ -120,19 +116,13 @@
       return this
     },
 
-    setClickableIcons: function(bool) {
-      this.Obj.setClickableIcons(bool)
-      return this
-    },
-
-    setMapTypeId: function(mapTypeId) {
-      this.Obj.setMapTypeId(mapTypeId)
-      return this
-    },
-
-    setStreetView: function(streetView) {
-      this.Obj.setStreetView(streetView)
-      return this
+    setOptions: function(compOptions, value) {
+      return Core.setOptions({
+        compArray   : this,
+        compOptions : compOptions,
+        compType    : this.Type,
+        value       : value
+      })
     },
 
     setZoom: function(zoom) {
@@ -140,13 +130,6 @@
         this.Obj.setZoom(zoom)
       }
       return this
-    },
-
-    update: function(compOptions) {
-      return Core.update({
-        compArray   : this,
-        compOptions : compOptions
-      })
     }
 
   }

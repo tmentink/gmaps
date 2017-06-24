@@ -10,7 +10,7 @@
       Util.renameConfigOptions(config)
     }
     config = Util.mergeWithGlobalConfig(config)
-    config.MapOptions = Util.convertCompOptions({
+    config.MapOptions = Util.convertComponentOptions({
       compType    : Const.ComponentType.MAP,
       compOptions : config.MapOptions
     })
