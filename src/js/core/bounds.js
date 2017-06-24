@@ -31,7 +31,10 @@ var Core = ((Core) => {
     const comps = parms.comps
     const map   = parms.map
 
-    if ($.type(comps) === "object") {
+    if (comps instanceof google.maps.LatLngBounds) {
+      map.obj.fitBounds(comps)
+    }
+    else if ($.type(comps) === "object") {
       const bounds = _getBoundsByComponents(map.components, comps)
       map.obj.fitBounds(bounds)
     }
