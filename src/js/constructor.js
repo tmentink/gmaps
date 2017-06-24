@@ -20,7 +20,7 @@
     if (!mapContainer) {
       return Util.throwError({
         method  : "new gmap",
-        message : "Could not find an element with an Id of " + config.MapId,
+        message : `Could not find an element with an Id of ${config.MapId}`,
         obj     : config
       })
     }
