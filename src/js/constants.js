@@ -10,17 +10,6 @@ var Const = ((Const) => {
   // Global Constants
   // ----------------------------------------------------------------------
 
-  Const.Settings = {
-    DELIMITED_STRINGS : "delimitedStrings",
-    DELIMITER         : "delimiter",
-    LABEL_OPTIONS     : "labelOptions",
-    MAP_ID            : "mapId",
-    MAP_OPTIONS       : "mapOptions",
-    MARKER_OPTIONS    : "markerOptions",
-    POLYGON_OPTIONS   : "polygonOptions",
-    URL_PRECISION     : "urlPrecision"
-  }
-
   Const.ComponentOption = {
     ANCHOR_POINT                : "anchorPoint",
     ANIMATION                   : "animation",
@@ -133,6 +122,17 @@ var Const = ((Const) => {
     VISIBLE_CHANGED     : "visible_changed",
     ZINDEX_CHANGED      : "zindex_changed",
     ZOOM_CHANGED        : "zoom_changed"
+  }
+
+  Const.Settings = {
+    DELIMITED_STRINGS : "delimitedStrings",
+    DELIMITER         : "delimiter",
+    LABEL_OPTIONS     : "labelOptions",
+    MAP_ID            : "mapId",
+    MAP_OPTIONS       : "mapOptions",
+    MARKER_OPTIONS    : "markerOptions",
+    POLYGON_OPTIONS   : "polygonOptions",
+    URL_PRECISION     : "urlPrecision"
   }
 
 
