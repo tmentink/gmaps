@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// GMaps: core/options.js
+// gmaps: core/options.js
 // ------------------------------------------------------------------------
 
 var Core = ((Core, ComponentType) => {
@@ -83,7 +83,7 @@ var Core = ((Core, ComponentType) => {
 
   function _getComponentOptions(comp, compOptions) {
     compOptions = Util.getComponentOption(compOptions)
-    const obj   = $.extend({}, comp.Obj)
+    const obj   = $.extend({}, comp.obj)
 
     if (compOptions) {
       return obj[compOptions]
@@ -91,17 +91,17 @@ var Core = ((Core, ComponentType) => {
 
     return Util.cleanComponentOptions({
       compOptions : obj,
-      compType    : comp.Type
+      compType    : comp.type
     })
   }
 
   function _setOptions(comp, options) {
-    comp.Obj.setOptions(options)
+    comp.obj.setOptions(options)
     return comp
   }
 
   function _multiSetOptions(compArray, ids, options) {
-    const newCompArray = new Components[compArray.Type]({ map: compArray.Map })
+    const newCompArray = new Components[compArray.type]({ map: compArray.map })
 
     for (var i = 0, i_end = ids.length; i < i_end; i++) {
       const comp = compArray.findById(ids[i])

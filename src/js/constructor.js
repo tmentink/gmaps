@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// GMaps: constructor.js
+// gmaps: constructor.js
 // ------------------------------------------------------------------------
 
 !(() => {
@@ -9,18 +9,21 @@
     if ($.isPlainObject(settings)) {
       Util.renameSettings(settings)
     }
-    settings = Util.mergeWithGlobalSettings(settings)
-    settings.MapOptions = Util.convertComponentOptions({
+
+    // merge and convert map settings
+    settings         = Util.mergeWithGlobalSettings(settings)
+    const mapOptions = Util.convertComponentOptions({
       compType    : Const.ComponentType.MAP,
-      compOptions : settings.MapOptions
+      compOptions : settings[Const.Settings.MAP_OPTIONS]
     })
 
-    // check if element with MapId exists
-    const mapContainer = document.getElementById(settings.MapId)
+    // check if element with mapId exists
+    const mapId        = settings[Const.Settings.MAP_ID]
+    const mapContainer = document.getElementById(mapId)
     if (!mapContainer) {
       return Util.throwError({
         method  : "new gmap",
-        message : `Could not find an element with an Id of ${settings.MapId}`,
+        message : `Could not find an element with an Id of ${mapId}`,
         obj     : settings
       })
     }
@@ -30,29 +33,29 @@
     // Class Definition
     // ----------------------------------------------------------------------
 
-    this.Components = {
+    this.components = {
       Label   : new Components.LabelArray({ map: this }),
       Marker  : new Components.MarkerArray({ map: this }),
       Polygon : new Components.PolygonArray({ map: this })
     }
-    this.Init   = {
-      Bounds  : undefined,
-      Options : settings.MapOptions
+    this.init   = {
+      bounds  : undefined,
+      options : mapOptions
     }
-    this.Obj = new google.maps.Map(mapContainer, settings.MapOptions)
-    this.Obj["gmaps"] = {
-      id      : settings.MapId,
+    this.obj = new google.maps.Map(mapContainer, mapOptions)
+    this.obj["gmaps"] = {
+      id      : mapId,
       map     : this,
       parent  : this,
       version : gmap.version
     }
-    this.Settings = settings
-    this.Type     = Const.ComponentType.MAP
-    this.Version  = gmap.version
+    this.settings = settings
+    this.type     = Const.ComponentType.MAP
+    this.version  = gmap.version
 
     // save bounds after map has finished loading
-    google.maps.event.addListenerOnce(this.Obj, Const.EventType.TILES_LOADED, () => {
-      this.Init.Bounds = this.Obj.getBounds()
+    google.maps.event.addListenerOnce(this.obj, Const.EventType.TILES_LOADED, () => {
+      this.init.bounds = this.obj.getBounds()
     })
   }
 

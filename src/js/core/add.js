@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// GMaps: core/add.js
+// gmaps: core/add.js
 // ------------------------------------------------------------------------
 
 var Core = ((Core) => {
@@ -69,7 +69,7 @@ var Core = ((Core) => {
       options : _mergeDefaults(map, type, compOptions)
     })
 
-    map.Components[type].push(comp)
+    map.components[type].push(comp)
     return comp
   }
 
@@ -92,16 +92,17 @@ var Core = ((Core) => {
   }
 
   function _getAutoId(map, type) {
-    const id = map.Components[type].Seed++
+    const id = map.components[type].seed++
     return `__${id}__`
   }
 
-  function _mergeDefaults(map, type, parms) {
-    const defaults = map.Settings[type + "Options"] || {}
-    const options  = $.extend({}, defaults, parms)
-    options.map    = map.Obj
+  function _mergeDefaults(map, type, compOptions) {
+    const namespace = Util.getSetting(`${type}Options`)
+    const defaults  = map.settings[namespace] || {}
+    const options   = $.extend({}, defaults, compOptions)
+    options.map     = map.obj
 
-    // delete any parms that are only for gmaps
+    // delete any options that are only for gmaps
     delete options.id
 
     return options
@@ -124,7 +125,7 @@ var Core = ((Core) => {
   function _validateParms(map, type, parms) {
 
     // Check if Id already exists
-    if (map.Components[type].includes(parms.id) === true) {
+    if (map.components[type].includes(parms.id) === true) {
       return Util.throwError({
         method  : "add",
         message : `A ${type} with an id of ${parms.id} already exists`,

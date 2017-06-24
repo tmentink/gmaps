@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// GMaps: core/reset.js
+// gmaps: core/reset.js
 // ------------------------------------------------------------------------
 
 var Core = ((Core, ComponentType) => {
@@ -14,8 +14,8 @@ var Core = ((Core, ComponentType) => {
     const compArray = parms.compArray
     const ids       = parms.ids
 
-    if (compArray.Type === ComponentType.MAP) {
-      compArray.Obj.fitBounds(compArray.Init.Bounds)
+    if (compArray.type === ComponentType.MAP) {
+      compArray.obj.fitBounds(compArray.init.bounds)
       return _reset(compArray)
     }
 
@@ -35,12 +35,12 @@ var Core = ((Core, ComponentType) => {
   // ----------------------------------------------------------------------
 
   function _reset(comp) {
-    comp.Obj.setOptions(comp.Init.Options)
+    comp.obj.setOptions(comp.init.options)
     return comp
   }
 
   function _multiReset(compArray, ids) {
-    const newCompArray = new Components[compArray.Type]({ map: compArray.Map })
+    const newCompArray = new Components[compArray.type]({ map: compArray.map })
 
     for (var i = 0, i_end = ids.length; i < i_end; i++) {
       const comp = compArray.findById(ids[i])

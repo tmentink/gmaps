@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// GMaps: components/baseComponentArray.js
+// gmaps: components/baseComponentArray.js
 // ------------------------------------------------------------------------
 
 var Components = ((Components) => {
@@ -13,10 +13,10 @@ var Components = ((Components) => {
   class BaseComponentArray {
 
     constructor(parms) {
-      this.Data = []
-      this.Map  = parms.map
-      this.Seed = 0
-      this.Type = parms.type
+      this.data = []
+      this.map  = parms.map
+      this.seed = 0
+      this.type = parms.type
     }
 
 
@@ -31,16 +31,16 @@ var Components = ((Components) => {
     }
 
     filter(fn) {
-      return this.Data.filter(fn)
+      return this.data.filter(fn)
     }
 
     find(fn) {
-      return this.Data.find(fn)
+      return this.data.find(fn)
     }
 
     findById(id) {
-      return this.Data.find(function(comp) {
-        return comp.Id === id
+      return this.data.find(function(comp) {
+        return comp.id === id
       })
     }
 
@@ -59,7 +59,7 @@ var Components = ((Components) => {
     }
 
     getChildType() {
-      return this.Type.replace("Array", "")
+      return this.type.replace("Array", "")
     }
 
     getGoogleObjects() {
@@ -97,7 +97,7 @@ var Components = ((Components) => {
     others() {
       return Core.search({
         ids      : this.getIds(),
-        map      : this.Map,
+        map      : this.map,
         matching : false,
         type     : this.getChildType()
       })
@@ -106,13 +106,13 @@ var Components = ((Components) => {
     pop(count) {
       return Core.pop({
         count : count,
-        map   : this.Map,
+        map   : this.map,
         type  : this.getChildType()
       })
     }
 
     push(comp) {
-      return this.Data.push(comp)
+      return this.data.push(comp)
     }
 
     reset() {
@@ -125,7 +125,7 @@ var Components = ((Components) => {
     shift(count) {
       return Core.shift({
         count : count,
-        map   : this.Map,
+        map   : this.map,
         type  : this.getChildType()
       })
     }
@@ -159,7 +159,7 @@ var Components = ((Components) => {
       comps[this.getChildType()] = this.getIds()
 
       Core.fitBounds({
-        map   : this.Map,
+        map   : this.map,
         comps : comps
       })
 

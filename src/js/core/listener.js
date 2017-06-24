@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// GMaps: core/listener.js
+// gmaps: core/listener.js
 // ------------------------------------------------------------------------
 
 var Core = ((Core, ComponentType) => {
@@ -57,7 +57,7 @@ var Core = ((Core, ComponentType) => {
   // ----------------------------------------------------------------------
 
   function _listener(compArray, ids, type, func, action) {
-    if (compArray.Type === ComponentType.MAP) {
+    if (compArray.type === ComponentType.MAP) {
       return Execute[action](compArray, type, func)
     }
 
@@ -72,7 +72,7 @@ var Core = ((Core, ComponentType) => {
   }
 
   function _multiListener(compArray, ids, type, func, action) {
-    const newCompArray = new Components[compArray.Type]({ map: compArray.Map })
+    const newCompArray = new Components[compArray.type]({ map: compArray.map })
 
     for (var i = 0, i_end = ids.length; i < i_end; i++) {
       const comp = compArray.findById(ids[i])
@@ -85,17 +85,17 @@ var Core = ((Core, ComponentType) => {
   }
 
   function _add(comp, type, func) {
-    google.maps.event.addListener(comp.Obj, type, func)
+    google.maps.event.addListener(comp.obj, type, func)
     return comp
   }
 
   function _removeAll(comp) {
-    google.maps.event.clearInstanceListeners(comp.Obj)
+    google.maps.event.clearInstanceListeners(comp.obj)
     return comp
   }
 
   function _removeType(comp, type) {
-    google.maps.event.clearListeners(comp.Obj, type)
+    google.maps.event.clearListeners(comp.obj, type)
     return comp
   }
 

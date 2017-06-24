@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// GMaps: prototype.js
+// gmaps: prototype.js
 // ------------------------------------------------------------------------
 
 !((ComponentType) => {
@@ -28,31 +28,31 @@
     },
 
     getBounds: function() {
-      return this.Obj.getBounds()
+      return this.obj.getBounds()
     },
 
     getCenter: function() {
-      return this.Obj.getCenter()
+      return this.obj.getCenter()
     },
 
     getOptions: function(compOption) {
       return Core.getOptions({
         compArray  : this,
         compOption : compOption,
-        compType   : this.Type
+        compType   : this.type
       })
     },
 
     getDiv: function() {
-      return this.Obj.getDiv()
+      return this.obj.getDiv()
     },
 
     getProjection: function() {
-      return this.Obj.getProjection()
+      return this.obj.getProjection()
     },
 
     getZoom: function() {
-      return this.Obj.getZoom()
+      return this.obj.getZoom()
     },
 
     labels: function(ids) {
@@ -111,7 +111,7 @@
 
     setCenter: function(center) {
       if (center !== undefined) {
-        this.Obj.setCenter(Util.toLatLng(center))
+        this.obj.setCenter(Util.toLatLng(center))
       }
       return this
     },
@@ -120,14 +120,14 @@
       return Core.setOptions({
         compArray   : this,
         compOptions : compOptions,
-        compType    : this.Type,
+        compType    : this.type,
         value       : value
       })
     },
 
     setZoom: function(zoom) {
       if (zoom !== undefined) {
-        this.Obj.setZoom(zoom)
+        this.obj.setZoom(zoom)
       }
       return this
     }

@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// GMaps: components/markerArray.js
+// gmaps: components/markerArray.js
 // ------------------------------------------------------------------------
 
 var Components = ((Components, ComponentType) => {

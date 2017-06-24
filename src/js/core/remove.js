@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// GMaps: core/remove.js
+// gmaps: core/remove.js
 // ------------------------------------------------------------------------
 
 var Core = ((Core) => {
@@ -17,13 +17,13 @@ var Core = ((Core) => {
 
   const RemoveFunction = {
     pop: function(compArray) {
-      const comp = compArray.Data.pop()
-      comp.Obj.setMap(null)
+      const comp = compArray.data.pop()
+      comp.obj.setMap(null)
       return comp
     },
     shift: function(compArray) {
-      const comp = compArray.Data.shift()
-      comp.Obj.setMap(null)
+      const comp = compArray.data.shift()
+      comp.obj.setMap(null)
       return comp
     }
   }
@@ -37,7 +37,7 @@ var Core = ((Core) => {
     const count = parms.count || 1
     const map   = parms.map
     const type  = Util.getComponentType(parms.type)
-    return _pop(map.Components[type], count, Action.POP)
+    return _pop(map.components[type], count, Action.POP)
   }
 
   Core.remove = function(parms) {
@@ -46,7 +46,7 @@ var Core = ((Core) => {
     const type = Util.getComponentType(parms.type)
 
     if (Util.validMapComponent(type)) {
-      const compArray = map.Components[type]
+      const compArray = map.components[type]
       ids = ids || compArray.getIds()
 
       if ($.isArray(ids)) {
@@ -71,7 +71,7 @@ var Core = ((Core) => {
     const count = parms.count || 1
     const map   = parms.map
     const type  = Util.getComponentType(parms.type)
-    return _pop(map.Components[type], count, Action.SHIFT)
+    return _pop(map.components[type], count, Action.SHIFT)
   }
 
 
@@ -80,15 +80,15 @@ var Core = ((Core) => {
   // ----------------------------------------------------------------------
 
   function _remove(comp) {
-    const compArray = comp.Map.Components[comp.Type]
-    const index     = compArray.Data.indexOf(comp)
+    const compArray = comp.map.components[comp.type]
+    const index     = compArray.data.indexOf(comp)
 
-    comp.Obj.setMap(null)
-    return compArray.Data.splice(index, 1)[0]
+    comp.obj.setMap(null)
+    return compArray.data.splice(index, 1)[0]
   }
 
   function _multiRemove(compArray, ids) {
-    const newCompArray = new Components[compArray.Type]({ map: compArray.Map })
+    const newCompArray = new Components[compArray.type]({ map: compArray.map })
 
     for (var i = 0, i_end = ids.length; i < i_end; i++) {
       const comp = compArray.findById(ids[i])
@@ -101,9 +101,9 @@ var Core = ((Core) => {
   }
 
   function _pop(compArray, count, action) {
-    const newCompArray = new Components[compArray.Type]({ map: compArray.Map })
+    const newCompArray = new Components[compArray.type]({ map: compArray.map })
 
-    while (count > 0 && compArray.Data.length > 0) {
+    while (count > 0 && compArray.data.length > 0) {
       newCompArray.push(RemoveFunction[action](compArray))
       count --
     }

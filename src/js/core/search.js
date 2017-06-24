@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// GMaps: core/search.js
+// gmaps: core/search.js
 // ------------------------------------------------------------------------
 
 var Core = ((Core) => {
@@ -15,11 +15,11 @@ var Core = ((Core) => {
     const map       = parms.map
     const matching  = parms.matching
     const type      = parms.type
-    const compArray = map.Components[type]
+    const compArray = map.components[type]
 
-    const newCompArray = new Components[compArray.Type]({ map: map })
-    newCompArray.Data  = ids !== undefined ?
-      _getDataByIds(compArray, Util.toArray(ids), matching) : compArray.Data.slice(0)
+    const newCompArray = new Components[compArray.type]({ map: map })
+    newCompArray.data  = ids !== undefined ?
+      _getDataByIds(compArray, Util.toArray(ids), matching) : compArray.data.slice(0)
 
     return newCompArray
   }
@@ -30,9 +30,9 @@ var Core = ((Core) => {
   // ----------------------------------------------------------------------
 
   function _getDataByIds(compArray, ids, matching) {
-    return compArray.Data.filter(function(comp) {
+    return compArray.data.filter(function(comp) {
       return matching === true ?
-        ids.indexOf(comp.Id) !== -1 : ids.indexOf(comp.Id) === -1
+        ids.indexOf(comp.id) !== -1 : ids.indexOf(comp.id) === -1
     })
   }
 

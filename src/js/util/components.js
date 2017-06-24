@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// GMaps: util/components.js
+// gmaps: util/components.js
 // ------------------------------------------------------------------------
 
 var Util = ((Util, ComponentOption) => {
@@ -212,7 +212,7 @@ var Util = ((Util, ComponentOption) => {
 
   Util.copy = function(parms) {
     const compArray = parms.compArray
-    const new_comp  = new Components[compArray.Type]({ map: compArray.Map })
+    const new_comp  = new Components[compArray.type]({ map: compArray.map })
     const proto     = _getPrototypes(compArray)
     const copy      = $.extend(true, new_comp, compArray)
 
@@ -225,14 +225,14 @@ var Util = ((Util, ComponentOption) => {
   }
 
   Util.getGoogleObjects = function(parms) {
-    return parms.compArray.Data.map(function(comp) {
-      return comp.Obj
+    return parms.compArray.data.map(function(comp) {
+      return comp.obj
     })
   }
 
   Util.getIds = function(parms) {
-    return parms.compArray.Data.map(function(comp) {
-      return comp.Id
+    return parms.compArray.data.map(function(comp) {
+      return comp.id
     })
   }
 

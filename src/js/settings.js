@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// GMaps: settings.js
+// gmaps: settings.js
 // ------------------------------------------------------------------------
 
 !((Settings) => {
@@ -10,14 +10,14 @@
   // Global Settings
   // ----------------------------------------------------------------------
 
-  Settings.DelimitedStrings = true
+  Settings.delimitedStrings = true
 
-  Settings.Delimiter = {
-    LatLng      : "|",
-    LatLngArray : "~"
+  Settings.delimiter = {
+    latLng      : "|",
+    latLngArray : "~"
   }
 
-  Settings.LabelOptions = {
+  Settings.labelOptions = {
     align        : "center",
     fontColor    : "#000",
     fontSize     : 14,
@@ -26,9 +26,9 @@
     visible      : true
   }
 
-  Settings.MapId = "gmap"
+  Settings.mapId = "gmap"
 
-  Settings.MapOptions = {
+  Settings.mapOptions = {
     center            : { lat: 37.5, lng: -120 },
     clickableIcons    : false,
     draggable         : true,
@@ -39,14 +39,14 @@
     zoom              : 6
   }
 
-  Settings.MarkerOptions = {
+  Settings.markerOptions = {
     clickable : true,
     draggable : false,
     opacity   : 1,
     visible   : true
   }
 
-  Settings.PolygonOptions = {
+  Settings.polygonOptions = {
     clickable     : true,
     editable      : false,
     draggable     : false,
@@ -59,8 +59,8 @@
     visible       : true
   }
 
-  Settings.UrlPrecision = 5
+  Settings.urlPrecision = 5
 
 
   return Settings
-})(gmap.Settings || (gmap.Settings = {}))
+})(gmap.settings || (gmap.settings = {}))

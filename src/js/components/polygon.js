@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// GMaps: components/polygon.js
+// gmaps: components/polygon.js
 // ------------------------------------------------------------------------
 
 var Components = ((Components, ComponentType) => {

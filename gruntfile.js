@@ -9,12 +9,12 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON("package.json"),
     version: "<%= pkg.version %>-alpha",
     banner: "/*!\n" +
-            " * GMaps v<%= version %> (<%= pkg.homepage %>)\n" +
+            " * gmaps v<%= version %> (<%= pkg.homepage %>)\n" +
             " * Copyright <%= grunt.template.today('yyyy') %> <%= pkg.author %>\n" +
             " * Licensed under <%= pkg.license %>\n" +
             " */\n",
     dependencyCheck: "if (typeof google === 'undefined' || typeof google.maps === 'undefined') {\n" +
-                     "throw new Error('<%= pkg.name %>.js requires Google Maps JavaScript API v3.')\n" +
+                     "throw new Error('<%= pkg.name %> requires Google Maps JavaScript API v3.')\n" +
                      "};\n",
     closure: {
       start: "!function() {\n",

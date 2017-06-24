@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// GMaps: core/bounds.js
+// gmaps: core/bounds.js
 // ------------------------------------------------------------------------
 
 var Core = ((Core) => {
@@ -32,12 +32,12 @@ var Core = ((Core) => {
     const map   = parms.map
 
     if ($.type(comps) === "object") {
-      const bounds = _getBoundsByComponents(map.Components, comps)
-      map.Obj.fitBounds(bounds)
+      const bounds = _getBoundsByComponents(map.components, comps)
+      map.obj.fitBounds(bounds)
     }
     else if (comps === "init" || comps === "initial") {
-      map.Obj.fitBounds(map.Init.Bounds)
-      map.Obj.setZoom(map.Init.Options.zoom)
+      map.obj.fitBounds(map.init.bounds)
+      map.obj.setZoom(map.init.options.zoom)
     }
 
     return map
@@ -91,7 +91,7 @@ var Core = ((Core) => {
 
   function _getBoundsByPath(comp) {
     const bounds = new google.maps.LatLngBounds()
-    const paths  = comp.Obj.getPaths()
+    const paths  = comp.obj.getPaths()
 
     for (var i = 0, i_end = paths.length; i < i_end; i++) {
       const path = paths.getAt(i)
@@ -106,7 +106,7 @@ var Core = ((Core) => {
 
   function _getBoundsByPosition(comp) {
     const bounds = new google.maps.LatLngBounds()
-    bounds.extend(comp.Obj.getPosition())
+    bounds.extend(comp.obj.getPosition())
     return bounds
   }
 

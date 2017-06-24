@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// GMaps: components/baseComponent.js
+// gmaps: components/baseComponent.js
 // ------------------------------------------------------------------------
 
 var Components = ((Components) => {
@@ -19,19 +19,19 @@ var Components = ((Components) => {
       const options = parms.options
       const type    = parms.type
 
-      this.Id   = id
-      this.Init = {
-        Options : options
+      this.id   = id
+      this.init = {
+        options : options
       }
-      this.Map  = map
-      this.Obj  = obj
-      this.Obj["gmaps"] = {
+      this.map  = map
+      this.obj  = obj
+      this.obj["gmaps"] = {
         id      : id,
         map     : map,
         parent  : this,
         version : gmap.version
       }
-      this.Type = type
+      this.type = type
     }
 
   }

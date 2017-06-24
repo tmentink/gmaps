@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// GMaps: core/display.js
+// gmaps: core/display.js
 // ------------------------------------------------------------------------
 
 var Core = ((Core) => {
@@ -24,7 +24,7 @@ var Core = ((Core) => {
       return true
     },
     toggle: function(comp) {
-      return !comp.Obj.getVisible()
+      return !comp.obj.getVisible()
     }
   }
 
@@ -62,7 +62,7 @@ var Core = ((Core) => {
   }
 
   function _multiDisplay(compArray, ids, action) {
-    const newCompArray = new Components[compArray.Type]({ map: compArray.Map })
+    const newCompArray = new Components[compArray.type]({ map: compArray.map })
 
     for (var i = 0, i_end = ids.length; i < i_end; i++) {
       const comp = compArray.findById(ids[i])
@@ -75,7 +75,7 @@ var Core = ((Core) => {
   }
 
   function _setVisibility(comp, action) {
-    comp.Obj.setOptions({ "visible": Visibility[action](comp) })
+    comp.obj.setOptions({ "visible": Visibility[action](comp) })
     return comp
   }
 

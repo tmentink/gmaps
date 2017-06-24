@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// GMaps: core/coordinates.js
+// gmaps: core/coordinates.js
 // ------------------------------------------------------------------------
 
 var Core = ((Core) => {
@@ -37,7 +37,7 @@ var Core = ((Core) => {
       const id   = ids[i]
       const comp = compArray.findById(id)
       if (comp) {
-        const coords = CoordinateFunctions[comp.Type](comp.Obj)
+        const coords = CoordinateFunctions[comp.type](comp.obj)
         retVal[id]   = stringify ? Util.toString(coords) : coords
       }
     }

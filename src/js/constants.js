@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// GMaps: constants.js
+// gmaps: constants.js
 // ------------------------------------------------------------------------
 
 var Const = ((Const) => {
@@ -11,14 +11,14 @@ var Const = ((Const) => {
   // ----------------------------------------------------------------------
 
   Const.Settings = {
-    DELIMITED_STRINGS : "DelimitedStrings",
-    DELIMITER         : "Delimiter",
-    LABEL_OPTIONS     : "LabelOptions",
-    MAP_ID            : "MapId",
-    MAP_OPTIONS       : "MapOptions",
-    MARKER_OPTIONS    : "MarkerOptions",
-    POLYGON_OPTIONS   : "PolygonOptions",
-    URL_PRECISION     : "UrlPrecision"
+    DELIMITED_STRINGS : "delimitedStrings",
+    DELIMITER         : "delimiter",
+    LABEL_OPTIONS     : "labelOptions",
+    MAP_ID            : "mapId",
+    MAP_OPTIONS       : "mapOptions",
+    MARKER_OPTIONS    : "markerOptions",
+    POLYGON_OPTIONS   : "polygonOptions",
+    URL_PRECISION     : "urlPrecision"
   }
 
   Const.ComponentOption = {

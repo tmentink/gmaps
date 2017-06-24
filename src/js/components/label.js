@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// GMaps: components/label.js
+// gmaps: components/label.js
 // ------------------------------------------------------------------------
 
 var Components = ((Components, ComponentType) => {

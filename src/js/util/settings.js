@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// GMaps: util/settings.js
+// gmaps: util/settings.js
 // ------------------------------------------------------------------------
 
 var Util = ((Util, GlobalSettings) => {
@@ -48,4 +48,4 @@ var Util = ((Util, GlobalSettings) => {
 
 
   return Util
-})(Util || (Util = {}), gmap.Settings)
+})(Util || (Util = {}), gmap.settings)

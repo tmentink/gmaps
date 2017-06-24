@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// GMaps: util/convert.js
+// gmaps: util/convert.js
 // ------------------------------------------------------------------------
 
 var Util = ((Util, Settings) => {
@@ -20,7 +20,7 @@ var Util = ((Util, Settings) => {
 
   Util.toLatLng = function(val) {
     if ($.type(val) === "string") {
-      return Settings.DelimitedStrings ? _strToLatLng(val) : JSON.parse(val)
+      return Settings.delimitedStrings ? _strToLatLng(val) : JSON.parse(val)
     }
 
     return val
@@ -28,7 +28,7 @@ var Util = ((Util, Settings) => {
 
   Util.toLatLngArray = function(val) {
     if ($.type(val) === "string") {
-      return Settings.DelimitedStrings ? _strToLatLngArray(val) : JSON.parse(val)
+      return Settings.delimitedStrings ? _strToLatLngArray(val) : JSON.parse(val)
     }
 
     return val
@@ -36,19 +36,19 @@ var Util = ((Util, Settings) => {
 
   Util.toString = function(val) {
     if (val instanceof google.maps.LatLng) {
-      return Settings.DelimitedStrings ?
-        val.toUrlValue(Settings.UrlPrecision) :
+      return Settings.delimitedStrings ?
+        val.toUrlValue(Settings.urlPrecision) :
         JSON.stringify(val)
     }
 
     if (val instanceof google.maps.MVCArray) {
       if (val.getAt(0) instanceof google.maps.MVCArray) {
-        return Settings.DelimitedStrings ?
+        return Settings.delimitedStrings ?
           _toMultiDelimitedString(val) :
           _toMultiJSONString(val)
       }
       else {
-        return Settings.DelimitedStrings ?
+        return Settings.delimitedStrings ?
           _toDelimitedString(val) :
           JSON.stringify(val.getArray())
       }
@@ -79,7 +79,7 @@ var Util = ((Util, Settings) => {
 
   function _strToLatLngArray(str) {
     const latLngArray = []
-    const coordPairs  = str.split(Settings.Delimiter.LatLng || "|")
+    const coordPairs  = str.split(Settings.delimiter.latLng || "|")
 
     for (var i = 0, i_end = coordPairs.length; i < i_end; i++) {
       latLngArray.push(Util.toLatLng(coordPairs[i]))
@@ -92,9 +92,9 @@ var Util = ((Util, Settings) => {
 
     MVCArray.forEach(function(el, i) {
       if (i > 0) {
-        str += Settings.Delimiter.LatLng || "|"
+        str += Settings.delimiter.latLng || "|"
       }
-      str += el.toUrlValue(Settings.UrlPrecision || 6)
+      str += el.toUrlValue(Settings.urlPrecision || 6)
     })
 
     return str
@@ -105,7 +105,7 @@ var Util = ((Util, Settings) => {
 
     MVCArray.forEach(function(el, i) {
       if (i > 0) {
-        str += Settings.Delimiter.LatLngArray || "~"
+        str += Settings.delimiter.latLngArray || "~"
       }
       str += _toDelimitedString(el)
     })
@@ -125,4 +125,4 @@ var Util = ((Util, Settings) => {
 
 
   return Util
-})(Util || (Util = {}), gmap.Settings)
+})(Util || (Util = {}), gmap.settings)
