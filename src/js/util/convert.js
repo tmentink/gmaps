@@ -38,7 +38,7 @@ var Util = ((Util, Settings) => {
     if (val instanceof google.maps.LatLng) {
       return Settings.delimitedStrings ?
         val.toUrlValue(Settings.urlPrecision) :
-        JSON.stringify(val)
+        JSON.stringify(val, _jsonReplacer)
     }
 
     if (val instanceof google.maps.MVCArray) {
@@ -50,7 +50,7 @@ var Util = ((Util, Settings) => {
       else {
         return Settings.delimitedStrings ?
           _toDelimitedString(val) :
-          JSON.stringify(val.getArray())
+          JSON.stringify(val.getArray(), _jsonReplacer)
       }
     }
 
@@ -71,6 +71,13 @@ var Util = ((Util, Settings) => {
   // ----------------------------------------------------------------------
   // Private Functions
   // ----------------------------------------------------------------------
+
+  function _jsonReplacer(key, value) {
+    if (key === "lat" || key === "lng") {
+      return Number(value.toFixed(Settings.urlPrecision))
+    }
+    return value
+  }
 
   function _strToLatLng(str) {
     const points = str.split(",")
@@ -120,7 +127,7 @@ var Util = ((Util, Settings) => {
       arr.push(el.getArray())
     })
 
-    return JSON.stringify(arr)
+    return JSON.stringify(arr, _jsonReplacer)
   }
 
 
