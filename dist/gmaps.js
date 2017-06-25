@@ -1,5 +1,5 @@
 /*!
- * gmaps v5.0.0-alpha (https://github.com/tmentink/gmaps)
+ * gmaps v5.0.1-alpha (https://github.com/tmentink/gmaps)
  * Copyright 2017 Trent Mentink
  * Licensed under MIT
  */
@@ -511,13 +511,13 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     };
     Util.toString = function(val) {
       if (val instanceof google.maps.LatLng) {
-        return Settings.delimitedStrings ? val.toUrlValue(Settings.urlPrecision) : JSON.stringify(val);
+        return Settings.delimitedStrings ? val.toUrlValue(Settings.urlPrecision) : JSON.stringify(val, _jsonReplacer);
       }
       if (val instanceof google.maps.MVCArray) {
         if (val.getAt(0) instanceof google.maps.MVCArray) {
           return Settings.delimitedStrings ? _toMultiDelimitedString(val) : _toMultiJSONString(val);
         } else {
-          return Settings.delimitedStrings ? _toDelimitedString(val) : JSON.stringify(val.getArray());
+          return Settings.delimitedStrings ? _toDelimitedString(val) : JSON.stringify(val.getArray(), _jsonReplacer);
         }
       }
       return undefined;
@@ -529,6 +529,12 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       }
       return undefined;
     };
+    function _jsonReplacer(key, value) {
+      if (key === "lat" || key === "lng") {
+        return Number(value.toFixed(Settings.urlPrecision));
+      }
+      return value;
+    }
     function _strToLatLng(str) {
       var points = str.split(",");
       return new google.maps.LatLng(parseFloat(points[0]), parseFloat(points[1]));
@@ -566,7 +572,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       MVCArray.forEach(function(el) {
         arr.push(el.getArray());
       });
-      return JSON.stringify(arr);
+      return JSON.stringify(arr, _jsonReplacer);
     }
     return Util;
   }(Util || (Util = {}), gmap.settings);
@@ -793,7 +799,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
         compType: type,
         compOptions: compOptions
       });
-      if (compOptions.id === undefined) {
+      if ($.type(compOptions.id) !== "string" && $.type(compOptions.id) !== "number") {
         compOptions.id = _getAutoId(map, type);
       }
       var comp = new Components[type]({
@@ -1716,6 +1722,9 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       if (!latLng) {
         return;
       }
+      if (latLng instanceof google.maps.LatLng === false) {
+        latLng = new google.maps.LatLng(latLng);
+      }
       var pos = projection.fromLatLngToDivPixel(latLng);
       var style = this.canvas_.style;
       style["top"] = pos.y + "px";
@@ -1981,5 +1990,5 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     Components.PolygonArray = PolygonArray;
     return Components;
   }(Components || (Components = {}), Const.ComponentType);
-  gmap.version = "5.0.0-alpha";
+  gmap.version = "5.0.1-alpha";
 }();

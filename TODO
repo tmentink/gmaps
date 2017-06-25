@@ -17,3 +17,4 @@ Util:
 
 Nice To Have Features:
   ☐ Add condition for toggle similar to jQuery
+  ☐ Replace multi $.type calls with object literal?
