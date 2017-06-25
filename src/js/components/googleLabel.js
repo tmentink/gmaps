@@ -87,10 +87,14 @@ var Components = ((Components) => {
       return
     }
 
-    const latLng = (this.get(Property.POSITION))
+    let latLng = (this.get(Property.POSITION))
     if (!latLng) {
       return
     }
+    if (latLng instanceof google.maps.LatLng === false) {
+      latLng = new google.maps.LatLng(latLng)
+    }
+
     const pos           = projection.fromLatLngToDivPixel(latLng)
     const style         = this.canvas_.style
     style["top"]        = pos.y + "px"
