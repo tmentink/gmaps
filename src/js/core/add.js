@@ -60,7 +60,7 @@ var Core = ((Core) => {
       compOptions : compOptions
     })
 
-    if (compOptions.id === undefined) {
+    if ($.type(compOptions.id) !== "string" && $.type(compOptions.id) !== "number") {
       compOptions.id = _getAutoId(map, type)
     }
 
