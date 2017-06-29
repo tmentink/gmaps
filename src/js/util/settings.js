@@ -2,7 +2,7 @@
 // gmaps: util/settings.js
 // ------------------------------------------------------------------------
 
-var Util = ((Util, GlobalSettings) => {
+var Util = ((Util, GlobalSettings, Setting) => {
   "use strict"
 
 
@@ -11,11 +11,14 @@ var Util = ((Util, GlobalSettings) => {
   // ----------------------------------------------------------------------
 
   const LocalSettings = [
-    Const.Settings.LABEL_OPTIONS,
-    Const.Settings.MAP_ID,
-    Const.Settings.MAP_OPTIONS,
-    Const.Settings.MARKER_OPTIONS,
-    Const.Settings.POLYGON_OPTIONS
+    Setting.CIRCLE_OPTIONS,
+    Setting.LABEL_OPTIONS,
+    Setting.MAP_ID,
+    Setting.MAP_OPTIONS,
+    Setting.MARKER_OPTIONS,
+    Setting.POLYGON_OPTIONS,
+    Setting.POLYLINE_OPTIONS,
+    Setting.RECTANGLE_OPTIONS
   ]
 
 
@@ -26,7 +29,7 @@ var Util = ((Util, GlobalSettings) => {
   Util.renameSettings = function(userSettings) {
     Object.keys(userSettings).forEach(function(key) {
       Util.renameProperty({
-        newName : Util.getSetting(key),
+        newName : Util.lookupSetting(key),
         obj     : userSettings,
         oldName : key
       })
@@ -48,4 +51,4 @@ var Util = ((Util, GlobalSettings) => {
 
 
   return Util
-})(Util || (Util = {}), gmap.settings)
+})(Util || (Util = {}), gmap.settings, Const.Setting)
