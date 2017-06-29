@@ -247,7 +247,7 @@ var Util = ((Util, ComponentOption) => {
   Util.renameComponentOptions = function(compOptions) {
     Object.keys(compOptions).forEach(function(key) {
       Util.renameProperty({
-        newName : Util.getComponentOption(key),
+        newName : Util.lookupComponentOption(key),
         obj     : compOptions,
         oldName : key
       })

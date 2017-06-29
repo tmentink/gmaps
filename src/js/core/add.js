@@ -24,7 +24,7 @@ var Core = ((Core) => {
   Core.addComponent = function(parms) {
     const compOptions = parms.compOptions
     const map         = parms.map
-    const type        = Util.getComponentType(parms.type)
+    const type        = Util.lookupComponentType(parms.type)
 
     if (Util.validMapComponent(type)) {
 
@@ -93,7 +93,7 @@ var Core = ((Core) => {
   }
 
   function _mergeDefaults(map, type, compOptions) {
-    const namespace = Util.getSetting(`${type}Options`)
+    const namespace = Util.lookupSetting(`${type}Options`)
     const defaults  = map.settings[namespace] || {}
     const options   = $.extend({}, defaults, compOptions)
     options.map     = map.obj

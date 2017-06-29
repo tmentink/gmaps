@@ -36,14 +36,14 @@ var Core = ((Core) => {
   Core.pop = function(parms) {
     const count = parms.count || 1
     const map   = parms.map
-    const type  = Util.getComponentType(parms.type)
+    const type  = Util.lookupComponentType(parms.type)
     return _pop(map.components[type], count, Action.POP)
   }
 
   Core.remove = function(parms) {
     let ids    = parms.ids
     const map  = parms.map
-    const type = Util.getComponentType(parms.type)
+    const type = Util.lookupComponentType(parms.type)
 
     if (Util.validMapComponent(type)) {
       const compArray = map.components[type]
@@ -70,7 +70,7 @@ var Core = ((Core) => {
   Core.shift = function(parms) {
     const count = parms.count || 1
     const map   = parms.map
-    const type  = Util.getComponentType(parms.type)
+    const type  = Util.lookupComponentType(parms.type)
     return _pop(map.components[type], count, Action.SHIFT)
   }
 

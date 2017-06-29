@@ -62,7 +62,7 @@ var Core = ((Core, ComponentType) => {
 
   function _formatComponentOptions(compOptions, compType, value) {
     if ($.type(compOptions) === "string") {
-      const optionName = Util.getComponentOption(compOptions)
+      const optionName = Util.lookupComponentOption(compOptions)
       compOptions = {}
       compOptions[optionName] = value
     }
@@ -82,7 +82,7 @@ var Core = ((Core, ComponentType) => {
   }
 
   function _getComponentOptions(comp, compOptions) {
-    compOptions = Util.getComponentOption(compOptions)
+    compOptions = Util.lookupComponentOption(compOptions)
     const obj   = $.extend({}, comp.obj)
 
     if (compOptions) {

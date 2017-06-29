@@ -80,7 +80,7 @@ var Core = ((Core) => {
     const types  = Object.keys(comps)
 
     for (var i = 0, i_end = types.length; i < i_end; i++) {
-      const type = Util.getComponentType(types[i])
+      const type = Util.lookupComponentType(types[i])
       const ids  = _getIds(mapComps[type], comps[types[i]])
 
       bounds.union(Core.getBounds({

@@ -37,7 +37,7 @@ var Core = ((Core, ComponentType) => {
     const compArray = parms.compArray
     const func      = parms.func
     const ids       = parms.ids
-    const type      = Util.getEventType(parms.type)
+    const type      = Util.lookupEventType(parms.type)
 
     return _listener(compArray, ids, type, func, Action.ADD)
   }
@@ -45,7 +45,7 @@ var Core = ((Core, ComponentType) => {
   Core.removeListener = function(parms) {
     const compArray = parms.compArray
     const ids       = parms.ids
-    const type      = Util.getEventType(parms.type)
+    const type      = Util.lookupEventType(parms.type)
     const action    = type !== "all" ? Action.REMOVE_TYPE : Action.REMOVE_ALL
 
     return _listener(compArray, ids, type, null, action)
