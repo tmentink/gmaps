@@ -14,11 +14,11 @@
     settings         = Util.mergeWithGlobalSettings(settings)
     const mapOptions = Util.convertComponentOptions({
       compType    : Const.ComponentType.MAP,
-      compOptions : settings[Const.Settings.MAP_OPTIONS]
+      compOptions : settings[Const.Setting.MAP_OPTIONS]
     })
 
     // check if element with mapId exists
-    const mapId        = settings[Const.Settings.MAP_ID]
+    const mapId        = settings[Const.Setting.MAP_ID]
     const mapContainer = document.getElementById(mapId)
     if (!mapContainer) {
       return Util.throwError({
