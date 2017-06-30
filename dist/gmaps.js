@@ -1,5 +1,5 @@
 /*!
- * gmaps v5.0.1-alpha (https://github.com/tmentink/gmaps)
+ * gmaps v5.1.0-alpha (https://github.com/tmentink/gmaps)
  * Copyright 2017 Trent Mentink
  * Licensed under MIT
  */
@@ -148,9 +148,9 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       settings = Util.mergeWithGlobalSettings(settings);
       var mapOptions = Util.convertComponentOptions({
         compType: Const.ComponentType.MAP,
-        compOptions: settings[Const.Settings.MAP_OPTIONS]
+        compOptions: settings[Const.Setting.MAP_OPTIONS]
       });
-      var mapId = settings[Const.Settings.MAP_ID];
+      var mapId = settings[Const.Setting.MAP_ID];
       var mapContainer = document.getElementById(mapId);
       if (!mapContainer) {
         return Util.throwError({
@@ -160,6 +160,9 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
         });
       }
       this.components = {
+        Circle: new Components.CircleArray({
+          map: this
+        }),
         Label: new Components.LabelArray({
           map: this
         }),
@@ -190,64 +193,10 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     };
     window.gmap = gmap;
   }();
-  !function(Settings) {
-    "use strict";
-    Settings.delimitedStrings = true;
-    Settings.delimiter = {
-      latLng: "|",
-      latLngArray: "~"
-    };
-    Settings.labelOptions = {
-      align: "center",
-      fontColor: "#000",
-      fontSize: 14,
-      strokeColor: "#FFF",
-      strokeWeight: 1,
-      visible: true
-    };
-    Settings.mapId = "gmap";
-    Settings.mapOptions = {
-      center: {
-        lat: 37.5,
-        lng: -120
-      },
-      clickableIcons: false,
-      disableDoubleClickZoom: false,
-      gestureHandling: "auto",
-      keyboardShortcuts: true,
-      mapTypeControl: false,
-      mapTypeId: google.maps.MapTypeId.ROADMAP,
-      scrollwheel: true,
-      streetViewControl: false,
-      zoom: 6,
-      zoomControl: false
-    };
-    Settings.markerOptions = {
-      clickable: true,
-      crossOnDrag: true,
-      draggable: false,
-      opacity: 1,
-      optimized: true,
-      visible: true
-    };
-    Settings.polygonOptions = {
-      clickable: true,
-      draggable: false,
-      editable: false,
-      fillColor: "#2185D0",
-      fillOpacity: .75,
-      geodesic: false,
-      strokeColor: "#000",
-      strokeOpacity: .75,
-      strokeWeight: 1,
-      visible: true
-    };
-    Settings.urlPrecision = 5;
-    return Settings;
-  }(gmap.settings || (gmap.settings = {}));
   var Const = function(Const) {
     "use strict";
-    Const.ComponentOption = {
+    var Option = {
+      ALIGN: "align",
       ANCHOR_POINT: "anchorPoint",
       ANIMATION: "animation",
       BACKGROUND_COLOR: "backgroundColor",
@@ -267,6 +216,9 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       EDITABLE: "editable",
       FILL_COLOR: "fillColor",
       FILL_OPACITY: "fillOpacity",
+      FONT_COLOR: "fontColor",
+      FONT_FAMILY: "fontFamily",
+      FONT_SIZE: "fontSize",
       FULLSCREEN_CONTROL: "fullscreenControl",
       FULLSCREEN_CONTROL_OPTIONS: "fullscreenControlOptions",
       GEODESIC: "geodesic",
@@ -282,6 +234,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       MAP_TYPE_ID: "mapTypeId",
       MAX_WIDTH: "maxWidth",
       MAX_ZOOM: "maxZoom",
+      MIN_ZOOM: "minZoom",
       NO_CLEAR: "noClear",
       OPACITY: "opacity",
       OPTIMIZED: "optimized",
@@ -309,21 +262,304 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       STYLES: "styles",
       TILT: "tilt",
       TITLE: "title",
+      TEXT: "text",
       VISIBLE: "visible",
       ZOOM: "zoom",
       ZOOM_CONTROL: "zoomControl",
       ZOOM_CONTROL_OPTIONS: "zoomControlOptions",
       Z_INDEX: "zIndex"
     };
-    Const.ComponentType = {
+    var Type = {
+      CIRCLE: "Circle",
+      CIRCLE_ARRAY: "CircleArray",
       LABEL: "Label",
       LABEL_ARRAY: "LabelArray",
       MAP: "Map",
       MARKER: "Marker",
       MARKER_ARRAY: "MarkerArray",
       POLYGON: "Polygon",
-      POLYGON_ARRAY: "PolygonArray"
+      POLYGON_ARRAY: "PolygonArray",
+      POLYLINE: "Polyline",
+      POLYLINE_ARRAY: "PolylineArray",
+      RECTANGLE: "Rectangle",
+      RECTANGLE_ARRAY: "RectangleArray"
     };
+    var Components = {};
+    Components[Type.CIRCLE] = {
+      options: [ {
+        name: Option.CENTER,
+        convertable: true,
+        required: true
+      }, {
+        name: Option.CLICKABLE
+      }, {
+        name: Option.DRAGGABLE
+      }, {
+        name: Option.EDITABLE
+      }, {
+        name: Option.FILL_COLOR
+      }, {
+        name: Option.FILL_OPACITY
+      }, {
+        name: Option.MAP
+      }, {
+        name: Option.RADIUS,
+        required: true
+      }, {
+        name: Option.STROKE_COLOR
+      }, {
+        name: Option.STROKE_OPACITY
+      }, {
+        name: Option.STROKE_POSITION
+      }, {
+        name: Option.STROKE_WEIGHT
+      }, {
+        name: Option.VISIBLE
+      }, {
+        name: Option.Z_INDEX
+      } ]
+    };
+    Components[Type.LABEL] = {
+      options: [ {
+        name: Option.ALIGN
+      }, {
+        name: Option.FONT_COLOR
+      }, {
+        name: Option.FONT_FAMILY
+      }, {
+        name: Option.FONT_SIZE
+      }, {
+        name: Option.MAX_ZOOM
+      }, {
+        name: Option.MIN_ZOOM
+      }, {
+        name: Option.POSITION,
+        convertable: true,
+        required: true
+      }, {
+        name: Option.STROKE_WEIGHT
+      }, {
+        name: Option.STROKE_COLOR
+      }, {
+        name: Option.VISIBLE
+      }, {
+        name: Option.TEXT,
+        required: true
+      }, {
+        name: Option.Z_INDEX
+      } ]
+    };
+    Components[Type.MAP] = {
+      options: [ {
+        name: Option.BACKGROUND_COLOR
+      }, {
+        name: Option.CENTER,
+        convertable: true,
+        required: true
+      }, {
+        name: Option.CLICKABLE_ICONS
+      }, {
+        name: Option.DISABLE_DEFAULT_UI
+      }, {
+        name: Option.DISABLE_DOUBLE_CLICK_ZOOM
+      }, {
+        name: Option.DRAGGABLE
+      }, {
+        name: Option.DRAGGABLE_CURSOR
+      }, {
+        name: Option.DRAGGING_CURSOR
+      }, {
+        name: Option.FULLSCREEN_CONTROL
+      }, {
+        name: Option.FULLSCREEN_CONTROL_OPTIONS
+      }, {
+        name: Option.GESTURE_HANDLING
+      }, {
+        name: Option.HEADING
+      }, {
+        name: Option.KEYBOARD_SHORTCUTS
+      }, {
+        name: Option.MAP_TYPE_CONTROL
+      }, {
+        name: Option.MAP_TYPE_CONTROL_OPTIONS
+      }, {
+        name: Option.MAP_TYPE_ID
+      }, {
+        name: Option.MAX_ZOOM
+      }, {
+        name: Option.NO_CLEAR
+      }, {
+        name: Option.PAN_CONTROL
+      }, {
+        name: Option.PAN_CONTROL_OPTIONS
+      }, {
+        name: Option.ROTATE_CONTROL
+      }, {
+        name: Option.ROTATE_CONTROL_OPTIONS
+      }, {
+        name: Option.SCALE_CONTROL
+      }, {
+        name: Option.SCALE_CONTROL_OPTIONS
+      }, {
+        name: Option.SCROLL_WHEEL
+      }, {
+        name: Option.STREET_VIEW
+      }, {
+        name: Option.STREET_VIEW_CONTROL
+      }, {
+        name: Option.STREET_VIEW_CONTROL_OPTIONS
+      }, {
+        name: Option.STYLES
+      }, {
+        name: Option.TILT
+      }, {
+        name: Option.ZOOM,
+        required: true
+      }, {
+        name: Option.ZOOM_CONTROL
+      }, {
+        name: Option.ZOOM_CONTROL_OPTIONS
+      } ]
+    };
+    Components[Type.MARKER] = {
+      options: [ {
+        name: Option.ANCHOR_POINT
+      }, {
+        name: Option.ANIMATION
+      }, {
+        name: Option.CLICKABLE
+      }, {
+        name: Option.CROSS_ON_DRAG
+      }, {
+        name: Option.CURSOR
+      }, {
+        name: Option.DRAGGABLE
+      }, {
+        name: Option.ICON
+      }, {
+        name: Option.LABEL
+      }, {
+        name: Option.MAP
+      }, {
+        name: Option.OPACITY
+      }, {
+        name: Option.OPTIMIZED
+      }, {
+        name: Option.PLACE
+      }, {
+        name: Option.POSITION,
+        convertable: true,
+        required: true
+      }, {
+        name: Option.SHAPE
+      }, {
+        name: Option.TITLE
+      }, {
+        name: Option.VISIBLE
+      }, {
+        name: Option.Z_INDEX
+      } ]
+    };
+    Components[Type.POLYGON] = {
+      options: [ {
+        name: Option.CLICKABLE
+      }, {
+        name: Option.DRAGGABLE
+      }, {
+        name: Option.EDITABLE
+      }, {
+        name: Option.FILL_COLOR
+      }, {
+        name: Option.FILL_OPACITY
+      }, {
+        name: Option.GEODESIC
+      }, {
+        name: Option.MAP
+      }, {
+        name: Option.PATHS,
+        convertable: true,
+        required: true
+      }, {
+        name: Option.STROKE_COLOR
+      }, {
+        name: Option.STROKE_OPACITY
+      }, {
+        name: Option.STROKE_POSITION
+      }, {
+        name: Option.STROKE_WEIGHT
+      }, {
+        name: Option.VISIBLE
+      }, {
+        name: Option.Z_INDEX
+      } ]
+    };
+    Components[Type.POLYLINE] = {
+      options: [ {
+        name: Option.CLICKABLE
+      }, {
+        name: Option.DRAGGABLE
+      }, {
+        name: Option.EDITABLE
+      }, {
+        name: Option.GEODESIC
+      }, {
+        name: Option.ICONS
+      }, {
+        name: Option.MAP
+      }, {
+        name: Option.PATH,
+        convertable: true,
+        required: true
+      }, {
+        name: Option.STROKE_COLOR
+      }, {
+        name: Option.STROKE_OPACITY
+      }, {
+        name: Option.STROKE_WEIGHT
+      }, {
+        name: Option.VISIBLE
+      }, {
+        name: Option.Z_INDEX
+      } ]
+    };
+    Components[Type.RECTANGLE] = {
+      options: [ {
+        name: Option.BOUNDS,
+        convertable: true,
+        required: true
+      }, {
+        name: Option.CLICKABLE
+      }, {
+        name: Option.DRAGGABLE
+      }, {
+        name: Option.EDITABLE
+      }, {
+        name: Option.FILL_COLOR
+      }, {
+        name: Option.FILL_OPACITY
+      }, {
+        name: Option.MAP
+      }, {
+        name: Option.STROKE_COLOR
+      }, {
+        name: Option.STROKE_OPACITY
+      }, {
+        name: Option.STROKE_POSITION
+      }, {
+        name: Option.STROKE_WEIGHT
+      }, {
+        name: Option.VISIBLE
+      }, {
+        name: Option.Z_INDEX
+      } ]
+    };
+    Const.Components = Components;
+    Const.ComponentOption = Option;
+    Const.ComponentType = Type;
+    return Const;
+  }(Const || (Const = {}));
+  var Const = function(Const) {
+    "use strict";
     Const.EventType = {
       ANIMATION_CHANGED: "animation_changed",
       BOUNDS_CHANGED: "bounds_changed",
@@ -358,7 +594,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       ZINDEX_CHANGED: "zindex_changed",
       ZOOM_CHANGED: "zoom_changed"
     };
-    Const.Settings = {
+    Const.Setting = {
+      CIRCLE_OPTIONS: "circleOptions",
       DELIMITED_STRINGS: "delimitedStrings",
       DELIMITER: "delimiter",
       LABEL_OPTIONS: "labelOptions",
@@ -366,11 +603,103 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       MAP_OPTIONS: "mapOptions",
       MARKER_OPTIONS: "markerOptions",
       POLYGON_OPTIONS: "polygonOptions",
+      POLYLINE_OPTIONS: "polylineOptions",
+      RECTANGLE_OPTIONS: "rectangleOptions",
       URL_PRECISION: "urlPrecision"
     };
     return Const;
   }(Const || (Const = {}));
-  var Util = function(Util, ComponentOption) {
+  !function(Settings, CompOption, Type) {
+    "use strict";
+    var CircleOptions = {};
+    CircleOptions[CompOption.CLICKABLE] = true;
+    CircleOptions[CompOption.DRAGGABLE] = false;
+    CircleOptions[CompOption.EDITABLE] = false;
+    CircleOptions[CompOption.FILL_COLOR] = "#2185d0";
+    CircleOptions[CompOption.FILL_OPACITY] = .75;
+    CircleOptions[CompOption.STROKE_COLOR] = "#000";
+    CircleOptions[CompOption.STROKE_OPACITY] = .75;
+    CircleOptions[CompOption.STROKE_POSITION] = google.maps.StrokePosition.CENTER;
+    CircleOptions[CompOption.STROKE_WEIGHT] = 1;
+    CircleOptions[CompOption.VISIBLE] = true;
+    var Delimiter = {
+      latLng: "|",
+      latLngArray: "~"
+    };
+    var LabelOptions = {};
+    LabelOptions[CompOption.ALIGN] = "center";
+    LabelOptions[CompOption.FONT_COLOR] = "#000";
+    LabelOptions[CompOption.FONT_SIZE] = 14;
+    LabelOptions[CompOption.STROKE_COLOR] = "#FFF";
+    LabelOptions[CompOption.STROKE_WEIGHT] = 1;
+    LabelOptions[CompOption.VISIBLE] = true;
+    var MapOptions = {};
+    MapOptions[CompOption.CENTER] = {
+      lat: 37.5,
+      lng: -120
+    };
+    MapOptions[CompOption.CLICKABLE_ICONS] = false;
+    MapOptions[CompOption.DISABLE_DOUBLE_CLICK_ZOOM] = false;
+    MapOptions[CompOption.GESTURE_HANDLING] = "auto";
+    MapOptions[CompOption.KEYBOARD_SHORTCUTS] = true;
+    MapOptions[CompOption.MAP_TYPE_CONTROL] = false;
+    MapOptions[CompOption.MAP_TYPE_ID] = google.maps.MapTypeId.ROADMAP;
+    MapOptions[CompOption.SCROLL_WHEEL] = true;
+    MapOptions[CompOption.STREET_VIEW_CONTROL] = false;
+    MapOptions[CompOption.ZOOM] = 6;
+    MapOptions[CompOption.ZOOM_CONTROL] = true;
+    var MarkerOptions = {};
+    MarkerOptions[CompOption.CLICKABLE] = true;
+    MarkerOptions[CompOption.CROSS_ON_DRAG] = true;
+    MarkerOptions[CompOption.DRAGGABLE] = false;
+    MarkerOptions[CompOption.OPACITY] = 1;
+    MarkerOptions[CompOption.OPTIMIZED] = true;
+    MarkerOptions[CompOption.VISIBLE] = true;
+    var PolygonOptions = {};
+    PolygonOptions[CompOption.CLICKABLE] = true;
+    PolygonOptions[CompOption.DRAGGABLE] = false;
+    PolygonOptions[CompOption.EDITABLE] = false;
+    PolygonOptions[CompOption.FILL_COLOR] = "#2185d0";
+    PolygonOptions[CompOption.FILL_OPACITY] = .75;
+    PolygonOptions[CompOption.GEODESIC] = false;
+    PolygonOptions[CompOption.STROKE_COLOR] = "#000";
+    PolygonOptions[CompOption.STROKE_OPACITY] = .75;
+    PolygonOptions[CompOption.STROKE_WEIGHT] = 1;
+    PolygonOptions[CompOption.VISIBLE] = true;
+    var PolylineOptions = {};
+    PolylineOptions[CompOption.CLICKABLE] = true;
+    PolylineOptions[CompOption.DRAGGABLE] = false;
+    PolylineOptions[CompOption.EDITABLE] = false;
+    PolylineOptions[CompOption.GEODESIC] = false;
+    PolylineOptions[CompOption.STROKE_COLOR] = "#000";
+    PolylineOptions[CompOption.STROKE_OPACITY] = .75;
+    PolylineOptions[CompOption.STROKE_WEIGHT] = 1;
+    PolylineOptions[CompOption.VISIBLE] = true;
+    var RectangleOptions = {};
+    RectangleOptions[CompOption.CLICKABLE] = true;
+    RectangleOptions[CompOption.DRAGGABLE] = false;
+    RectangleOptions[CompOption.EDITABLE] = false;
+    RectangleOptions[CompOption.FILL_COLOR] = "#2185d0";
+    RectangleOptions[CompOption.FILL_OPACITY] = .75;
+    RectangleOptions[CompOption.STROKE_COLOR] = "#000";
+    RectangleOptions[CompOption.STROKE_OPACITY] = .75;
+    RectangleOptions[CompOption.STROKE_POSITION] = google.maps.StrokePosition.CENTER;
+    RectangleOptions[CompOption.STROKE_WEIGHT] = 1;
+    RectangleOptions[CompOption.VISIBLE] = true;
+    Settings[Type.CIRCLE_OPTIONS] = CircleOptions;
+    Settings[Type.DELIMITED_STRINGS] = true;
+    Settings[Type.DELIMITER] = Delimiter;
+    Settings[Type.LABEL_OPTIONS] = LabelOptions;
+    Settings[Type.MAP_ID] = "gmap";
+    Settings[Type.MAP_OPTIONS] = MapOptions;
+    Settings[Type.MARKER_OPTIONS] = MarkerOptions;
+    Settings[Type.POLYGON_OPTIONS] = PolygonOptions;
+    Settings[Type.POLYLINE_OPTIONS] = PolylineOptions;
+    Settings[Type.RECTANGLE_OPTIONS] = RectangleOptions;
+    Settings[Type.URL_PRECISION] = 5;
+    return Settings;
+  }(gmap.settings || (gmap.settings = {}), Const.ComponentOption, Const.Setting);
+  var Util = function(Util) {
     "use strict";
     var Conversions = {
       center: function center(parms) {
@@ -378,7 +707,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
           parms.center = Util.toLatLng(parms.center);
         }
       },
-      path: function path(parms) {
+      paths: function paths(parms) {
         if (parms.paths || parms.path) {
           parms.paths = Util.toLatLngArray(parms.paths || parms.path);
           delete parms.path;
@@ -390,37 +719,12 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
         }
       }
     };
-    var ConvertableOptions = {
-      Label: {
-        position: Conversions.position
-      },
-      Map: {
-        center: Conversions.center
-      },
-      Marker: {
-        position: Conversions.position
-      },
-      Polygon: {
-        path: Conversions.path,
-        paths: Conversions.path
-      }
-    };
-    var ComponentOptions = {
-      Circle: [ ComponentOption.CENTER, ComponentOption.CLICKABLE, ComponentOption.DRAGGABLE, ComponentOption.EDITABLE, ComponentOption.FILL_COLOR, ComponentOption.FILL_OPACITY, ComponentOption.MAP, ComponentOption.RADIUS, ComponentOption.STROKE_COLOR, ComponentOption.STROKE_OPACITY, ComponentOption.STROKE_POSITION, ComponentOption.STROKE_WEIGHT, ComponentOption.VISIBLE, ComponentOption.Z_INDEX ],
-      GroundOverlay: [ ComponentOption.CLICKABLE, ComponentOption.MAP, ComponentOption.OPACITY ],
-      InfoWindow: [ ComponentOption.CONTENT, ComponentOption.DISABLE_AUTO_PAN, ComponentOption.MAX_WIDTH, ComponentOption.PIXEL_OFFSET, ComponentOption.POSITION, ComponentOption.Z_INDEX ],
-      Map: [ ComponentOption.BACKGROUND_COLOR, ComponentOption.CENTER, ComponentOption.CLICKABLE_ICONS, ComponentOption.DISABLE_DEFAULT_UI, ComponentOption.DISABLE_DOUBLE_CLICK_ZOOM, ComponentOption.DRAGGABLE, ComponentOption.DRAGGABLE_CURSOR, ComponentOption.DRAGGING_CURSOR, ComponentOption.FULLSCREEN_CONTROL, ComponentOption.FULLSCREEN_CONTROL_OPTIONS, ComponentOption.GESTURE_HANDLING, ComponentOption.HEADING, ComponentOption.KEYBOARD_SHORTCUTS, ComponentOption.MAP_TYPE_CONTROL, ComponentOption.MAP_TYPE_CONTROL_OPTIONS, ComponentOption.MAP_TYPE_ID, ComponentOption.MAX_ZOOM, ComponentOption.NO_CLEAR, ComponentOption.PAN_CONTROL, ComponentOption.PAN_CONTROL_OPTIONS, ComponentOption.ROTATE_CONTROL, ComponentOption.ROTATE_CONTROL_OPTIONS, ComponentOption.SCALE_CONTROL, ComponentOption.SCALE_CONTROL_OPTIONS, ComponentOption.SCROLL_WHEEL, ComponentOption.STREET_VIEW, ComponentOption.STREET_VIEW_CONTROL, ComponentOption.STREET_VIEW_CONTROL_OPTIONS, ComponentOption.STYLES, ComponentOption.TILT, ComponentOption.ZOOM, ComponentOption.ZOOM_CONTROL, ComponentOption.ZOOM_CONTROL_OPTIONS ],
-      Marker: [ ComponentOption.ANCHOR_POINT, ComponentOption.ANIMATION, ComponentOption.CLICKABLE, ComponentOption.CROSS_ON_DRAG, ComponentOption.CURSOR, ComponentOption.DRAGGABLE, ComponentOption.ICON, ComponentOption.LABEL, ComponentOption.MAP, ComponentOption.OPACITY, ComponentOption.OPTIMIZED, ComponentOption.PLACE, ComponentOption.POSITION, ComponentOption.SHAPE, ComponentOption.TITLE, ComponentOption.VISIBLE, ComponentOption.Z_INDEX ],
-      Polyline: [ ComponentOption.CLICKABLE, ComponentOption.DRAGGABLE, ComponentOption.EDITABLE, ComponentOption.GEODESIC, ComponentOption.ICONS, ComponentOption.MAP, ComponentOption.PATH, ComponentOption.STROKE_COLOR, ComponentOption.STROKE_OPACITY, ComponentOption.STROKE_WEIGHT, ComponentOption.VISIBLE, ComponentOption.Z_INDEX ],
-      Polygon: [ ComponentOption.CLICKABLE, ComponentOption.DRAGGABLE, ComponentOption.EDITABLE, ComponentOption.FILL_COLOR, ComponentOption.FILL_OPACITY, ComponentOption.GEODESIC, ComponentOption.MAP, ComponentOption.PATHS, ComponentOption.STROKE_COLOR, ComponentOption.STROKE_OPACITY, ComponentOption.STROKE_POSITION, ComponentOption.STROKE_WEIGHT, ComponentOption.VISIBLE, ComponentOption.Z_INDEX ],
-      Rectangle: [ ComponentOption.BOUNDS, ComponentOption.CLICKABLE, ComponentOption.DRAGGABLE, ComponentOption.EDITABLE, ComponentOption.FILL_COLOR, ComponentOption.FILL_OPACITY, ComponentOption.MAP, ComponentOption.STROKE_COLOR, ComponentOption.STROKE_OPACITY, ComponentOption.STROKE_POSITION, ComponentOption.STROKE_WEIGHT, ComponentOption.VISIBLE, ComponentOption.Z_INDEX ]
-    };
-    var MapComponents = [ Const.ComponentType.LABEL, Const.ComponentType.MARKER, Const.ComponentType.POLYGON ];
     Util.cleanComponentOptions = function(parms) {
       var compOptions = parms.compOptions;
       var compType = parms.compType.replace("Array", "");
+      var compTypeOptions = _getComponentOptions(compType);
       Object.keys(compOptions).forEach(function(key) {
-        if (ComponentOptions[compType].indexOf(key) === -1) {
+        if (compTypeOptions.indexOf(key) === -1) {
           delete compOptions[key];
         }
       });
@@ -429,9 +733,11 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     Util.convertComponentOptions = function(parms) {
       var compOptions = parms.compOptions;
       var compType = parms.compType.replace("Array", "");
-      Object.keys(ConvertableOptions[compType]).forEach(function(key) {
-        ConvertableOptions[compType][key](compOptions);
-      });
+      var convertableOptions = _getConvertableOptions(compType);
+      for (var i = 0, i_end = convertableOptions.length; i < i_end; i++) {
+        var option = convertableOptions[i];
+        Conversions[option.name](compOptions);
+      }
       return compOptions;
     };
     Util.copy = function(parms) {
@@ -443,16 +749,6 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
         delete copy[proto[i]];
       }
       return copy;
-    };
-    Util.getGoogleObjects = function(parms) {
-      return parms.compArray.data.map(function(comp) {
-        return comp.obj;
-      });
-    };
-    Util.getIds = function(parms) {
-      return parms.compArray.data.map(function(comp) {
-        return comp.id;
-      });
     };
     Util.getNewComponentArray = function(compArray, map) {
       if ($.type(compArray) === "string") {
@@ -467,7 +763,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     Util.renameComponentOptions = function(compOptions) {
       Object.keys(compOptions).forEach(function(key) {
         Util.renameProperty({
-          newName: Util.getComponentOption(key),
+          newName: Util.lookupComponentOption(key),
           obj: compOptions,
           oldName: key
         });
@@ -475,20 +771,30 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       return compOptions;
     };
     Util.validComponentOption = function(parms) {
-      var compType = parms.compType;
       var compOption = parms.compOption;
-      return ComponentOptions[compType].includes(compOption);
+      var compType = parms.compType;
+      return _getComponentOptions(compType).includes(compOption);
     };
-    Util.validMapComponent = function(type) {
-      return MapComponents.includes(type);
+    Util.validMapComponent = function(compType) {
+      return compType !== "Map" && Object.keys(Const.Components).includes(compType);
     };
+    function _getConvertableOptions(compType) {
+      return Const.Components[compType].options.filter(function(option) {
+        return option.convertable === true;
+      });
+    }
+    function _getComponentOptions(compType) {
+      return Const.Components[compType].options.map(function(option) {
+        return option.name;
+      });
+    }
     function _getPrototypes(compArray) {
       var proto = Object.keys(Object.getPrototypeOf(compArray));
       var base_proto = Object.keys(Object.getPrototypeOf(new Components.BaseComponentArray({})));
       return proto.concat(base_proto);
     }
     return Util;
-  }(Util || (Util = {}), Const.ComponentOption);
+  }(Util || (Util = {}));
   var Util = function(Util, Settings) {
     "use strict";
     Util.toArray = function(val) {
@@ -578,144 +884,29 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
   }(Util || (Util = {}), gmap.settings);
   var Util = function(Util) {
     "use strict";
-    var SettingsAlias = {
-      delimitedstrings: Const.Settings.DELIMITED_STRINGS,
-      delimiter: Const.Settings.DELIMITER,
-      labeloptions: Const.Settings.LABEL_OPTIONS,
-      mapid: Const.Settings.MAP_ID,
-      mapoptions: Const.Settings.MAP_OPTIONS,
-      markeroptions: Const.Settings.MARKER_OPTIONS,
-      polygonoptions: Const.Settings.POLYGON_OPTIONS,
-      urlprecision: Const.Settings.URL_PRECISION
+    Util.lookupComponentOption = function(value) {
+      value = Util.toLowerCase(value);
+      return _lookup(Const.ComponentOption, value) || value;
     };
-    var ComponentOptionAlias = {
-      anchorpoint: Const.ComponentOption.ANCHOR_POINT,
-      animation: Const.ComponentOption.ANIMATION,
-      backgroundcolor: Const.ComponentOption.BACKGROUND_COLOR,
-      bounds: Const.ComponentOption.BOUNDS,
-      center: Const.ComponentOption.CENTER,
-      clickable: Const.ComponentOption.CLICKABLE,
-      clickableicons: Const.ComponentOption.CLICKABLE_ICONS,
-      content: Const.ComponentOption.CONTENT,
-      crossondrag: Const.ComponentOption.CROSS_ON_DRAG,
-      cursor: Const.ComponentOption.CURSOR,
-      disableautopan: Const.ComponentOption.DISABLE_AUTO_PAN,
-      disabledefaultui: Const.ComponentOption.DISABLE_DEFAULT_UI,
-      disabledoubleclickzoom: Const.ComponentOption.DISABLE_DOUBLE_CLICK_ZOOM,
-      draggable: Const.ComponentOption.DRAGGABLE,
-      draggablecursor: Const.ComponentOption.DRAGGABLE_CURSOR,
-      draggingcursor: Const.ComponentOption.DRAGGING_CURSOR,
-      editable: Const.ComponentOption.EDITABLE,
-      fillcolor: Const.ComponentOption.FILL_COLOR,
-      fillopacity: Const.ComponentOption.FILL_OPACITY,
-      fullscreencontrol: Const.ComponentOption.FULLSCREEN_CONTROL,
-      fullscreencontroloptions: Const.ComponentOption.FULLSCREEN_CONTROL_OPTIONS,
-      geodesic: Const.ComponentOption.GEODESIC,
-      gesturehandling: Const.ComponentOption.GESTURE_HANDLING,
-      heading: Const.ComponentOption.HEADING,
-      icon: Const.ComponentOption.ICON,
-      icons: Const.ComponentOption.ICONS,
-      keyboardshortcuts: Const.ComponentOption.KEYBOARD_SHORTCUTS,
-      label: Const.ComponentOption.LABEL,
-      map: Const.ComponentOption.MAP,
-      maptypecontrol: Const.ComponentOption.MAP_TYPE_CONTROL,
-      maptypecontroloptions: Const.ComponentOption.MAP_TYPE_CONTROL_OPTIONS,
-      maptypeid: Const.ComponentOption.MAP_TYPE_ID,
-      maxwidth: Const.ComponentOption.MAX_WIDTH,
-      maxzoom: Const.ComponentOption.MAX_ZOOM,
-      noclear: Const.ComponentOption.NO_CLEAR,
-      opacity: Const.ComponentOption.OPACITY,
-      optimized: Const.ComponentOption.OPTIMIZED,
-      pancontrol: Const.ComponentOption.PAN_CONTROL,
-      pancontroloptions: Const.ComponentOption.PAN_CONTROL_OPTIONS,
-      path: Const.ComponentOption.PATH,
-      paths: Const.ComponentOption.PATHS,
-      pixeloffset: Const.ComponentOption.PIXEL_OFFSET,
-      place: Const.ComponentOption.PLACE,
-      position: Const.ComponentOption.POSITION,
-      radius: Const.ComponentOption.RADIUS,
-      rotatecontrol: Const.ComponentOption.ROTATE_CONTROL,
-      rotatecontroloptions: Const.ComponentOption.ROTATE_CONTROL_OPTIONS,
-      scalecontrol: Const.ComponentOption.SCALE_CONTROL,
-      scalecontroloptions: Const.ComponentOption.SCALE_CONTROL_OPTIONS,
-      scrollwheel: Const.ComponentOption.SCROLL_WHEEL,
-      shape: Const.ComponentOption.SHAPE,
-      streetview: Const.ComponentOption.STREET_VIEW,
-      streetviewcontrol: Const.ComponentOption.STREET_VIEW_CONTROL,
-      streetviewcontroloptions: Const.ComponentOption.STREET_VIEW_CONTROL_OPTIONS,
-      strokecolor: Const.ComponentOption.STROKE_COLOR,
-      strokeopacity: Const.ComponentOption.STROKE_OPACITY,
-      strokeposition: Const.ComponentOption.STROKE_POSITION,
-      strokeweight: Const.ComponentOption.STROKE_WEIGHT,
-      styles: Const.ComponentOption.STYLES,
-      tilt: Const.ComponentOption.TILT,
-      title: Const.ComponentOption.TITLE,
-      visible: Const.ComponentOption.VISIBLE,
-      zoom: Const.ComponentOption.ZOOM,
-      zoomcontrol: Const.ComponentOption.ZOOM_CONTROL,
-      zoomcontroloptions: Const.ComponentOption.ZOOM_CONTROL_OPTIONS,
-      zindex: Const.ComponentOption.Z_INDEX
+    Util.lookupComponentType = function(value) {
+      value = Util.toLowerCase(value);
+      return _lookup(Const.ComponentType, value, true) || value;
     };
-    var ComponentTypeAlias = {
-      label: Const.ComponentType.LABEL,
-      labels: Const.ComponentType.LABEL,
-      map: Const.ComponentType.MAP,
-      maps: Const.ComponentType.MAP,
-      marker: Const.ComponentType.MARKER,
-      markers: Const.ComponentType.MARKER,
-      polygon: Const.ComponentType.POLYGON,
-      polygons: Const.ComponentType.POLYGON
+    Util.lookupEventType = function(value) {
+      value = Util.toLowerCase(value);
+      return _lookup(Const.EventType, value) || value;
     };
-    var EventTypeAlias = {
-      animationchanged: Const.EventType.ANIMATION_CHANGED,
-      boundschanged: Const.EventType.BOUNDS_CHANGED,
-      centerchanged: Const.EventType.CENTER_CHANGED,
-      click: Const.EventType.CLICK,
-      clickablechanged: Const.EventType.CLICKABLE_CHANGED,
-      cursorchanged: Const.EventType.CURSOR_CHANGED,
-      doubleclick: Const.EventType.DOUBLE_CLICK,
-      drag: Const.EventType.DRAG,
-      dragend: Const.EventType.DRAG_END,
-      dragstart: Const.EventType.DRAG_START,
-      draggablechanged: Const.EventType.DRAGGABLE_CHANGED,
-      flatchanged: Const.EventType.FLAT_CHANGED,
-      headingchanged: Const.EventType.HEADING_CHANGED,
-      iconchanged: Const.EventType.ICON_CHANGED,
-      idle: Const.EventType.IDLE,
-      maptypeidchanged: Const.EventType.MAP_TYPE_ID_CHANGED,
-      mousedown: Const.EventType.MOUSE_DOWN,
-      mousemove: Const.EventType.MOUSE_MOVE,
-      mouseout: Const.EventType.MOUSE_OUT,
-      mouseover: Const.EventType.MOUSE_OVER,
-      mouseup: Const.EventType.MOUSE_UP,
-      positionchanged: Const.EventType.POSITION_CHANGED,
-      projectionchanged: Const.EventType.PROJECTION_CHANGED,
-      resize: Const.EventType.RESIZE,
-      rightclick: Const.EventType.RIGHT_CLICK,
-      shapechanged: Const.EventType.SHAPE_CHANGED,
-      tilesloaded: Const.EventType.TILES_LOADED,
-      tiltchanged: Const.EventType.TILT_CHANGED,
-      titlechanged: Const.EventType.TITLE_CHANGED,
-      visiblechanged: Const.EventType.VISIBLE_CHANGED,
-      zindexchanged: Const.EventType.ZINDEX_CHANGED,
-      zoomchanged: Const.EventType.ZOOM_CHANGED
+    Util.lookupSetting = function(value) {
+      value = Util.toLowerCase(value);
+      return _lookup(Const.Setting, value) || value;
     };
-    Util.getSetting = function(option) {
-      option = Util.toLowerCase(option);
-      return SettingsAlias[option] || option;
-    };
-    Util.getComponentOption = function(option) {
-      option = Util.toLowerCase(option);
-      return ComponentOptionAlias[option] || option;
-    };
-    Util.getComponentType = function(type) {
-      type = Util.toLowerCase(type);
-      return ComponentTypeAlias[type] || type;
-    };
-    Util.getEventType = function(event) {
-      event = Util.toLowerCase(event);
-      return EventTypeAlias[event] || event;
-    };
+    function _lookup(constant, value, plural) {
+      var key = Object.keys(constant).find(function(key) {
+        key = Util.toLowerCase(key);
+        return key === value || plural && key + "s" === value;
+      });
+      return constant[key];
+    }
     return Util;
   }(Util || (Util = {}));
   var Util = function(Util) {
@@ -738,13 +929,13 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     };
     return Util;
   }(Util || (Util = {}));
-  var Util = function(Util, GlobalSettings) {
+  var Util = function(Util, GlobalSettings, Setting) {
     "use strict";
-    var LocalSettings = [ Const.Settings.LABEL_OPTIONS, Const.Settings.MAP_ID, Const.Settings.MAP_OPTIONS, Const.Settings.MARKER_OPTIONS, Const.Settings.POLYGON_OPTIONS ];
+    var LocalSettings = [ Setting.CIRCLE_OPTIONS, Setting.LABEL_OPTIONS, Setting.MAP_ID, Setting.MAP_OPTIONS, Setting.MARKER_OPTIONS, Setting.POLYGON_OPTIONS, Setting.POLYLINE_OPTIONS, Setting.RECTANGLE_OPTIONS ];
     Util.renameSettings = function(userSettings) {
       Object.keys(userSettings).forEach(function(key) {
         Util.renameProperty({
-          newName: Util.getSetting(key),
+          newName: Util.lookupSetting(key),
           obj: userSettings,
           oldName: key
         });
@@ -761,24 +952,19 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       return userSettings;
     };
     return Util;
-  }(Util || (Util = {}), gmap.settings);
+  }(Util || (Util = {}), gmap.settings, Const.Setting);
   var Core = function(Core) {
     "use strict";
-    var RequiredParms = {
-      Label: [ "position", "text" ],
-      Marker: [ "position" ],
-      Polygon: [ [ "path", "paths" ] ]
-    };
     Core.addComponent = function(parms) {
       var compOptions = parms.compOptions;
       var map = parms.map;
-      var type = Util.getComponentType(parms.type);
+      var type = Util.lookupComponentType(parms.type);
       if (Util.validMapComponent(type)) {
         if ($.type(compOptions) === "array") {
           return _multiAdd(map, type, compOptions);
         }
         if ($.type(compOptions) === "object") {
-          if (_validateParms(map, type, compOptions)) {
+          if (_validateOptions(map, type, compOptions)) {
             var newCompArray = Util.getNewComponentArray(type, map);
             newCompArray.push(_add(map, type, compOptions));
             return newCompArray;
@@ -813,7 +999,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       var newCompArray = Util.getNewComponentArray(type, map);
       for (var i = 0, i_end = compOptionsArray.length; i < i_end; i++) {
         var compOptions = compOptionsArray[i];
-        if (_validateParms(map, type, compOptions)) {
+        if (_validateOptions(map, type, compOptions)) {
           newCompArray.push(_add(map, type, compOptions));
         }
       }
@@ -824,33 +1010,37 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       return "__" + id + "__";
     }
     function _mergeDefaults(map, type, compOptions) {
-      var namespace = Util.getSetting(type + "Options");
+      var namespace = Util.lookupSetting(type + "Options");
       var defaults = map.settings[namespace] || {};
       var options = $.extend({}, defaults, compOptions);
       options.map = map.obj;
       delete options.id;
       return options;
     }
-    function _requiredParmsAreEmpty(reqParms, parms) {
-      return reqParms.map(function(key) {
-        return parms[key] !== "" && parms[key] !== null && parms[key] !== undefined && parms[key] !== false;
-      }).indexOf(true) === -1;
+    function _getRequiredOptions(compType) {
+      return Const.Components[compType].options.filter(function(option) {
+        return option.required === true;
+      });
     }
-    function _validateParms(map, type, parms) {
-      if (map.components[type].includes(parms.id) === true) {
+    function _requiredOptionIsEmpty(reqOption, compOptions) {
+      return compOptions[reqOption] === "" || compOptions[reqOption] === null || compOptions[reqOption] === undefined;
+    }
+    function _validateOptions(map, compType, compOptions) {
+      if (map.components[compType].includes(compOptions.id) === true) {
         return Util.throwError({
           method: "add",
-          message: "A " + type + " with an id of " + parms.id + " already exists",
-          obj: parms
+          message: "A " + compType + " with an id of " + compOptions.id + " already exists",
+          obj: compOptions
         });
       }
-      for (var i = 0, i_end = RequiredParms[type].length; i < i_end; i++) {
-        var reqParm = Util.toArray(RequiredParms[type][i]);
-        if (_requiredParmsAreEmpty(reqParm, parms)) {
+      var requiredOptions = _getRequiredOptions(compType);
+      for (var i = 0, i_end = requiredOptions.length; i < i_end; i++) {
+        var reqOption = requiredOptions[i].name;
+        if (_requiredOptionIsEmpty(reqOption, compOptions)) {
           return Util.throwError({
             method: "add",
-            message: reqParm.join(" or ") + " must have a value",
-            obj: parms
+            message: reqOption + " must have a value",
+            obj: compOptions
           });
         }
       }
@@ -861,6 +1051,9 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
   var Core = function(Core) {
     "use strict";
     var BoundsFunction = {
+      Circle: function Circle(comp) {
+        return comp.obj.getBounds();
+      },
       Label: function Label(comp) {
         return _getBoundsByPosition(comp);
       },
@@ -908,7 +1101,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       var bounds = new google.maps.LatLngBounds();
       var types = Object.keys(comps);
       for (var i = 0, i_end = types.length; i < i_end; i++) {
-        var type = Util.getComponentType(types[i]);
+        var type = Util.lookupComponentType(types[i]);
         var ids = _getIds(mapComps[type], comps[types[i]]);
         bounds.union(Core.getBounds({
           compArray: mapComps[type],
@@ -934,9 +1127,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       return bounds;
     }
     function _getIds(compArray, ids) {
-      return ids === null || ids === "all" ? Util.getIds({
-        compArray: compArray
-      }) : ids;
+      return ids === null || ids === "all" ? compArray.getIds() : ids;
     }
     return Core;
   }(Core || (Core = {}));
@@ -1050,13 +1241,13 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       var compArray = parms.compArray;
       var func = parms.func;
       var ids = parms.ids;
-      var type = Util.getEventType(parms.type);
+      var type = Util.lookupEventType(parms.type);
       return _listener(compArray, ids, type, func, Action.ADD);
     };
     Core.removeListener = function(parms) {
       var compArray = parms.compArray;
       var ids = parms.ids;
-      var type = Util.getEventType(parms.type);
+      var type = Util.lookupEventType(parms.type);
       var action = type !== "all" ? Action.REMOVE_TYPE : Action.REMOVE_ALL;
       return _listener(compArray, ids, type, null, action);
     };
@@ -1137,7 +1328,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     };
     function _formatComponentOptions(compOptions, compType, value) {
       if ($.type(compOptions) === "string") {
-        var optionName = Util.getComponentOption(compOptions);
+        var optionName = Util.lookupComponentOption(compOptions);
         compOptions = {};
         compOptions[optionName] = value;
       } else {
@@ -1153,7 +1344,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       return keys.length === 1 ? retVal[keys[0]] : retVal;
     }
     function _getComponentOptions(comp, compOptions) {
-      compOptions = Util.getComponentOption(compOptions);
+      compOptions = Util.lookupComponentOption(compOptions);
       var obj = $.extend({}, comp.obj);
       if (compOptions) {
         return obj[compOptions];
@@ -1200,13 +1391,13 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     Core.pop = function(parms) {
       var count = parms.count || 1;
       var map = parms.map;
-      var type = Util.getComponentType(parms.type);
+      var type = Util.lookupComponentType(parms.type);
       return _pop(map.components[type], count, Action.POP);
     };
     Core.remove = function(parms) {
       var ids = parms.ids;
       var map = parms.map;
-      var type = Util.getComponentType(parms.type);
+      var type = Util.lookupComponentType(parms.type);
       if (Util.validMapComponent(type)) {
         var compArray = map.components[type];
         ids = ids || compArray.getIds();
@@ -1230,7 +1421,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     Core.shift = function(parms) {
       var count = parms.count || 1;
       var map = parms.map;
-      var type = Util.getComponentType(parms.type);
+      var type = Util.lookupComponentType(parms.type);
       return _pop(map.components[type], count, Action.SHIFT);
     };
     function _remove(comp) {
@@ -1319,6 +1510,14 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
           compOptions: compOptions,
           map: this,
           type: type
+        });
+      },
+      circles: function circles(ids) {
+        return Core.search({
+          ids: ids,
+          map: this,
+          matching: true,
+          type: ComponentType.CIRCLE
         });
       },
       fitBounds: function fitBounds(comps) {
@@ -1564,13 +1763,13 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
         return this.type.replace("Array", "");
       };
       BaseComponentArray.prototype.getGoogleObjects = function getGoogleObjects() {
-        return Util.getGoogleObjects({
-          compArray: this
+        return this.data.map(function(comp) {
+          return comp.obj;
         });
       };
       BaseComponentArray.prototype.getIds = function getIds() {
-        return Util.getIds({
-          compArray: this
+        return this.data.map(function(comp) {
+          return comp.id;
         });
       };
       BaseComponentArray.prototype.getOptions = function getOptions(compOption) {
@@ -1821,11 +2020,60 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
   }(Components || (Components = {}));
   var Components = function(Components, ComponentType) {
     "use strict";
-    var Label = function(_Components$BaseCompo) {
-      _inherits(Label, _Components$BaseCompo);
+    var Circle = function(_Components$BaseCompo) {
+      _inherits(Circle, _Components$BaseCompo);
+      function Circle(parms) {
+        _classCallCheck(this, Circle);
+        return _possibleConstructorReturn(this, _Components$BaseCompo.call(this, {
+          id: parms.id,
+          obj: new google.maps.Circle(parms.options),
+          options: parms.options,
+          type: ComponentType.CIRCLE
+        }));
+      }
+      return Circle;
+    }(Components.BaseComponent);
+    Components.Circle = Circle;
+    return Components;
+  }(Components || (Components = {}), Const.ComponentType);
+  var Components = function(Components, ComponentType) {
+    "use strict";
+    var CircleArray = function(_Components$BaseCompo2) {
+      _inherits(CircleArray, _Components$BaseCompo2);
+      function CircleArray(parms) {
+        _classCallCheck(this, CircleArray);
+        return _possibleConstructorReturn(this, _Components$BaseCompo2.call(this, {
+          map: parms.map,
+          type: ComponentType.CIRCLE_ARRAY
+        }));
+      }
+      CircleArray.prototype.off = function off(type) {
+        return Core.removeListener({
+          compArray: this,
+          ids: this.getIds(),
+          type: type
+        });
+      };
+      CircleArray.prototype.on = function on(type, func) {
+        return Core.addListener({
+          compArray: this,
+          func: func,
+          ids: this.getIds(),
+          type: type
+        });
+      };
+      return CircleArray;
+    }(Components.BaseComponentArray);
+    Components.CircleArray = CircleArray;
+    return Components;
+  }(Components || (Components = {}), Const.ComponentType);
+  var Components = function(Components, ComponentType) {
+    "use strict";
+    var Label = function(_Components$BaseCompo3) {
+      _inherits(Label, _Components$BaseCompo3);
       function Label(parms) {
         _classCallCheck(this, Label);
-        return _possibleConstructorReturn(this, _Components$BaseCompo.call(this, {
+        return _possibleConstructorReturn(this, _Components$BaseCompo3.call(this, {
           id: parms.id,
           obj: new Components.GoogleLabel(parms.options),
           options: parms.options,
@@ -1839,11 +2087,11 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
   }(Components || (Components = {}), Const.ComponentType);
   var Components = function(Components, ComponentType) {
     "use strict";
-    var LabelArray = function(_Components$BaseCompo2) {
-      _inherits(LabelArray, _Components$BaseCompo2);
+    var LabelArray = function(_Components$BaseCompo4) {
+      _inherits(LabelArray, _Components$BaseCompo4);
       function LabelArray(parms) {
         _classCallCheck(this, LabelArray);
-        return _possibleConstructorReturn(this, _Components$BaseCompo2.call(this, {
+        return _possibleConstructorReturn(this, _Components$BaseCompo4.call(this, {
           map: parms.map,
           type: ComponentType.LABEL_ARRAY
         }));
@@ -1868,11 +2116,11 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
   }(Components || (Components = {}), Const.ComponentType);
   var Components = function(Components, ComponentType) {
     "use strict";
-    var Marker = function(_Components$BaseCompo3) {
-      _inherits(Marker, _Components$BaseCompo3);
+    var Marker = function(_Components$BaseCompo5) {
+      _inherits(Marker, _Components$BaseCompo5);
       function Marker(parms) {
         _classCallCheck(this, Marker);
-        return _possibleConstructorReturn(this, _Components$BaseCompo3.call(this, {
+        return _possibleConstructorReturn(this, _Components$BaseCompo5.call(this, {
           id: parms.id,
           obj: new google.maps.Marker(parms.options),
           options: parms.options,
@@ -1886,11 +2134,11 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
   }(Components || (Components = {}), Const.ComponentType);
   var Components = function(Components, ComponentType) {
     "use strict";
-    var MarkerArray = function(_Components$BaseCompo4) {
-      _inherits(MarkerArray, _Components$BaseCompo4);
+    var MarkerArray = function(_Components$BaseCompo6) {
+      _inherits(MarkerArray, _Components$BaseCompo6);
       function MarkerArray(parms) {
         _classCallCheck(this, MarkerArray);
-        return _possibleConstructorReturn(this, _Components$BaseCompo4.call(this, {
+        return _possibleConstructorReturn(this, _Components$BaseCompo6.call(this, {
           map: parms.map,
           type: ComponentType.MARKER_ARRAY
         }));
@@ -1930,11 +2178,11 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
   }(Components || (Components = {}), Const.ComponentType);
   var Components = function(Components, ComponentType) {
     "use strict";
-    var Polygon = function(_Components$BaseCompo5) {
-      _inherits(Polygon, _Components$BaseCompo5);
+    var Polygon = function(_Components$BaseCompo7) {
+      _inherits(Polygon, _Components$BaseCompo7);
       function Polygon(parms) {
         _classCallCheck(this, Polygon);
-        return _possibleConstructorReturn(this, _Components$BaseCompo5.call(this, {
+        return _possibleConstructorReturn(this, _Components$BaseCompo7.call(this, {
           id: parms.id,
           obj: new google.maps.Polygon(parms.options),
           options: parms.options,
@@ -1948,11 +2196,11 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
   }(Components || (Components = {}), Const.ComponentType);
   var Components = function(Components, ComponentType) {
     "use strict";
-    var PolygonArray = function(_Components$BaseCompo6) {
-      _inherits(PolygonArray, _Components$BaseCompo6);
+    var PolygonArray = function(_Components$BaseCompo8) {
+      _inherits(PolygonArray, _Components$BaseCompo8);
       function PolygonArray(parms) {
         _classCallCheck(this, PolygonArray);
-        return _possibleConstructorReturn(this, _Components$BaseCompo6.call(this, {
+        return _possibleConstructorReturn(this, _Components$BaseCompo8.call(this, {
           map: parms.map,
           type: ComponentType.POLYGON_ARRAY
         }));
@@ -1990,5 +2238,5 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     Components.PolygonArray = PolygonArray;
     return Components;
   }(Components || (Components = {}), Const.ComponentType);
-  gmap.version = "5.0.1-alpha";
+  gmap.version = "5.1.0-alpha";
 }();

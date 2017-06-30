@@ -1,10 +1,12 @@
 
 Add Remaining Components:
-  ☐ Circle
-  ☐ GroundOverlay
-  ☐ InfoWindow
   ☐ Polyline
   ☐ Rectangle
+
+
+Components:
+  ☐ Add getCenterString() and getBoundsString()
+  ☐ Auto calculate circle radius similar to shape
 
 
 Testing:
