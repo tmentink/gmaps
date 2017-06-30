@@ -115,7 +115,10 @@ var Const = ((Const) => {
       { name : Option.FILL_COLOR },
       { name : Option.FILL_OPACITY },
       { name : Option.MAP },
-      { name : Option.RADIUS },
+      {
+        name        : Option.RADIUS,
+        required    : true
+      },
       { name : Option.STROKE_COLOR },
       { name : Option.STROKE_OPACITY },
       { name : Option.STROKE_POSITION },

@@ -11,6 +11,9 @@ var Core = ((Core) => {
   // ----------------------------------------------------------------------
 
   const BoundsFunction = {
+    Circle: function(comp) {
+      return comp.obj.getBounds()
+    },
     Label: function(comp) {
       return _getBoundsByPosition(comp)
     },

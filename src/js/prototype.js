@@ -20,6 +20,15 @@
       })
     },
 
+    circles: function(ids) {
+      return Core.search({
+        ids      : ids,
+        map      : this,
+        matching : true,
+        type     : ComponentType.CIRCLE
+      })
+    },
+
     fitBounds: function(comps) {
       return Core.fitBounds({
         map   : this,
