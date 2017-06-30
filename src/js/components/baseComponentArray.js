@@ -63,14 +63,14 @@ var Components = ((Components) => {
     }
 
     getGoogleObjects() {
-      return Util.getGoogleObjects({
-        compArray: this
+      return this.data.map(function(comp) {
+        return comp.obj
       })
     }
 
     getIds() {
-      return Util.getIds({
-        compArray: this
+      return this.data.map(function(comp) {
+        return comp.id
       })
     }
 

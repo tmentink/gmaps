@@ -7,17 +7,6 @@ var Core = ((Core) => {
 
 
   // ----------------------------------------------------------------------
-  // Constants
-  // ----------------------------------------------------------------------
-
-  const RequiredParms = {
-    Label   : [ "position", "text" ],
-    Marker  : [ "position" ],
-    Polygon : [ ["path", "paths"] ]
-  }
-
-
-  // ----------------------------------------------------------------------
   // Public Methods
   // ----------------------------------------------------------------------
 
@@ -33,7 +22,7 @@ var Core = ((Core) => {
       }
 
       if ($.type(compOptions) === "object") {
-        if (_validateParms(map, type, compOptions)) {
+        if (_validateOptions(map, type, compOptions)) {
           const newCompArray = Util.getNewComponentArray(type, map)
           newCompArray.push(_add(map, type, compOptions))
           return newCompArray
@@ -79,7 +68,7 @@ var Core = ((Core) => {
     for (var i = 0, i_end = compOptionsArray.length; i < i_end; i++) {
       const compOptions = compOptionsArray[i]
 
-      if (_validateParms(map, type, compOptions)) {
+      if (_validateOptions(map, type, compOptions)) {
         newCompArray.push(_add(map, type, compOptions))
       }
     }
@@ -109,35 +98,39 @@ var Core = ((Core) => {
   // Validation Functions
   // ----------------------------------------------------------------------
 
-  function _requiredParmsAreEmpty(reqParms, parms) {
-    return reqParms.map(function(key) {
-      return parms[key] !== ""
-          && parms[key] !== null
-          && parms[key] !== undefined
-          && parms[key] !== false
-    }).indexOf(true) === -1
+  function _getRequiredOptions(compType) {
+    return Const.Components[compType].options.filter(function(option) {
+      return option.required === true
+    })
   }
 
-  function _validateParms(map, type, parms) {
+  function _requiredOptionIsEmpty(reqOption, compOptions) {
+    return compOptions[reqOption] === ""
+        || compOptions[reqOption] === null
+        || compOptions[reqOption] === undefined
+  }
+
+  function _validateOptions(map, compType, compOptions) {
 
     // Check if Id already exists
-    if (map.components[type].includes(parms.id) === true) {
+    if (map.components[compType].includes(compOptions.id) === true) {
       return Util.throwError({
         method  : "add",
-        message : `A ${type} with an id of ${parms.id} already exists`,
-        obj     : parms
+        message : `A ${compType} with an id of ${compOptions.id} already exists`,
+        obj     : compOptions
       })
     }
 
-    // Check if all required parms have values
-    for (var i = 0, i_end = RequiredParms[type].length; i < i_end; i++) {
-      const reqParm = Util.toArray(RequiredParms[type][i])
+    // Check if all required options have values
+    const requiredOptions = _getRequiredOptions(compType)
+    for (var i = 0, i_end = requiredOptions.length; i < i_end; i++) {
+      const reqOption = requiredOptions[i].name
 
-      if (_requiredParmsAreEmpty(reqParm, parms)) {
+      if (_requiredOptionIsEmpty(reqOption, compOptions)) {
         return Util.throwError({
           method  : "add",
-          message : `${reqParm.join(" or ")} must have a value`,
-          obj     : parms
+          message : `${reqOption} must have a value`,
+          obj     : compOptions
         })
       }
     }

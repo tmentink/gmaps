@@ -114,8 +114,7 @@ var Core = ((Core) => {
   }
 
   function _getIds(compArray, ids) {
-    return ids === null || ids === "all" ?
-      Util.getIds({ compArray: compArray }) : ids
+    return ids === null || ids === "all" ? compArray.getIds() : ids
   }
 
 
