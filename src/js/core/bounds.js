@@ -21,6 +21,9 @@ var Core = ((Core) => {
       return _getBoundsByPosition(comp)
     },
     Polygon: function(comp) {
+      return _getBoundsByPaths(comp)
+    },
+    Polyline: function(comp) {
       return _getBoundsByPath(comp)
     },
     Rectangle: function(comp) {
@@ -99,6 +102,17 @@ var Core = ((Core) => {
   }
 
   function _getBoundsByPath(comp) {
+    const bounds = new google.maps.LatLngBounds()
+    const path  = comp.obj.getPath()
+
+    for (var i = 0, i_end = path.length; i < i_end; i++) {
+      bounds.extend(path.getAt(i))
+    }
+
+    return bounds
+  }
+
+  function _getBoundsByPaths(comp) {
     const bounds = new google.maps.LatLngBounds()
     const paths  = comp.obj.getPaths()
 

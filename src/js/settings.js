@@ -75,7 +75,7 @@
   PolylineOptions[CompOption.GEODESIC]       = false
   PolylineOptions[CompOption.STROKE_COLOR]   = "#000"
   PolylineOptions[CompOption.STROKE_OPACITY] = 0.75
-  PolylineOptions[CompOption.STROKE_WEIGHT]  = 1
+  PolylineOptions[CompOption.STROKE_WEIGHT]  = 3
   PolylineOptions[CompOption.VISIBLE]        = true
 
   const RectangleOptions = {}

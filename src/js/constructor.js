@@ -38,6 +38,7 @@
       Label     : new Components.LabelArray     ({ map: this }),
       Marker    : new Components.MarkerArray    ({ map: this }),
       Polygon   : new Components.PolygonArray   ({ map: this }),
+      Polyline  : new Components.PolylineArray  ({ map: this }),
       Rectangle : new Components.RectangleArray ({ map: this })
     }
     this.init   = {

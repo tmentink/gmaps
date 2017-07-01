@@ -106,6 +106,15 @@
       })
     },
 
+    polylines: function(ids) {
+      return Core.search({
+        ids      : ids,
+        map      : this,
+        matching : true,
+        type     : ComponentType.POLYLINE
+      })
+    },
+
     rectangles: function(ids) {
       return Core.search({
         ids      : ids,

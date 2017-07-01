@@ -21,6 +21,11 @@ var Util = ((Util) => {
         parms.center = Util.toLatLng(parms.center)
       }
     },
+    path: function(parms) {
+      if (parms.path) {
+        parms.path = Util.toLatLngArray(parms.path)
+      }
+    },
     paths: function(parms) {
       if (parms.paths || parms.path) {
         parms.paths = Util.toLatLngArray(parms.paths || parms.path)

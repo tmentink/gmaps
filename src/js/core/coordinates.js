@@ -19,6 +19,9 @@ var Core = ((Core) => {
     },
     Polygon: function(obj) {
       return obj.getPaths()
+    },
+    Polyline: function(obj) {
+      return obj.getPath()
     }
   }
 
