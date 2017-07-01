@@ -34,10 +34,11 @@
     // ----------------------------------------------------------------------
 
     this.components = {
-      Circle  : new Components.CircleArray  ({ map: this }),
-      Label   : new Components.LabelArray   ({ map: this }),
-      Marker  : new Components.MarkerArray  ({ map: this }),
-      Polygon : new Components.PolygonArray ({ map: this })
+      Circle    : new Components.CircleArray    ({ map: this }),
+      Label     : new Components.LabelArray     ({ map: this }),
+      Marker    : new Components.MarkerArray    ({ map: this }),
+      Polygon   : new Components.PolygonArray   ({ map: this }),
+      Rectangle : new Components.RectangleArray ({ map: this })
     }
     this.init   = {
       bounds  : undefined,

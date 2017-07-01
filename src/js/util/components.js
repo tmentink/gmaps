@@ -11,6 +11,11 @@ var Util = ((Util) => {
   // ----------------------------------------------------------------------
 
   const Conversions = {
+    bounds: function(parms) {
+      if (parms.bounds) {
+        parms.bounds = Util.toLatLngBounds(parms.bounds)
+      }
+    },
     center: function(parms) {
       if (parms.center) {
         parms.center = Util.toLatLng(parms.center)

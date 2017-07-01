@@ -34,6 +34,24 @@ var Util = ((Util, Settings) => {
     return val
   }
 
+  Util.toLatLngBounds = function(val) {
+    if ($.type(val) === "string") {
+      return Settings.delimitedStrings ? _strToLatLngBounds(val) : JSON.parse(val)
+    }
+
+    return val
+  }
+
+  Util.toLowerCase = function(val) {
+    const regex = /\s+|\_+/g
+
+    if ($.type(val) === "string") {
+      return val.toLowerCase().replace(regex, "")
+    }
+
+    return undefined
+  }
+
   Util.toString = function(val) {
     if (val instanceof google.maps.LatLng) {
       return Settings.delimitedStrings ?
@@ -52,16 +70,6 @@ var Util = ((Util, Settings) => {
           _toDelimitedString(val) :
           JSON.stringify(val.getArray(), _jsonReplacer)
       }
-    }
-
-    return undefined
-  }
-
-  Util.toLowerCase = function(val) {
-    const regex = /\s+|\_+/g
-
-    if ($.type(val) === "string") {
-      return val.toLowerCase().replace(regex, "")
     }
 
     return undefined
@@ -92,6 +100,17 @@ var Util = ((Util, Settings) => {
       latLngArray.push(Util.toLatLng(coordPairs[i]))
     }
     return latLngArray
+  }
+
+  function _strToLatLngBounds(str) {
+    const coordPairs   = str.split(Settings.delimiter.latLngBounds || "|")
+
+    return {
+      north : Number(coordPairs[0]),
+      east  : Number(coordPairs[1]),
+      south : Number(coordPairs[2]),
+      west  : Number(coordPairs[3])
+    }
   }
 
   function _toDelimitedString(MVCArray) {

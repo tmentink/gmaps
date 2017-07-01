@@ -22,6 +22,9 @@ var Core = ((Core) => {
     },
     Polygon: function(comp) {
       return _getBoundsByPath(comp)
+    },
+    Rectangle: function(comp) {
+      return comp.obj.getBounds()
     }
   }
 

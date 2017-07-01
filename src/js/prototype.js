@@ -106,6 +106,15 @@
       })
     },
 
+    rectangles: function(ids) {
+      return Core.search({
+        ids      : ids,
+        map      : this,
+        matching : true,
+        type     : ComponentType.RECTANGLE
+      })
+    },
+
     remove: function(type, ids) {
       return Core.remove({
         ids  : ids,
