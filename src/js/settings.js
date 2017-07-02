@@ -23,8 +23,9 @@
   CircleOptions[CompOption.VISIBLE]         = true
 
   const Delimiter = {
-    latLng      : "|",
-    latLngArray : "~"
+    latLng       : "|",
+    latLngArray  : "~",
+    latLngBounds : "|"
   }
 
   const LabelOptions = {}
