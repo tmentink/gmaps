@@ -1,22 +1,18 @@
 
-Add Remaining Components:
-  ☐ Polyline
-  ☐ Rectangle
+New Features:
+  ☐ Add ability to trigger events
+  ☐ Consider merging map.components with data layer
 
 
-Components:
+Nice To Haves:
+  ☐ Add condition for toggle similar to jQuery
   ☐ Add getCenterString() and getBoundsString()
   ☐ Auto calculate circle radius similar to shape
 
 
-Testing:
-  ☐ Create mock google.maps service for testing
-
-
-Util:
-  ☐ Create function for multi actions (_multiDisplay, _multiRemove, etc..)?
-
-
-Nice To Have Features:
-  ☐ Add condition for toggle similar to jQuery
+Performance / Maintainability:
   ☐ Replace multi $.type calls with object literal?
+
+
+Testing:
+  ☐ Create mock google.maps service for unit testing

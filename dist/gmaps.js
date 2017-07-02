@@ -1,5 +1,5 @@
 /*!
- * gmaps v5.1.0-alpha (https://github.com/tmentink/gmaps)
+ * gmaps v5.2.0-alpha (https://github.com/tmentink/gmaps)
  * Copyright 2017 Trent Mentink
  * Licensed under MIT
  */
@@ -170,6 +170,12 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
           map: this
         }),
         Polygon: new Components.PolygonArray({
+          map: this
+        }),
+        Polyline: new Components.PolylineArray({
+          map: this
+        }),
+        Rectangle: new Components.RectangleArray({
           map: this
         })
       };
@@ -624,7 +630,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     CircleOptions[CompOption.VISIBLE] = true;
     var Delimiter = {
       latLng: "|",
-      latLngArray: "~"
+      latLngArray: "~",
+      latLngBounds: "|"
     };
     var LabelOptions = {};
     LabelOptions[CompOption.ALIGN] = "center";
@@ -673,7 +680,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     PolylineOptions[CompOption.GEODESIC] = false;
     PolylineOptions[CompOption.STROKE_COLOR] = "#000";
     PolylineOptions[CompOption.STROKE_OPACITY] = .75;
-    PolylineOptions[CompOption.STROKE_WEIGHT] = 1;
+    PolylineOptions[CompOption.STROKE_WEIGHT] = 3;
     PolylineOptions[CompOption.VISIBLE] = true;
     var RectangleOptions = {};
     RectangleOptions[CompOption.CLICKABLE] = true;
@@ -702,9 +709,19 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
   var Util = function(Util) {
     "use strict";
     var Conversions = {
+      bounds: function bounds(parms) {
+        if (parms.bounds) {
+          parms.bounds = Util.toLatLngBounds(parms.bounds);
+        }
+      },
       center: function center(parms) {
         if (parms.center) {
           parms.center = Util.toLatLng(parms.center);
+        }
+      },
+      path: function path(parms) {
+        if (parms.path) {
+          parms.path = Util.toLatLngArray(parms.path);
         }
       },
       paths: function paths(parms) {
@@ -815,6 +832,19 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       }
       return val;
     };
+    Util.toLatLngBounds = function(val) {
+      if ($.type(val) === "string") {
+        return Settings.delimitedStrings ? _strToLatLngBounds(val) : JSON.parse(val);
+      }
+      return val;
+    };
+    Util.toLowerCase = function(val) {
+      var regex = /\s+|\_+/g;
+      if ($.type(val) === "string") {
+        return val.toLowerCase().replace(regex, "");
+      }
+      return undefined;
+    };
     Util.toString = function(val) {
       if (val instanceof google.maps.LatLng) {
         return Settings.delimitedStrings ? val.toUrlValue(Settings.urlPrecision) : JSON.stringify(val, _jsonReplacer);
@@ -825,13 +855,6 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
         } else {
           return Settings.delimitedStrings ? _toDelimitedString(val) : JSON.stringify(val.getArray(), _jsonReplacer);
         }
-      }
-      return undefined;
-    };
-    Util.toLowerCase = function(val) {
-      var regex = /\s+|\_+/g;
-      if ($.type(val) === "string") {
-        return val.toLowerCase().replace(regex, "");
       }
       return undefined;
     };
@@ -852,6 +875,15 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
         latLngArray.push(Util.toLatLng(coordPairs[i]));
       }
       return latLngArray;
+    }
+    function _strToLatLngBounds(str) {
+      var coordPairs = str.split(Settings.delimiter.latLngBounds || "|");
+      return {
+        north: Number(coordPairs[0]),
+        east: Number(coordPairs[1]),
+        south: Number(coordPairs[2]),
+        west: Number(coordPairs[3])
+      };
     }
     function _toDelimitedString(MVCArray) {
       var str = "";
@@ -1061,7 +1093,13 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
         return _getBoundsByPosition(comp);
       },
       Polygon: function Polygon(comp) {
+        return _getBoundsByPaths(comp);
+      },
+      Polyline: function Polyline(comp) {
         return _getBoundsByPath(comp);
+      },
+      Rectangle: function Rectangle(comp) {
+        return comp.obj.getBounds();
       }
     };
     Core.fitBounds = function(parms) {
@@ -1112,6 +1150,14 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     }
     function _getBoundsByPath(comp) {
       var bounds = new google.maps.LatLngBounds();
+      var path = comp.obj.getPath();
+      for (var i = 0, i_end = path.length; i < i_end; i++) {
+        bounds.extend(path.getAt(i));
+      }
+      return bounds;
+    }
+    function _getBoundsByPaths(comp) {
+      var bounds = new google.maps.LatLngBounds();
       var paths = comp.obj.getPaths();
       for (var i = 0, i_end = paths.length; i < i_end; i++) {
         var path = paths.getAt(i);
@@ -1142,6 +1188,9 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       },
       Polygon: function Polygon(obj) {
         return obj.getPaths();
+      },
+      Polyline: function Polyline(obj) {
+        return obj.getPath();
       }
     };
     Core.getCoordinates = function(parms) {
@@ -1583,6 +1632,22 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
           map: this,
           matching: true,
           type: ComponentType.POLYGON
+        });
+      },
+      polylines: function polylines(ids) {
+        return Core.search({
+          ids: ids,
+          map: this,
+          matching: true,
+          type: ComponentType.POLYLINE
+        });
+      },
+      rectangles: function rectangles(ids) {
+        return Core.search({
+          ids: ids,
+          map: this,
+          matching: true,
+          type: ComponentType.RECTANGLE
         });
       },
       remove: function remove(type, ids) {
@@ -2238,5 +2303,116 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     Components.PolygonArray = PolygonArray;
     return Components;
   }(Components || (Components = {}), Const.ComponentType);
-  gmap.version = "5.1.0-alpha";
+  var Components = function(Components, ComponentType) {
+    "use strict";
+    var Polyline = function(_Components$BaseCompo9) {
+      _inherits(Polyline, _Components$BaseCompo9);
+      function Polyline(parms) {
+        _classCallCheck(this, Polyline);
+        return _possibleConstructorReturn(this, _Components$BaseCompo9.call(this, {
+          id: parms.id,
+          obj: new google.maps.Polyline(parms.options),
+          options: parms.options,
+          type: ComponentType.POLYLINE
+        }));
+      }
+      return Polyline;
+    }(Components.BaseComponent);
+    Components.Polyline = Polyline;
+    return Components;
+  }(Components || (Components = {}), Const.ComponentType);
+  var Components = function(Components, ComponentType) {
+    "use strict";
+    var PolylineArray = function(_Components$BaseCompo10) {
+      _inherits(PolylineArray, _Components$BaseCompo10);
+      function PolylineArray(parms) {
+        _classCallCheck(this, PolylineArray);
+        return _possibleConstructorReturn(this, _Components$BaseCompo10.call(this, {
+          map: parms.map,
+          type: ComponentType.POLYLINE_ARRAY
+        }));
+      }
+      PolylineArray.prototype.getPath = function getPath() {
+        return Core.getCoordinates({
+          compArray: this,
+          ids: this.getIds()
+        });
+      };
+      PolylineArray.prototype.getPathString = function getPathString() {
+        return Core.getCoordinates({
+          compArray: this,
+          stringify: true,
+          ids: this.getIds()
+        });
+      };
+      PolylineArray.prototype.off = function off(type) {
+        return Core.removeListener({
+          compArray: this,
+          ids: this.getIds(),
+          type: type
+        });
+      };
+      PolylineArray.prototype.on = function on(type, func) {
+        return Core.addListener({
+          compArray: this,
+          func: func,
+          ids: this.getIds(),
+          type: type
+        });
+      };
+      return PolylineArray;
+    }(Components.BaseComponentArray);
+    Components.PolylineArray = PolylineArray;
+    return Components;
+  }(Components || (Components = {}), Const.ComponentType);
+  var Components = function(Components, ComponentType) {
+    "use strict";
+    var Rectangle = function(_Components$BaseCompo11) {
+      _inherits(Rectangle, _Components$BaseCompo11);
+      function Rectangle(parms) {
+        _classCallCheck(this, Rectangle);
+        return _possibleConstructorReturn(this, _Components$BaseCompo11.call(this, {
+          id: parms.id,
+          obj: new google.maps.Rectangle(parms.options),
+          options: parms.options,
+          type: ComponentType.RECTANGLE
+        }));
+      }
+      return Rectangle;
+    }(Components.BaseComponent);
+    Components.Rectangle = Rectangle;
+    return Components;
+  }(Components || (Components = {}), Const.ComponentType);
+  var Components = function(Components, ComponentType) {
+    "use strict";
+    var RectangleArray = function(_Components$BaseCompo12) {
+      _inherits(RectangleArray, _Components$BaseCompo12);
+      function RectangleArray(parms) {
+        _classCallCheck(this, RectangleArray);
+        return _possibleConstructorReturn(this, _Components$BaseCompo12.call(this, {
+          map: parms.map,
+          type: ComponentType.RECTANGLE_ARRAY
+        }));
+      }
+      RectangleArray.prototype.off = function off(type) {
+        return Core.removeListener({
+          compArray: this,
+          ids: this.getIds(),
+          type: type
+        });
+      };
+      RectangleArray.prototype.on = function on(type, func) {
+        return Core.addListener({
+          compArray: this,
+          func: func,
+          ids: this.getIds(),
+          type: type
+        });
+      };
+      return RectangleArray;
+    }(Components.BaseComponentArray);
+    Components.RectangleArray = RectangleArray;
+    return Components;
+  }(Components || (Components = {}), Const.ComponentType);
+  gmap.version = "5.2.0-alpha";
 }();
