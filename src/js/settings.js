@@ -14,7 +14,7 @@
   CircleOptions[CompOption.CLICKABLE]       = true
   CircleOptions[CompOption.DRAGGABLE]       = false
   CircleOptions[CompOption.EDITABLE]        = false
-  CircleOptions[CompOption.FILL_COLOR]      = "#2185d0"
+  CircleOptions[CompOption.FILL_COLOR]      = "#2196f3"
   CircleOptions[CompOption.FILL_OPACITY]    = 0.75
   CircleOptions[CompOption.STROKE_COLOR]    = "#000"
   CircleOptions[CompOption.STROKE_OPACITY]  = 0.75
@@ -61,7 +61,7 @@
   PolygonOptions[CompOption.CLICKABLE]      = true
   PolygonOptions[CompOption.DRAGGABLE]      = false
   PolygonOptions[CompOption.EDITABLE]       = false
-  PolygonOptions[CompOption.FILL_COLOR]     = "#2185d0"
+  PolygonOptions[CompOption.FILL_COLOR]     = "#2196f3"
   PolygonOptions[CompOption.FILL_OPACITY]   = 0.75
   PolygonOptions[CompOption.GEODESIC]       = false
   PolygonOptions[CompOption.STROKE_COLOR]   = "#000"
@@ -83,7 +83,7 @@
   RectangleOptions[CompOption.CLICKABLE]       = true
   RectangleOptions[CompOption.DRAGGABLE]       = false
   RectangleOptions[CompOption.EDITABLE]        = false
-  RectangleOptions[CompOption.FILL_COLOR]      = "#2185d0"
+  RectangleOptions[CompOption.FILL_COLOR]      = "#2196f3"
   RectangleOptions[CompOption.FILL_OPACITY]    = 0.75
   RectangleOptions[CompOption.STROKE_COLOR]    = "#000"
   RectangleOptions[CompOption.STROKE_OPACITY]  = 0.75
