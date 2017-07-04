@@ -1,5 +1,5 @@
 /*!
- * gmaps v5.2.0-alpha (https://github.com/tmentink/gmaps)
+ * gmaps v1.0.0-alpha.5 (https://github.com/tmentink/gmaps)
  * Copyright 2017 Trent Mentink
  * Licensed under MIT
  */
@@ -2414,5 +2414,5 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     Components.RectangleArray = RectangleArray;
     return Components;
   }(Components || (Components = {}), Const.ComponentType);
-  gmap.version = "5.2.0-alpha";
+  gmap.version = "1.0.0-alpha.5";
 }();

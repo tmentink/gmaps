@@ -2,6 +2,7 @@
 New Features:
   ☐ Add ability to trigger events
   ☐ Consider merging map.components with data layer
+  ☐ Add InfoWindow option for markers
 
 
 Nice To Haves:
