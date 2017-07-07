@@ -26,7 +26,7 @@ var Util = ((Util) => {
   }
 
   Util.throwError = function(parms) {
-    /* eslint-disable no-console */
+    // eslint-disable-next-line no-console
     console.error(parms.method + ": " + parms.message, parms.obj || "")
     return false
   }
