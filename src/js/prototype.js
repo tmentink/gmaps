@@ -51,6 +51,10 @@
       return this.obj.getCenter()
     },
 
+    getCenterString: function() {
+      return Util.toString(this.getCenter())
+    },
+
     getOptions: function(compOption) {
       return Core.getOptions({
         compArray  : this,

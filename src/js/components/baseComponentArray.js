@@ -58,6 +58,10 @@ var Components = ((Components) => {
       })
     }
 
+    getCenterString() {
+      return Util.toString(this.getCenter())
+    }
+
     getChildType() {
       return this.type.replace("Array", "")
     }
