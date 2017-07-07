@@ -1,5 +1,5 @@
 /*!
- * gmaps v1.0.0-alpha.5 (https://github.com/tmentink/gmaps)
+ * gmaps v1.0.0-alpha.6 (https://github.com/tmentink/gmaps)
  * Copyright 2017 Trent Mentink
  * Licensed under MIT
  */
@@ -39,6 +39,59 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       throw new TypeError("Cannot call a class as a function");
     }
   }
+  !function() {
+    "use strict";
+    if (!Array.prototype.find) {
+      Object.defineProperty(Array.prototype, "find", {
+        value: function value(predicate) {
+          if (this == null) {
+            throw new TypeError("'this' is null or not defined");
+          }
+          var o = Object(this);
+          var len = o.length >>> 0;
+          if (typeof predicate !== "function") {
+            throw new TypeError("predicate must be a function");
+          }
+          var thisArg = arguments[1];
+          var k = 0;
+          while (k < len) {
+            var kValue = o[k];
+            if (predicate.call(thisArg, kValue, k, o)) {
+              return kValue;
+            }
+            k++;
+          }
+          return undefined;
+        }
+      });
+    }
+    if (!Array.prototype.includes) {
+      Object.defineProperty(Array.prototype, "includes", {
+        value: function value(searchElement, fromIndex) {
+          if (this == null) {
+            throw new TypeError("'this' is null or not defined");
+          }
+          var o = Object(this);
+          var len = o.length >>> 0;
+          if (len === 0) {
+            return false;
+          }
+          var n = fromIndex || 0;
+          var k = Math.max(n >= 0 ? n : len - Math.abs(n), 0);
+          function sameValueZero(x, y) {
+            return x === y || typeof x === "number" && typeof y === "number" && isNaN(x) && isNaN(y);
+          }
+          while (k < len) {
+            if (sameValueZero(o[k], searchElement)) {
+              return true;
+            }
+            k++;
+          }
+          return false;
+        }
+      });
+    }
+  }();
   !function($) {
     "use strict";
     if (window.jQuery) {
@@ -1270,20 +1323,91 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
   }(Core || (Core = {}));
   var Core = function(Core, ComponentType) {
     "use strict";
+    var DefaultOptions = {
+      showMarkers: true,
+      zoom: 12
+    };
+    var IconOptions = {
+      geolocate_inner: {
+        fillColor: "#2196f3",
+        fillOpacity: 1,
+        path: google.maps.SymbolPath.CIRCLE,
+        scale: 8,
+        strokeColor: "#FFF",
+        strokeOpacity: 1,
+        strokeWeight: 2
+      },
+      geolocate_outer: {
+        fillColor: "#2196f3",
+        fillOpacity: .5,
+        path: google.maps.SymbolPath.CIRCLE,
+        scale: 16,
+        strokeOpacity: 0
+      }
+    };
+    var MarkerIds = [ "geolocate_inner", "geolocate_outer" ];
+    Core.geolocate = function(parms) {
+      var map = parms.map;
+      var options = $.extend({}, DefaultOptions, parms.options || {});
+      if (window.navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+          var center = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+          if (options.showMarkers === true && _markerExists(map) === false) {
+            map.add(ComponentType.MARKER, [ _getMarkerOptions(MarkerIds[1], center), _getMarkerOptions(MarkerIds[0], center) ]);
+          }
+          map.markers(MarkerIds).setOptions({
+            position: center,
+            visible: options.showMarkers
+          });
+          return map.setOptions({
+            center: center,
+            zoom: options.zoom
+          });
+        });
+      } else {
+        return false;
+      }
+    };
+    function _getMarkerOptions(id, position) {
+      return {
+        id: id,
+        position: position,
+        icon: IconOptions[id]
+      };
+    }
+    function _markerExists(map) {
+      var markers = map.components[ComponentType.MARKER];
+      return markers.includes(MarkerIds[0]) === true || markers.includes(MarkerIds[1]) === true;
+    }
+    return Core;
+  }(Core || (Core = {}), Const.ComponentType);
+  var Core = function(Core, ComponentType) {
+    "use strict";
     var Action = {
       ADD: "add",
       REMOVE_ALL: "remove_all",
-      REMOVE_TYPE: "remove_type"
+      REMOVE_TYPE: "remove_type",
+      TRIGGER: "trigger"
     };
     var Execute = {
       add: function add(comp, type, fn) {
-        return _add(comp, type, fn);
+        google.maps.event.addListener(comp.obj, type, fn);
+        return comp;
       },
       remove_all: function remove_all(comp) {
-        return _removeAll(comp);
+        google.maps.event.clearInstanceListeners(comp.obj);
+        return comp;
       },
       remove_type: function remove_type(comp, type) {
-        return _removeType(comp, type);
+        google.maps.event.clearListeners(comp.obj, type);
+        return comp;
+      },
+      trigger: function trigger(comp, type) {
+        google.maps.event.trigger(comp.obj, type, {});
+        return comp;
       }
     };
     Core.addListener = function(parms) {
@@ -1299,6 +1423,12 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       var type = Util.lookupEventType(parms.type);
       var action = type !== "all" ? Action.REMOVE_TYPE : Action.REMOVE_ALL;
       return _listener(compArray, ids, type, null, action);
+    };
+    Core.triggerListener = function(parms) {
+      var compArray = parms.compArray;
+      var ids = parms.ids;
+      var type = Util.lookupEventType(parms.type);
+      return _listener(compArray, ids, type, null, Action.TRIGGER);
     };
     function _listener(compArray, ids, type, func, action) {
       if (compArray.type === ComponentType.MAP) {
@@ -1321,18 +1451,6 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
         }
       }
       return newCompArray;
-    }
-    function _add(comp, type, func) {
-      google.maps.event.addListener(comp.obj, type, func);
-      return comp;
-    }
-    function _removeAll(comp) {
-      google.maps.event.clearInstanceListeners(comp.obj);
-      return comp;
-    }
-    function _removeType(comp, type) {
-      google.maps.event.clearListeners(comp.obj, type);
-      return comp;
     }
     return Core;
   }(Core || (Core = {}), Const.ComponentType);
@@ -1575,11 +1693,20 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
           comps: comps
         });
       },
+      geolocate: function geolocate(options) {
+        return Core.geolocate({
+          map: this,
+          options: options
+        });
+      },
       getBounds: function getBounds() {
         return this.obj.getBounds();
       },
       getCenter: function getCenter() {
         return this.obj.getCenter();
+      },
+      getCenterString: function getCenterString() {
+        return Util.toString(this.getCenter());
       },
       getOptions: function getOptions(compOption) {
         return Core.getOptions({
@@ -1681,6 +1808,12 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
           this.obj.setZoom(zoom);
         }
         return this;
+      },
+      trigger: function trigger(type) {
+        return Core.triggerListener({
+          compArray: this,
+          type: type
+        });
       }
     };
     return gmap;
@@ -1823,6 +1956,9 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
           compArray: this,
           ids: this.getIds()
         });
+      };
+      BaseComponentArray.prototype.getCenterString = function getCenterString() {
+        return Util.toString(this.getCenter());
       };
       BaseComponentArray.prototype.getChildType = function getChildType() {
         return this.type.replace("Array", "");
@@ -2127,6 +2263,13 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
           type: type
         });
       };
+      CircleArray.prototype.trigger = function trigger(type) {
+        return Core.triggerListener({
+          compArray: this,
+          ids: this.getIds(),
+          type: type
+        });
+      };
       return CircleArray;
     }(Components.BaseComponentArray);
     Components.CircleArray = CircleArray;
@@ -2236,6 +2379,13 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
           type: type
         });
       };
+      MarkerArray.prototype.trigger = function trigger(type) {
+        return Core.triggerListener({
+          compArray: this,
+          ids: this.getIds(),
+          type: type
+        });
+      };
       return MarkerArray;
     }(Components.BaseComponentArray);
     Components.MarkerArray = MarkerArray;
@@ -2294,6 +2444,13 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
         return Core.addListener({
           compArray: this,
           func: func,
+          ids: this.getIds(),
+          type: type
+        });
+      };
+      PolygonArray.prototype.trigger = function trigger(type) {
+        return Core.triggerListener({
+          compArray: this,
           ids: this.getIds(),
           type: type
         });
@@ -2360,6 +2517,13 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
           type: type
         });
       };
+      PolylineArray.prototype.trigger = function trigger(type) {
+        return Core.triggerListener({
+          compArray: this,
+          ids: this.getIds(),
+          type: type
+        });
+      };
       return PolylineArray;
     }(Components.BaseComponentArray);
     Components.PolylineArray = PolylineArray;
@@ -2409,10 +2573,17 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
           type: type
         });
       };
+      RectangleArray.prototype.trigger = function trigger(type) {
+        return Core.triggerListener({
+          compArray: this,
+          ids: this.getIds(),
+          type: type
+        });
+      };
       return RectangleArray;
     }(Components.BaseComponentArray);
     Components.RectangleArray = RectangleArray;
     return Components;
   }(Components || (Components = {}), Const.ComponentType);
-  gmap.version = "1.0.0-alpha.5";
+  gmap.version = "1.0.0-alpha.6";
 }();

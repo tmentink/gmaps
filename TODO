@@ -1,13 +1,12 @@
 
 New Features:
-  ☐ Add ability to trigger events
   ☐ Consider merging map.components with data layer
   ☐ Add InfoWindow option for markers
 
 
 Nice To Haves:
   ☐ Add condition for toggle similar to jQuery
-  ☐ Add getCenterString() and getBoundsString()
+  ☐ Add getBoundsString()
   ☐ Auto calculate circle radius similar to shape
 
 
