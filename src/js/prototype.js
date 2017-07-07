@@ -164,6 +164,13 @@
         this.obj.setZoom(zoom)
       }
       return this
+    },
+
+    trigger(type) {
+      return Core.triggerListener({
+        compArray : this,
+        type      : type
+      })
     }
 
   }

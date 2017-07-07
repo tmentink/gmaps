@@ -14,17 +14,25 @@ var Core = ((Core, ComponentType) => {
     ADD         : "add",
     REMOVE_ALL  : "remove_all",
     REMOVE_TYPE : "remove_type",
+    TRIGGER     : "trigger"
   }
 
   const Execute = {
     add: function(comp, type, fn) {
-      return _add(comp, type, fn)
+      google.maps.event.addListener(comp.obj, type, fn)
+      return comp
     },
     remove_all: function(comp) {
-      return _removeAll(comp)
+      google.maps.event.clearInstanceListeners(comp.obj)
+      return comp
     },
     remove_type: function(comp, type) {
-      return _removeType(comp, type)
+      google.maps.event.clearListeners(comp.obj, type)
+      return comp
+    },
+    trigger: function(comp, type) {
+      google.maps.event.trigger(comp.obj, type, {})
+      return comp
     }
   }
 
@@ -49,6 +57,14 @@ var Core = ((Core, ComponentType) => {
     const action    = type !== "all" ? Action.REMOVE_TYPE : Action.REMOVE_ALL
 
     return _listener(compArray, ids, type, null, action)
+  }
+
+  Core.triggerListener = function(parms) {
+    const compArray = parms.compArray
+    const ids       = parms.ids
+    const type      = Util.lookupEventType(parms.type)
+
+    return _listener(compArray, ids, type, null, Action.TRIGGER)
   }
 
 
@@ -82,21 +98,6 @@ var Core = ((Core, ComponentType) => {
     }
 
     return newCompArray
-  }
-
-  function _add(comp, type, func) {
-    google.maps.event.addListener(comp.obj, type, func)
-    return comp
-  }
-
-  function _removeAll(comp) {
-    google.maps.event.clearInstanceListeners(comp.obj)
-    return comp
-  }
-
-  function _removeType(comp, type) {
-    google.maps.event.clearListeners(comp.obj, type)
-    return comp
   }
 
 

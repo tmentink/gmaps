@@ -56,6 +56,14 @@ var Components = ((Components, ComponentType) => {
       })
     }
 
+    trigger(type) {
+      return Core.triggerListener({
+        compArray : this,
+        ids       : this.getIds(),
+        type      : type
+      })
+    }
+
   }
 
 
