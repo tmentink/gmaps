@@ -36,6 +36,13 @@
       })
     },
 
+    geolocate: function(options) {
+      return Core.geolocate({
+        map     : this,
+        options : options
+      })
+    },
+
     getBounds: function() {
       return this.obj.getBounds()
     },
