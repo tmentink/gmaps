@@ -2,7 +2,7 @@
 // gmaps: core/options.js
 // ------------------------------------------------------------------------
 
-var Core = ((Core, ComponentType) => {
+var Core = ((Core) => {
   "use strict"
 
 
@@ -11,19 +11,19 @@ var Core = ((Core, ComponentType) => {
   // ----------------------------------------------------------------------
 
   Core.getOptions = function(parms) {
+    let comp        = parms.comp
     const compArray = parms.compArray
     let compOption  = parms.compOption || null
-    const compType  = parms.compType
     const ids       = parms.ids
     let retVal      = {}
 
-    if (compType === ComponentType.MAP) {
-      retVal = _getComponentOptions(compArray, compOption)
+    if (comp) {
+      retVal = _getComponentOptions(comp, compOption)
     }
     else {
       for (var i = 0, i_end = ids.length; i < i_end; i++) {
-        const id   = ids[i]
-        const comp = compArray.findById(id)
+        const id = ids[i]
+        comp     = compArray.findById(id)
         if (comp) {
           retVal[id] = _getComponentOptions(comp, compOption)
         }
@@ -34,6 +34,7 @@ var Core = ((Core, ComponentType) => {
   }
 
   Core.setOptions = function(parms) {
+    const comp      = parms.comp
     const compArray = parms.compArray
     let compOptions = parms.compOptions
     const compType  = parms.compType
@@ -41,15 +42,10 @@ var Core = ((Core, ComponentType) => {
     const value     = parms.value
     compOptions     = _formatComponentOptions(compOptions, compType, value)
 
-    if (compType === ComponentType.MAP) {
-      return _setOptions(compArray, compOptions)
-    }
-
     if ($.isArray(ids)) {
       return _multiSetOptions(compArray, ids, compOptions)
     }
 
-    const comp = compArray.findById(ids)
     if (comp) {
       return _setOptions(comp, compOptions)
     }
@@ -115,5 +111,5 @@ var Core = ((Core, ComponentType) => {
 
 
   return Core
-})(Core || (Core = {}), Const.ComponentType)
+})(Core || (Core = {}))
 

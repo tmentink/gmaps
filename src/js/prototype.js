@@ -57,9 +57,8 @@
 
     getOptions: function(compOption) {
       return Core.getOptions({
-        compArray  : this,
-        compOption : compOption,
-        compType   : this.type
+        comp       : this,
+        compOption : compOption
       })
     },
 
@@ -95,16 +94,16 @@
 
     off: function(type) {
       return Core.removeListener({
-        compArray : this,
-        type      : type
+        comp : this,
+        type : type
       })
     },
 
     on: function(type, func) {
       return Core.addListener({
-        compArray : this,
-        func      : func,
-        type      : type
+        comp : this,
+        func : func,
+        type : type
       })
     },
 
@@ -144,7 +143,9 @@
     },
 
     reset: function() {
-      return Core.reset({ compArray: this })
+      return Core.reset({
+        comp: this
+      })
     },
 
     setCenter: function(center) {
@@ -156,7 +157,7 @@
 
     setOptions: function(compOptions, value) {
       return Core.setOptions({
-        compArray   : this,
+        comp        : this,
         compOptions : compOptions,
         compType    : this.type,
         value       : value
@@ -172,8 +173,8 @@
 
     trigger(type) {
       return Core.triggerListener({
-        compArray : this,
-        type      : type
+        comp : this,
+        type : type
       })
     }
 

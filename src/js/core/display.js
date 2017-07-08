@@ -34,15 +34,15 @@ var Core = ((Core) => {
   // ----------------------------------------------------------------------
 
   Core.hide = function(parms) {
-    return _display(parms.compArray, parms.ids, Action.HIDE)
+    return _display(parms.comp, parms.compArray, parms.ids, Action.HIDE)
   }
 
   Core.show = function(parms) {
-    return _display(parms.compArray, parms.ids, Action.SHOW)
+    return _display(parms.comp, parms.compArray, parms.ids, Action.SHOW)
   }
 
   Core.toggle = function(parms) {
-    return _display(parms.compArray, parms.ids, Action.TOGGLE)
+    return _display(parms.comp, parms.compArray, parms.ids, Action.TOGGLE)
   }
 
 
@@ -50,12 +50,11 @@ var Core = ((Core) => {
   // Private Fucntions
   // ----------------------------------------------------------------------
 
-  function _display(compArray, ids, action) {
+  function _display(comp, compArray, ids, action) {
     if ($.isArray(ids)) {
       return _multiDisplay(compArray, ids, action)
     }
 
-    const comp = compArray.findById(ids)
     if (comp) {
       return _setVisibility(comp, action)
     }

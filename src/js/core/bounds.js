@@ -57,13 +57,19 @@ var Core = ((Core) => {
 
   Core.getBounds = function(parms) {
     const bounds    = new google.maps.LatLngBounds()
+    let comp        = parms.comp
     const compArray = parms.compArray
     const ids       = Util.toArray(parms.ids)
 
-    for (var i = 0, i_end = ids.length; i < i_end; i++) {
-      const comp = compArray.findById(ids[i])
-      if (comp) {
-        bounds.union(BoundsFunction[compArray.getChildType()](comp))
+    if (comp) {
+      bounds.union(BoundsFunction[comp.type](comp))
+    }
+    else {
+      for (var i = 0, i_end = ids.length; i < i_end; i++) {
+        comp = compArray.findById(ids[i])
+        if (comp) {
+          bounds.union(BoundsFunction[compArray.getChildType()](comp))
+        }
       }
     }
 
@@ -72,6 +78,7 @@ var Core = ((Core) => {
 
   Core.getCenter = function(parms) {
     const bounds = Core.getBounds({
+      comp      : parms.comp,
       compArray : parms.compArray,
       ids       : parms.ids
     })

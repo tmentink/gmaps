@@ -11,20 +11,18 @@ var Core = ((Core, ComponentType) => {
   // ----------------------------------------------------------------------
 
   Core.reset = function(parms) {
+    const comp      = parms.comp
     const compArray = parms.compArray
     const ids       = parms.ids
-
-    if (compArray.type === ComponentType.MAP) {
-      compArray.obj.fitBounds(compArray.init.bounds)
-      return _reset(compArray)
-    }
 
     if ($.isArray(ids)) {
       return _multiReset(compArray, ids)
     }
 
-    const comp = compArray.findByID(ids)
     if (comp) {
+      if (comp.type === ComponentType.MAP) {
+        comp.obj.fitBounds(comp.init.bounds)
+      }
       return _reset(comp)
     }
   }

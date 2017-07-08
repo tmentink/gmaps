@@ -2,7 +2,7 @@
 // gmaps: core/listener.js
 // ------------------------------------------------------------------------
 
-var Core = ((Core, ComponentType) => {
+var Core = ((Core) => {
   "use strict"
 
 
@@ -42,29 +42,32 @@ var Core = ((Core, ComponentType) => {
   // ----------------------------------------------------------------------
 
   Core.addListener = function(parms) {
+    const comp      = parms.comp
     const compArray = parms.compArray
     const func      = parms.func
     const ids       = parms.ids
     const type      = Util.lookupEventType(parms.type)
 
-    return _listener(compArray, ids, type, func, Action.ADD)
+    return _listener(comp, compArray, ids, type, func, Action.ADD)
   }
 
   Core.removeListener = function(parms) {
+    const comp      = parms.comp
     const compArray = parms.compArray
     const ids       = parms.ids
     const type      = Util.lookupEventType(parms.type)
     const action    = type !== "all" ? Action.REMOVE_TYPE : Action.REMOVE_ALL
 
-    return _listener(compArray, ids, type, null, action)
+    return _listener(comp, compArray, ids, type, null, action)
   }
 
   Core.triggerListener = function(parms) {
+    const comp      = parms.comp
     const compArray = parms.compArray
     const ids       = parms.ids
     const type      = Util.lookupEventType(parms.type)
 
-    return _listener(compArray, ids, type, null, Action.TRIGGER)
+    return _listener(comp, compArray, ids, type, null, Action.TRIGGER)
   }
 
 
@@ -72,16 +75,11 @@ var Core = ((Core, ComponentType) => {
   // Private Functions
   // ----------------------------------------------------------------------
 
-  function _listener(compArray, ids, type, func, action) {
-    if (compArray.type === ComponentType.MAP) {
-      return Execute[action](compArray, type, func)
-    }
-
+  function _listener(comp, compArray, ids, type, func, action) {
     if ($.isArray(ids)) {
       return _multiListener(compArray, ids, type, func, action)
     }
 
-    const comp = compArray.findById(ids)
     if (comp) {
       return Execute[action](comp, type, func)
     }
@@ -102,4 +100,4 @@ var Core = ((Core, ComponentType) => {
 
 
   return Core
-})(Core || (Core = {}), Const.ComponentType)
+})(Core || (Core = {}))

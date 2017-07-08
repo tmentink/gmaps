@@ -31,17 +31,24 @@ var Core = ((Core) => {
   // ----------------------------------------------------------------------
 
   Core.getCoordinates = function(parms) {
+    let comp        = parms.comp
+    let coords      = null
     const compArray = parms.compArray
     const stringify = parms.stringify
     const ids       = Util.toArray(parms.ids)
     const retVal    = {}
 
+    if (comp) {
+      coords = CoordinateFunctions[comp.type](comp.obj)
+      return stringify ? Util.toString(coords) : coords
+    }
+
     for (var i = 0, i_end = ids.length; i < i_end; i++) {
-      const id   = ids[i]
-      const comp = compArray.findById(id)
+      const id = ids[i]
+      comp     = compArray.findById(id)
       if (comp) {
-        const coords = CoordinateFunctions[comp.type](comp.obj)
-        retVal[id]   = stringify ? Util.toString(coords) : coords
+        coords     = CoordinateFunctions[comp.type](comp.obj)
+        retVal[id] = stringify ? Util.toString(coords) : coords
       }
     }
 
