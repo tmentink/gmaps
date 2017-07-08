@@ -44,6 +44,11 @@ var Components = ((Components) => {
       })
     }
 
+    forEach(fn) {
+      this.data.forEach(fn)
+      return this
+    }
+
     getBounds() {
       return Core.getBounds({
         compArray : this,
