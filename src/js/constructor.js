@@ -56,8 +56,9 @@
     this.type     = Const.ComponentType.MAP
     this.version  = gmap.version
 
-    // save bounds after map has finished loading
+    // save bounds and reference to data after map has finished loading
     google.maps.event.addListenerOnce(this.obj, Const.EventType.TILES_LOADED, () => {
+      this.data        = this.obj.data
       this.init.bounds = this.obj.getBounds()
     })
   }
