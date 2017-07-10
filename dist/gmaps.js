@@ -1,5 +1,5 @@
 /*!
- * gmaps v1.0.0-alpha.6 (https://github.com/tmentink/gmaps)
+ * gmaps v1.0.0-alpha.7 (https://github.com/tmentink/gmaps)
  * Copyright 2017 Trent Mentink
  * Licensed under MIT
  */
@@ -247,7 +247,13 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       this.type = Const.ComponentType.MAP;
       this.version = gmap.version;
       google.maps.event.addListenerOnce(this.obj, Const.EventType.TILES_LOADED, function() {
+        _this.controls = _this.obj.controls;
+        _this.data = _this.obj.data;
         _this.init.bounds = _this.obj.getBounds();
+        var onLoad = settings[Const.Setting.ON_LOAD];
+        if ($.type(onLoad) === "function") {
+          onLoad(_this);
+        }
       });
     };
     window.gmap = gmap;
@@ -661,6 +667,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       MAP_ID: "mapId",
       MAP_OPTIONS: "mapOptions",
       MARKER_OPTIONS: "markerOptions",
+      ON_LOAD: "onLoad",
       POLYGON_OPTIONS: "polygonOptions",
       POLYLINE_OPTIONS: "polylineOptions",
       RECTANGLE_OPTIONS: "rectangleOptions",
@@ -753,6 +760,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     Settings[Type.MAP_ID] = "gmap";
     Settings[Type.MAP_OPTIONS] = MapOptions;
     Settings[Type.MARKER_OPTIONS] = MarkerOptions;
+    Settings[Type.ON_LOAD] = function() {};
     Settings[Type.POLYGON_OPTIONS] = PolygonOptions;
     Settings[Type.POLYLINE_OPTIONS] = PolylineOptions;
     Settings[Type.RECTANGLE_OPTIONS] = RectangleOptions;
@@ -1016,7 +1024,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
   }(Util || (Util = {}));
   var Util = function(Util, GlobalSettings, Setting) {
     "use strict";
-    var LocalSettings = [ Setting.CIRCLE_OPTIONS, Setting.LABEL_OPTIONS, Setting.MAP_ID, Setting.MAP_OPTIONS, Setting.MARKER_OPTIONS, Setting.POLYGON_OPTIONS, Setting.POLYLINE_OPTIONS, Setting.RECTANGLE_OPTIONS ];
+    var LocalSettings = [ Setting.CIRCLE_OPTIONS, Setting.LABEL_OPTIONS, Setting.MAP_ID, Setting.MAP_OPTIONS, Setting.MARKER_OPTIONS, Setting.ON_LOAD, Setting.POLYGON_OPTIONS, Setting.POLYLINE_OPTIONS, Setting.RECTANGLE_OPTIONS ];
     Util.renameSettings = function(userSettings) {
       Object.keys(userSettings).forEach(function(key) {
         Util.renameProperty({
@@ -1171,18 +1179,24 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     };
     Core.getBounds = function(parms) {
       var bounds = new google.maps.LatLngBounds();
+      var comp = parms.comp;
       var compArray = parms.compArray;
       var ids = Util.toArray(parms.ids);
-      for (var i = 0, i_end = ids.length; i < i_end; i++) {
-        var comp = compArray.findById(ids[i]);
-        if (comp) {
-          bounds.union(BoundsFunction[compArray.getChildType()](comp));
+      if (comp) {
+        bounds.union(BoundsFunction[comp.type](comp));
+      } else {
+        for (var i = 0, i_end = ids.length; i < i_end; i++) {
+          comp = compArray.findById(ids[i]);
+          if (comp) {
+            bounds.union(BoundsFunction[compArray.getChildType()](comp));
+          }
         }
       }
       return bounds;
     };
     Core.getCenter = function(parms) {
       var bounds = Core.getBounds({
+        comp: parms.comp,
         compArray: parms.compArray,
         ids: parms.ids
       });
@@ -1247,15 +1261,21 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       }
     };
     Core.getCoordinates = function(parms) {
+      var comp = parms.comp;
+      var coords = null;
       var compArray = parms.compArray;
       var stringify = parms.stringify;
       var ids = Util.toArray(parms.ids);
       var retVal = {};
+      if (comp) {
+        coords = CoordinateFunctions[comp.type](comp.obj);
+        return stringify ? Util.toString(coords) : coords;
+      }
       for (var i = 0, i_end = ids.length; i < i_end; i++) {
         var id = ids[i];
-        var comp = compArray.findById(id);
+        comp = compArray.findById(id);
         if (comp) {
-          var coords = CoordinateFunctions[comp.type](comp.obj);
+          coords = CoordinateFunctions[comp.type](comp.obj);
           retVal[id] = stringify ? Util.toString(coords) : coords;
         }
       }
@@ -1286,19 +1306,18 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       }
     };
     Core.hide = function(parms) {
-      return _display(parms.compArray, parms.ids, Action.HIDE);
+      return _display(parms.comp, parms.compArray, parms.ids, Action.HIDE);
     };
     Core.show = function(parms) {
-      return _display(parms.compArray, parms.ids, Action.SHOW);
+      return _display(parms.comp, parms.compArray, parms.ids, Action.SHOW);
     };
     Core.toggle = function(parms) {
-      return _display(parms.compArray, parms.ids, Action.TOGGLE);
+      return _display(parms.comp, parms.compArray, parms.ids, Action.TOGGLE);
     };
-    function _display(compArray, ids, action) {
+    function _display(comp, compArray, ids, action) {
       if ($.isArray(ids)) {
         return _multiDisplay(compArray, ids, action);
       }
-      var comp = compArray.findById(ids);
       if (comp) {
         return _setVisibility(comp, action);
       }
@@ -1384,7 +1403,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     }
     return Core;
   }(Core || (Core = {}), Const.ComponentType);
-  var Core = function(Core, ComponentType) {
+  var Core = function(Core) {
     "use strict";
     var Action = {
       ADD: "add",
@@ -1411,33 +1430,32 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       }
     };
     Core.addListener = function(parms) {
+      var comp = parms.comp;
       var compArray = parms.compArray;
       var func = parms.func;
       var ids = parms.ids;
       var type = Util.lookupEventType(parms.type);
-      return _listener(compArray, ids, type, func, Action.ADD);
+      return _listener(comp, compArray, ids, type, func, Action.ADD);
     };
     Core.removeListener = function(parms) {
+      var comp = parms.comp;
       var compArray = parms.compArray;
       var ids = parms.ids;
       var type = Util.lookupEventType(parms.type);
       var action = type !== "all" ? Action.REMOVE_TYPE : Action.REMOVE_ALL;
-      return _listener(compArray, ids, type, null, action);
+      return _listener(comp, compArray, ids, type, null, action);
     };
     Core.triggerListener = function(parms) {
+      var comp = parms.comp;
       var compArray = parms.compArray;
       var ids = parms.ids;
       var type = Util.lookupEventType(parms.type);
-      return _listener(compArray, ids, type, null, Action.TRIGGER);
+      return _listener(comp, compArray, ids, type, null, Action.TRIGGER);
     };
-    function _listener(compArray, ids, type, func, action) {
-      if (compArray.type === ComponentType.MAP) {
-        return Execute[action](compArray, type, func);
-      }
+    function _listener(comp, compArray, ids, type, func, action) {
       if ($.isArray(ids)) {
         return _multiListener(compArray, ids, type, func, action);
       }
-      var comp = compArray.findById(ids);
       if (comp) {
         return Execute[action](comp, type, func);
       }
@@ -1453,21 +1471,21 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       return newCompArray;
     }
     return Core;
-  }(Core || (Core = {}), Const.ComponentType);
-  var Core = function(Core, ComponentType) {
+  }(Core || (Core = {}));
+  var Core = function(Core) {
     "use strict";
     Core.getOptions = function(parms) {
+      var comp = parms.comp;
       var compArray = parms.compArray;
       var compOption = parms.compOption || null;
-      var compType = parms.compType;
       var ids = parms.ids;
       var retVal = {};
-      if (compType === ComponentType.MAP) {
-        retVal = _getComponentOptions(compArray, compOption);
+      if (comp) {
+        retVal = _getComponentOptions(comp, compOption);
       } else {
         for (var i = 0, i_end = ids.length; i < i_end; i++) {
           var id = ids[i];
-          var comp = compArray.findById(id);
+          comp = compArray.findById(id);
           if (comp) {
             retVal[id] = _getComponentOptions(comp, compOption);
           }
@@ -1476,19 +1494,16 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       return retVal ? _formatRetVal(retVal) : undefined;
     };
     Core.setOptions = function(parms) {
+      var comp = parms.comp;
       var compArray = parms.compArray;
       var compOptions = parms.compOptions;
       var compType = parms.compType;
       var ids = parms.ids;
       var value = parms.value;
       compOptions = _formatComponentOptions(compOptions, compType, value);
-      if (compType === ComponentType.MAP) {
-        return _setOptions(compArray, compOptions);
-      }
       if ($.isArray(ids)) {
         return _multiSetOptions(compArray, ids, compOptions);
       }
-      var comp = compArray.findById(ids);
       if (comp) {
         return _setOptions(comp, compOptions);
       }
@@ -1536,7 +1551,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       return newCompArray;
     }
     return Core;
-  }(Core || (Core = {}), Const.ComponentType);
+  }(Core || (Core = {}));
   var Core = function(Core) {
     "use strict";
     var Action = {
@@ -1620,17 +1635,16 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
   var Core = function(Core, ComponentType) {
     "use strict";
     Core.reset = function(parms) {
+      var comp = parms.comp;
       var compArray = parms.compArray;
       var ids = parms.ids;
-      if (compArray.type === ComponentType.MAP) {
-        compArray.obj.fitBounds(compArray.init.bounds);
-        return _reset(compArray);
-      }
       if ($.isArray(ids)) {
         return _multiReset(compArray, ids);
       }
-      var comp = compArray.findByID(ids);
       if (comp) {
+        if (comp.type === ComponentType.MAP) {
+          comp.obj.fitBounds(comp.init.bounds);
+        }
         return _reset(comp);
       }
     };
@@ -1710,9 +1724,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       },
       getOptions: function getOptions(compOption) {
         return Core.getOptions({
-          compArray: this,
-          compOption: compOption,
-          compType: this.type
+          comp: this,
+          compOption: compOption
         });
       },
       getDiv: function getDiv() {
@@ -1742,13 +1755,13 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       },
       off: function off(type) {
         return Core.removeListener({
-          compArray: this,
+          comp: this,
           type: type
         });
       },
       on: function on(type, func) {
         return Core.addListener({
-          compArray: this,
+          comp: this,
           func: func,
           type: type
         });
@@ -1786,7 +1799,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       },
       reset: function reset() {
         return Core.reset({
-          compArray: this
+          comp: this
         });
       },
       setCenter: function setCenter(center) {
@@ -1797,7 +1810,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       },
       setOptions: function setOptions(compOptions, value) {
         return Core.setOptions({
-          compArray: this,
+          comp: this,
           compOptions: compOptions,
           compType: this.type,
           value: value
@@ -1811,7 +1824,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       },
       trigger: function trigger(type) {
         return Core.triggerListener({
-          compArray: this,
+          comp: this,
           type: type
         });
       }
@@ -1895,27 +1908,94 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
   }(Util || (Util = {}));
   var Components = function(Components) {
     "use strict";
-    var BaseComponent = function BaseComponent(parms) {
-      _classCallCheck(this, BaseComponent);
-      var id = parms.id;
-      var map = parms.options.map.gmaps.parent;
-      var obj = parms.obj;
-      var options = parms.options;
-      var type = parms.type;
-      this.id = id;
-      this.init = {
-        options: options
+    var BaseComponent = function() {
+      function BaseComponent(parms) {
+        _classCallCheck(this, BaseComponent);
+        var id = parms.id;
+        var map = parms.options.map.gmaps.parent;
+        var obj = parms.obj;
+        var options = parms.options;
+        var type = parms.type;
+        this.id = id;
+        this.init = {
+          options: options
+        };
+        this.map = map;
+        this.obj = obj;
+        this.obj["gmaps"] = {
+          id: id,
+          map: map,
+          parent: this,
+          version: gmap.version
+        };
+        this.type = type;
+      }
+      BaseComponent.prototype.getBounds = function getBounds() {
+        return Core.getBounds({
+          comp: this
+        });
       };
-      this.map = map;
-      this.obj = obj;
-      this.obj["gmaps"] = {
-        id: id,
-        map: map,
-        parent: this,
-        version: gmap.version
+      BaseComponent.prototype.getCenter = function getCenter() {
+        return Core.getCenter({
+          comp: this
+        });
       };
-      this.type = type;
-    };
+      BaseComponent.prototype.getCenterString = function getCenterString() {
+        return Util.toString(this.getCenter());
+      };
+      BaseComponent.prototype.getOptions = function getOptions(compOption) {
+        return Core.getOptions({
+          comp: this,
+          compOption: compOption
+        });
+      };
+      BaseComponent.prototype.hide = function hide() {
+        return Core.hide({
+          comp: this
+        });
+      };
+      BaseComponent.prototype.others = function others() {
+        return Core.search({
+          ids: [ this.id ],
+          map: this.map,
+          matching: false,
+          type: this.type
+        });
+      };
+      BaseComponent.prototype.reset = function reset() {
+        return Core.reset({
+          comp: this
+        });
+      };
+      BaseComponent.prototype.setOptions = function setOptions(compOptions, value) {
+        return Core.setOptions({
+          comp: this,
+          compOptions: compOptions,
+          compType: this.type,
+          value: value
+        });
+      };
+      BaseComponent.prototype.show = function show() {
+        return Core.show({
+          comp: this
+        });
+      };
+      BaseComponent.prototype.toggle = function toggle() {
+        return Core.toggle({
+          comp: this
+        });
+      };
+      BaseComponent.prototype.zoom = function zoom() {
+        var comps = {};
+        comps[this.type] = this.id;
+        Core.fitBounds({
+          map: this.map,
+          comps: comps
+        });
+        return this;
+      };
+      return BaseComponent;
+    }();
     Components.BaseComponent = BaseComponent;
     return Components;
   }(Components || (Components = {}));
@@ -1944,6 +2024,10 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
         return this.data.find(function(comp) {
           return comp.id === id;
         });
+      };
+      BaseComponentArray.prototype.forEach = function forEach(fn) {
+        this.data.forEach(fn);
+        return this;
       };
       BaseComponentArray.prototype.getBounds = function getBounds() {
         return Core.getBounds({
@@ -2232,6 +2316,25 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
           type: ComponentType.CIRCLE
         }));
       }
+      Circle.prototype.off = function off(type) {
+        return Core.removeListener({
+          comp: this,
+          type: type
+        });
+      };
+      Circle.prototype.on = function on(type, func) {
+        return Core.addListener({
+          comp: this,
+          func: func,
+          type: type
+        });
+      };
+      Circle.prototype.trigger = function trigger(type) {
+        return Core.triggerListener({
+          comp: this,
+          type: type
+        });
+      };
       return Circle;
     }(Components.BaseComponent);
     Components.Circle = Circle;
@@ -2335,6 +2438,36 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
           type: ComponentType.MARKER
         }));
       }
+      Marker.prototype.getPosition = function getPosition() {
+        return Core.getCoordinates({
+          comp: this
+        });
+      };
+      Marker.prototype.getPositionString = function getPositionString() {
+        return Core.getCoordinates({
+          comp: this,
+          stringify: true
+        });
+      };
+      Marker.prototype.off = function off(type) {
+        return Core.removeListener({
+          comp: this,
+          type: type
+        });
+      };
+      Marker.prototype.on = function on(type, func) {
+        return Core.addListener({
+          comp: this,
+          func: func,
+          type: type
+        });
+      };
+      Marker.prototype.trigger = function trigger(type) {
+        return Core.triggerListener({
+          comp: this,
+          type: type
+        });
+      };
       return Marker;
     }(Components.BaseComponent);
     Components.Marker = Marker;
@@ -2404,6 +2537,36 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
           type: ComponentType.POLYGON
         }));
       }
+      Polygon.prototype.getPath = function getPath() {
+        return Core.getCoordinates({
+          comp: this
+        });
+      };
+      Polygon.prototype.getPathString = function getPathString() {
+        return Core.getCoordinates({
+          comp: this,
+          stringify: true
+        });
+      };
+      Polygon.prototype.off = function off(type) {
+        return Core.removeListener({
+          comp: this,
+          type: type
+        });
+      };
+      Polygon.prototype.on = function on(type, func) {
+        return Core.addListener({
+          comp: this,
+          func: func,
+          type: type
+        });
+      };
+      Polygon.prototype.trigger = function trigger(type) {
+        return Core.triggerListener({
+          comp: this,
+          type: type
+        });
+      };
       return Polygon;
     }(Components.BaseComponent);
     Components.Polygon = Polygon;
@@ -2473,6 +2636,36 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
           type: ComponentType.POLYLINE
         }));
       }
+      Polyline.prototype.getPath = function getPath() {
+        return Core.getCoordinates({
+          comp: this
+        });
+      };
+      Polyline.prototype.getPathString = function getPathString() {
+        return Core.getCoordinates({
+          comp: this,
+          stringify: true
+        });
+      };
+      Polyline.prototype.off = function off(type) {
+        return Core.removeListener({
+          comp: this,
+          type: type
+        });
+      };
+      Polyline.prototype.on = function on(type, func) {
+        return Core.addListener({
+          comp: this,
+          func: func,
+          type: type
+        });
+      };
+      Polyline.prototype.trigger = function trigger(type) {
+        return Core.triggerListener({
+          comp: this,
+          type: type
+        });
+      };
       return Polyline;
     }(Components.BaseComponent);
     Components.Polyline = Polyline;
@@ -2542,6 +2735,25 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
           type: ComponentType.RECTANGLE
         }));
       }
+      Rectangle.prototype.off = function off(type) {
+        return Core.removeListener({
+          comp: this,
+          type: type
+        });
+      };
+      Rectangle.prototype.on = function on(type, func) {
+        return Core.addListener({
+          comp: this,
+          func: func,
+          type: type
+        });
+      };
+      Rectangle.prototype.trigger = function trigger(type) {
+        return Core.triggerListener({
+          comp: this,
+          type: type
+        });
+      };
       return Rectangle;
     }(Components.BaseComponent);
     Components.Rectangle = Rectangle;
@@ -2585,5 +2797,5 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     Components.RectangleArray = RectangleArray;
     return Components;
   }(Components || (Components = {}), Const.ComponentType);
-  gmap.version = "1.0.0-alpha.6";
+  gmap.version = "1.0.0-alpha.7";
 }();

@@ -1,5 +1,9 @@
 
-New Features:
+Bugs/Improvements:
+
+
+New Features/Functionality:
+  ☐ Consider making all ids strings
   ☐ Consider merging map.components with data layer
   ☐ Add InfoWindow option for markers
 
@@ -12,6 +16,7 @@ Nice To Haves:
 
 Performance / Maintainability:
   ☐ Replace multi $.type calls with object literal?
+  ☐ Add comments explaining internal code
 
 
 Testing:
