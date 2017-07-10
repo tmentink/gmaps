@@ -103,6 +103,7 @@
   Settings[Type.MAP_ID]            = "gmap"
   Settings[Type.MAP_OPTIONS]       = MapOptions
   Settings[Type.MARKER_OPTIONS]    = MarkerOptions
+  Settings[Type.ON_LOAD]           = function() {}
   Settings[Type.POLYGON_OPTIONS]   = PolygonOptions
   Settings[Type.POLYLINE_OPTIONS]  = PolylineOptions
   Settings[Type.RECTANGLE_OPTIONS] = RectangleOptions

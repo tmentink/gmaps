@@ -16,6 +16,7 @@ var Util = ((Util, GlobalSettings, Setting) => {
     Setting.MAP_ID,
     Setting.MAP_OPTIONS,
     Setting.MARKER_OPTIONS,
+    Setting.ON_LOAD,
     Setting.POLYGON_OPTIONS,
     Setting.POLYLINE_OPTIONS,
     Setting.RECTANGLE_OPTIONS

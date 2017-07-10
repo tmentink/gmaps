@@ -41,7 +41,7 @@
       Polyline  : new Components.PolylineArray  ({ map: this }),
       Rectangle : new Components.RectangleArray ({ map: this })
     }
-    this.init   = {
+    this.init = {
       bounds  : undefined,
       options : mapOptions
     }
@@ -56,10 +56,17 @@
     this.type     = Const.ComponentType.MAP
     this.version  = gmap.version
 
-    // save bounds and reference to data after map has finished loading
+    // save reference to controls, data and bounds after map has finished loading
     google.maps.event.addListenerOnce(this.obj, Const.EventType.TILES_LOADED, () => {
+      this.controls    = this.obj.controls
       this.data        = this.obj.data
       this.init.bounds = this.obj.getBounds()
+
+      // call onLoad callback
+      const onLoad = settings[Const.Setting.ON_LOAD]
+      if ($.type(onLoad) === "function") {
+        onLoad(this)
+      }
     })
   }
 

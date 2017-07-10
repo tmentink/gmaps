@@ -53,6 +53,7 @@ var Const = ((Const) => {
     MAP_ID            : "mapId",
     MAP_OPTIONS       : "mapOptions",
     MARKER_OPTIONS    : "markerOptions",
+    ON_LOAD           : "onLoad",
     POLYGON_OPTIONS   : "polygonOptions",
     POLYLINE_OPTIONS  : "polylineOptions",
     RECTANGLE_OPTIONS : "rectangleOptions",
