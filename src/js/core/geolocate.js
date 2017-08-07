@@ -11,8 +11,9 @@ var Core = ((Core, ComponentType) => {
   // ----------------------------------------------------------------------
 
   const DefaultOptions = {
-    showMarkers : true,
-    zoom        : 12
+    enableHighAccuracy : false,
+    showMarkers        : true,
+    zoom               : 12
   }
 
   const IconOptions = {
@@ -55,23 +56,13 @@ var Core = ((Core, ComponentType) => {
           lng: position.coords.longitude
         }
 
-        if (options.showMarkers === true && _markerExists(map) === false) {
-          map.add(ComponentType.MARKER, [
-            _getMarkerOptions(MarkerIds[1], center),
-            _getMarkerOptions(MarkerIds[0], center)
-          ])
-        }
-
-        map.markers(MarkerIds).setOptions({
-          position : center,
-          visible  : options.showMarkers
-        })
+        _addUpdateMarkers(map, center, options.showMarkers)
 
         return map.setOptions({
           center : center,
           zoom   : options.zoom
         })
-      })
+      }, _error, options)
     }
     else {
       return false
@@ -82,6 +73,27 @@ var Core = ((Core, ComponentType) => {
   // ----------------------------------------------------------------------
   // Private Function
   // ----------------------------------------------------------------------
+
+  function _addUpdateMarkers(map, position, showMarkers) {
+    if (showMarkers === true && _markerExists(map) === false) {
+      map.add(ComponentType.MARKER, [
+        _getMarkerOptions(MarkerIds[1], position),
+        _getMarkerOptions(MarkerIds[0], position)
+      ])
+    }
+
+    map.markers(MarkerIds).setOptions({
+      position : position,
+      visible  : showMarkers
+    })
+  }
+
+  function _error(error) {
+    return Util.throwError({
+      method  : "geoLocate",
+      message : error.message
+    })
+  }
 
   function _getMarkerOptions(id, position) {
     return {
