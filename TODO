@@ -1,11 +1,11 @@
 
-Bugs/Improvements:
+Bugs:
 
 
 New Features/Functionality:
-  ☐ Consider making all ids strings
   ☐ Consider merging map.components with data layer
   ☐ Add InfoWindow option for markers
+  ☐ Add parameter to polygon getPath/getPathString to select path index
 
 
 Nice To Haves:

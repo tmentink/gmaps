@@ -1,5 +1,5 @@
 /*!
- * gmaps v1.0.0-alpha.7 (https://github.com/tmentink/gmaps)
+ * gmaps v1.0.0-alpha.8 (https://github.com/tmentink/gmaps)
  * Copyright 2017 Trent Mentink
  * Licensed under MIT
  */
@@ -1082,7 +1082,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
         compOptions.id = _getAutoId(map, type);
       }
       var comp = new Components[type]({
-        id: compOptions.id,
+        id: compOptions.id.toString(),
         options: _mergeDefaults(map, type, compOptions)
       });
       map.components[type].push(comp);
@@ -1343,6 +1343,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
   var Core = function(Core, ComponentType) {
     "use strict";
     var DefaultOptions = {
+      enableHighAccuracy: false,
       showMarkers: true,
       zoom: 12
     };
@@ -1374,22 +1375,31 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
             lat: position.coords.latitude,
             lng: position.coords.longitude
           };
-          if (options.showMarkers === true && _markerExists(map) === false) {
-            map.add(ComponentType.MARKER, [ _getMarkerOptions(MarkerIds[1], center), _getMarkerOptions(MarkerIds[0], center) ]);
-          }
-          map.markers(MarkerIds).setOptions({
-            position: center,
-            visible: options.showMarkers
-          });
+          _addUpdateMarkers(map, center, options.showMarkers);
           return map.setOptions({
             center: center,
             zoom: options.zoom
           });
-        });
+        }, _error, options);
       } else {
         return false;
       }
     };
+    function _addUpdateMarkers(map, position, showMarkers) {
+      if (showMarkers === true && _markerExists(map) === false) {
+        map.add(ComponentType.MARKER, [ _getMarkerOptions(MarkerIds[1], position), _getMarkerOptions(MarkerIds[0], position) ]);
+      }
+      map.markers(MarkerIds).setOptions({
+        position: position,
+        visible: showMarkers
+      });
+    }
+    function _error(error) {
+      return Util.throwError({
+        method: "geoLocate",
+        message: error.message
+      });
+    }
     function _getMarkerOptions(id, position) {
       return {
         id: id,
@@ -1673,9 +1683,14 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       var type = parms.type;
       var compArray = map.components[type];
       var newCompArray = Util.getNewComponentArray(compArray);
-      newCompArray.data = ids !== undefined ? _getDataByIds(compArray, Util.toArray(ids), matching) : compArray.data.slice(0);
+      newCompArray.data = ids !== undefined ? _getDataByIds(compArray, _formatIds(ids), matching) : compArray.data.slice(0);
       return newCompArray;
     };
+    function _formatIds(ids) {
+      return Util.toArray(ids).map(function(id) {
+        return id.toString();
+      });
+    }
     function _getDataByIds(compArray, ids, matching) {
       return compArray.data.filter(function(comp) {
         return matching === true ? ids.indexOf(comp.id) !== -1 : ids.indexOf(comp.id) === -1;
@@ -2797,5 +2812,5 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     Components.RectangleArray = RectangleArray;
     return Components;
   }(Components || (Components = {}), Const.ComponentType);
-  gmap.version = "1.0.0-alpha.7";
+  gmap.version = "1.0.0-alpha.8";
 }();
