@@ -49,12 +49,13 @@ var Core = ((Core) => {
       compOptions : compOptions
     })
 
-    if ($.type(compOptions.id) !== "string" && $.type(compOptions.id) !== "number") {
+    if ($.type(compOptions.id) !== "string" &&
+        $.type(compOptions.id) !== "number") {
       compOptions.id = _getAutoId(map, type)
     }
 
     const comp = new Components[type]({
-      id      : compOptions.id,
+      id      : compOptions.id.toString(),
       options : _mergeDefaults(map, type, compOptions)
     })
 

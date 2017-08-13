@@ -19,7 +19,7 @@ var Core = ((Core) => {
 
     const newCompArray = Util.getNewComponentArray(compArray)
     newCompArray.data  = ids !== undefined ?
-      _getDataByIds(compArray, Util.toArray(ids), matching) : compArray.data.slice(0)
+      _getDataByIds(compArray, _formatIds(ids), matching) : compArray.data.slice(0)
 
     return newCompArray
   }
@@ -28,6 +28,12 @@ var Core = ((Core) => {
   // ----------------------------------------------------------------------
   // Private Functions
   // ----------------------------------------------------------------------
+
+  function _formatIds(ids) {
+    return Util.toArray(ids).map(function(id) {
+      return id.toString()
+    })
+  }
 
   function _getDataByIds(compArray, ids, matching) {
     return compArray.data.filter(function(comp) {
