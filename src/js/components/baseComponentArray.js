@@ -156,9 +156,10 @@ var Components = ((Components) => {
       })
     }
 
-    toggle() {
+    toggle(condition) {
       return Core.toggle({
         compArray : this,
+        condition : condition,
         ids       : this.getIds()
       })
     }

@@ -98,9 +98,10 @@ var Components = ((Components) => {
       })
     }
 
-    toggle() {
+    toggle(condition) {
       return Core.toggle({
-        comp : this
+        comp      : this,
+        condition : condition
       })
     }
 

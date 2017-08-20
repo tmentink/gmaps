@@ -42,7 +42,12 @@ var Core = ((Core) => {
   }
 
   Core.toggle = function(parms) {
-    return _display(parms.comp, parms.compArray, parms.ids, Action.TOGGLE)
+    let action = Action.TOGGLE
+    if ($.type(parms.condition) === "boolean") {
+      action = parms.condition ? Action.SHOW : Action.HIDE
+    }
+
+    return _display(parms.comp, parms.compArray, parms.ids, action)
   }
 
 
