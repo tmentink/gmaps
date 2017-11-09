@@ -34,13 +34,13 @@ var Core = ((Core) => {
     let comp        = parms.comp
     let coords      = null
     const compArray = parms.compArray
-    const stringify = parms.stringify
     const ids       = Util.toArray(parms.ids)
+    const stringify = parms.stringify
     const retVal    = {}
 
     if (comp) {
       coords = CoordinateFunctions[comp.type](comp.obj)
-      return stringify ? Util.toString(coords) : coords
+      return _getCoords(coords, comp.map, stringify)
     }
 
     for (var i = 0, i_end = ids.length; i < i_end; i++) {
@@ -48,7 +48,7 @@ var Core = ((Core) => {
       comp     = compArray.findById(id)
       if (comp) {
         coords     = CoordinateFunctions[comp.type](comp.obj)
-        retVal[id] = stringify ? Util.toString(coords) : coords
+        retVal[id] = _getCoords(coords, comp.map, stringify)
       }
     }
 
@@ -63,6 +63,19 @@ var Core = ((Core) => {
   function _formatRetVal(retVal) {
     const keys = Object.keys(retVal)
     return keys.length === 1 ? retVal[keys[0]] : retVal
+  }
+
+  function _getCoords(coords, map, stringify) {
+    let retVal = coords
+
+    if (stringify) {
+      retVal = Util.toString({
+        map : map,
+        val : coords
+      })
+    }
+
+    return retVal
   }
 
 

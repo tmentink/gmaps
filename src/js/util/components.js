@@ -11,30 +11,45 @@ var Util = ((Util) => {
   // ----------------------------------------------------------------------
 
   const Conversions = {
-    bounds: function(parms) {
-      if (parms.bounds) {
-        parms.bounds = Util.toLatLngBounds(parms.bounds)
+    bounds: function(options, map) {
+      if (options.bounds) {
+        options.bounds = Util.toLatLngBounds({
+          map : map,
+          val : options.bounds
+        })
       }
     },
-    center: function(parms) {
-      if (parms.center) {
-        parms.center = Util.toLatLng(parms.center)
+    center: function(options, map) {
+      if (options.center) {
+        options.center = Util.toLatLng({
+          map : map,
+          val : options.center
+        })
       }
     },
-    path: function(parms) {
-      if (parms.path) {
-        parms.path = Util.toLatLngArray(parms.path)
+    path: function(options, map) {
+      if (options.path) {
+        options.path = Util.toLatLngArray({
+          map : map,
+          val : options.path
+        })
       }
     },
-    paths: function(parms) {
-      if (parms.paths || parms.path) {
-        parms.paths = Util.toLatLngArray(parms.paths || parms.path)
-        delete parms.path
+    paths: function(options, map) {
+      if (options.paths || options.path) {
+        options.paths = Util.toLatLngArray({
+          map : map,
+          val : options.paths || options.path
+        })
+        delete options.path
       }
     },
-    position: function(parms) {
-      if (parms.position) {
-        parms.position = Util.toLatLng(parms.position)
+    position: function(options, map) {
+      if (options.position) {
+        options.position = Util.toLatLng({
+          map : map,
+          val : options.position
+        })
       }
     }
   }
@@ -61,10 +76,11 @@ var Util = ((Util) => {
     const compOptions        = parms.compOptions
     const compType           = parms.compType.replace("Array", "")
     const convertableOptions = _getConvertableOptions(compType)
+    const map                = parms.map
 
     for (var i = 0, i_end = convertableOptions.length; i < i_end; i++) {
       const option = convertableOptions[i]
-      Conversions[option.name](compOptions)
+      Conversions[option.name](compOptions, map)
     }
 
     return compOptions

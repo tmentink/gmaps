@@ -52,7 +52,10 @@ var Components = ((Components) => {
     }
 
     getCenterString() {
-      return Util.toString(this.getCenter())
+      return Util.toString({
+        map : this.map,
+        val : this.getCenter()
+      })
     }
 
     getOptions(compOption) {
@@ -88,6 +91,7 @@ var Components = ((Components) => {
         comp        : this,
         compOptions : compOptions,
         compType    : this.type,
+        map         : this.map,
         value       : value
       })
     }

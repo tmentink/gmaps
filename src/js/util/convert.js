@@ -2,8 +2,25 @@
 // gmaps: util/convert.js
 // ------------------------------------------------------------------------
 
-var Util = ((Util, Settings) => {
+var Util = ((Util, Setting) => {
   "use strict"
+
+
+  // ----------------------------------------------------------------------
+  // Constants
+  // ----------------------------------------------------------------------
+
+  const Delimiter = {
+    latLng: function (map) {
+      return map.settings[Setting.DELIMITER].latLng || "|"
+    },
+    latLngArray: function (map) {
+      return map.settings[Setting.DELIMITER].latLngArray || "~"
+    },
+    latLngBounds: function (map) {
+      return map.settings[Setting.DELIMITER].latLngBounds || "|"
+    }
+  }
 
 
   // ----------------------------------------------------------------------
@@ -18,25 +35,34 @@ var Util = ((Util, Settings) => {
     return val
   }
 
-  Util.toLatLng = function(val) {
+  Util.toLatLng = function(parms) {
+    const map = parms.map
+    const val = parms.val
+
     if ($.type(val) === "string") {
-      return Settings.delimitedStrings ? _strToLatLng(val) : JSON.parse(val)
+      return _useDelimitedStrings(map) ? _strToLatLng(val, map) : JSON.parse(val)
     }
 
     return val
   }
 
-  Util.toLatLngArray = function(val) {
+  Util.toLatLngArray = function(parms) {
+    const map = parms.map
+    const val = parms.val
+
     if ($.type(val) === "string") {
-      return Settings.delimitedStrings ? _strToLatLngArray(val) : JSON.parse(val)
+      return _useDelimitedStrings(map) ? _strToLatLngArray(val, map) : JSON.parse(val)
     }
 
     return val
   }
 
-  Util.toLatLngBounds = function(val) {
+  Util.toLatLngBounds = function(parms) {
+    const map = parms.map
+    const val = parms.val
+
     if ($.type(val) === "string") {
-      return Settings.delimitedStrings ? _strToLatLngBounds(val) : JSON.parse(val)
+      return _useDelimitedStrings(map) ? _strToLatLngBounds(val, map) : JSON.parse(val)
     }
 
     return val
@@ -52,23 +78,26 @@ var Util = ((Util, Settings) => {
     return undefined
   }
 
-  Util.toString = function(val) {
+  Util.toString = function(parms) {
+    const map = parms.map
+    const val = parms.val
+
     if (val instanceof google.maps.LatLng) {
-      return Settings.delimitedStrings ?
-        val.toUrlValue(Settings.urlPrecision) :
-        JSON.stringify(val, _jsonReplacer)
+      return _useDelimitedStrings(map) ?
+        val.toUrlValue(_getUrlPrecision(map)) :
+        _stringify(val, map)
     }
 
     if (val instanceof google.maps.MVCArray) {
       if (val.getAt(0) instanceof google.maps.MVCArray) {
-        return Settings.delimitedStrings ?
-          _toMultiDelimitedString(val) :
-          _toMultiJSONString(val)
+        return _useDelimitedStrings(map) ?
+          _toMultiDelimitedString(val, map) :
+          _toMultiJSONString(val, map)
       }
       else {
-        return Settings.delimitedStrings ?
-          _toDelimitedString(val) :
-          JSON.stringify(val.getArray(), _jsonReplacer)
+        return _useDelimitedStrings(map) ?
+          _toDelimitedString(val, map) :
+          _stringify(val.getArray(), map)
       }
     }
 
@@ -80,11 +109,17 @@ var Util = ((Util, Settings) => {
   // Private Functions
   // ----------------------------------------------------------------------
 
-  function _jsonReplacer(key, value) {
-    if (key === "lat" || key === "lng") {
-      return Number(value.toFixed(Settings.urlPrecision))
-    }
-    return value
+  function _getUrlPrecision(map) {
+    return map.settings[Setting.URL_PRECISION] || 6
+  }
+
+  function _stringify(val, map) {
+    return JSON.stringify(val, function(key, value) {
+      if (key === "lat" || key === "lng") {
+        return Number(value.toFixed(_getUrlPrecision(map)))
+      }
+      return value
+    })
   }
 
   function _strToLatLng(str) {
@@ -92,18 +127,22 @@ var Util = ((Util, Settings) => {
     return new google.maps.LatLng(parseFloat(points[0]), parseFloat(points[1]))
   }
 
-  function _strToLatLngArray(str) {
+  function _strToLatLngArray(str, map) {
     const latLngArray = []
-    const coordPairs  = str.split(Settings.delimiter.latLng || "|")
+    const coordPairs  = str.split(Delimiter.latLng(map))
 
     for (var i = 0, i_end = coordPairs.length; i < i_end; i++) {
-      latLngArray.push(Util.toLatLng(coordPairs[i]))
+      latLngArray.push(Util.toLatLng({
+        map : map,
+        val : coordPairs[i]
+      }))
     }
+
     return latLngArray
   }
 
-  function _strToLatLngBounds(str) {
-    const coordPairs   = str.split(Settings.delimiter.latLngBounds || "|")
+  function _strToLatLngBounds(str, map) {
+    const coordPairs   = str.split(Delimiter.latLngBounds(map))
 
     return {
       north : Number(coordPairs[0]),
@@ -113,42 +152,46 @@ var Util = ((Util, Settings) => {
     }
   }
 
-  function _toDelimitedString(MVCArray) {
+  function _toDelimitedString(MVCArray, map) {
     let str = ""
 
     MVCArray.forEach(function(el, i) {
       if (i > 0) {
-        str += Settings.delimiter.latLng || "|"
+        str += Delimiter.latLng(map)
       }
-      str += el.toUrlValue(Settings.urlPrecision || 6)
+      str += el.toUrlValue(_getUrlPrecision(map))
     })
 
     return str
   }
 
-  function _toMultiDelimitedString(MVCArray) {
+  function _toMultiDelimitedString(MVCArray, map) {
     let str = ""
 
     MVCArray.forEach(function(el, i) {
       if (i > 0) {
-        str += Settings.delimiter.latLngArray || "~"
+        str += Delimiter.latLngArray(map)
       }
-      str += _toDelimitedString(el)
+      str += _toDelimitedString(el, map)
     })
 
     return str
   }
 
-  function _toMultiJSONString(MVCArray) {
+  function _toMultiJSONString(MVCArray, map) {
     let arr = []
 
     MVCArray.forEach(function(el) {
       arr.push(el.getArray())
     })
 
-    return JSON.stringify(arr, _jsonReplacer)
+    return _stringify(arr, map)
+  }
+
+  function _useDelimitedStrings(map) {
+    return map.settings[Setting.DELIMITED_STRINGS]
   }
 
 
   return Util
-})(Util || (Util = {}), gmap.settings)
+})(Util || (Util = {}), Const.Setting)

@@ -2,25 +2,8 @@
 // gmaps: util/settings.js
 // ------------------------------------------------------------------------
 
-var Util = ((Util, GlobalSettings, Setting) => {
+var Util = ((Util, GlobalSettings) => {
   "use strict"
-
-
-  // ----------------------------------------------------------------------
-  // Constants
-  // ----------------------------------------------------------------------
-
-  const LocalSettings = [
-    Setting.CIRCLE_OPTIONS,
-    Setting.LABEL_OPTIONS,
-    Setting.MAP_ID,
-    Setting.MAP_OPTIONS,
-    Setting.MARKER_OPTIONS,
-    Setting.ON_LOAD,
-    Setting.POLYGON_OPTIONS,
-    Setting.POLYLINE_OPTIONS,
-    Setting.RECTANGLE_OPTIONS
-  ]
 
 
   // ----------------------------------------------------------------------
@@ -40,16 +23,9 @@ var Util = ((Util, GlobalSettings, Setting) => {
 
   Util.mergeWithGlobalSettings = function(userSettings) {
     userSettings = $.extend(true, {}, GlobalSettings, userSettings)
-
-    // delete any options that don't exist in LocalSettings
-    Object.keys(userSettings).forEach(function(key) {
-      if (LocalSettings.indexOf(key) === -1) {
-        delete userSettings[key]
-      }
-    })
     return userSettings
   }
 
 
   return Util
-})(Util || (Util = {}), gmap.settings, Const.Setting)
+})(Util || (Util = {}), gmap.settings)

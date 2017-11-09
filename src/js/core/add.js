@@ -46,7 +46,8 @@ var Core = ((Core) => {
   function _add(map, type, compOptions) {
     compOptions = Util.convertComponentOptions({
       compType    : type,
-      compOptions : compOptions
+      compOptions : compOptions,
+      map         : map
     })
 
     if ($.type(compOptions.id) !== "string" &&

@@ -52,7 +52,10 @@
     },
 
     getCenterString: function() {
-      return Util.toString(this.getCenter())
+      return Util.toString({
+        map : this,
+        val : this.getCenter()
+      })
     },
 
     getOptions: function(compOption) {
@@ -150,7 +153,10 @@
 
     setCenter: function(center) {
       if (center !== undefined) {
-        this.obj.setCenter(Util.toLatLng(center))
+        this.obj.setCenter(Util.toLatLng({
+          map : this,
+          val : center
+        }))
       }
       return this
     },
@@ -160,6 +166,7 @@
         comp        : this,
         compOptions : compOptions,
         compType    : this.type,
+        map         : this,
         value       : value
       })
     },

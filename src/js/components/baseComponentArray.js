@@ -65,7 +65,10 @@ var Components = ((Components) => {
     }
 
     getCenterString() {
-      return Util.toString(this.getCenter())
+      return Util.toString({
+        map : this.map,
+        val : this.getCenter()
+      })
     }
 
     getChildType() {
@@ -153,6 +156,7 @@ var Components = ((Components) => {
         compOptions : compOptions,
         compType    : this.getChildType(),
         ids         : this.getIds(),
+        map         : this.map,
         value       : value
       })
     }

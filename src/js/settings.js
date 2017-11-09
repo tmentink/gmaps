@@ -97,7 +97,7 @@
   // ----------------------------------------------------------------------
 
   Settings[Type.CIRCLE_OPTIONS]    = CircleOptions
-  Settings[Type.DELIMITED_STRINGS] = true
+  Settings[Type.DELIMITED_STRINGS] = false
   Settings[Type.DELIMITER]         = Delimiter
   Settings[Type.LABEL_OPTIONS]     = LabelOptions
   Settings[Type.MAP_ID]            = "gmap"

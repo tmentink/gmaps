@@ -39,8 +39,9 @@ var Core = ((Core) => {
     let compOptions = parms.compOptions
     const compType  = parms.compType
     const ids       = parms.ids
+    const map       = parms.map
     const value     = parms.value
-    compOptions     = _formatComponentOptions(compOptions, compType, value)
+    compOptions     = _formatComponentOptions(compOptions, compType, map, value)
 
     if ($.isArray(ids)) {
       return _multiSetOptions(compArray, ids, compOptions)
@@ -56,7 +57,7 @@ var Core = ((Core) => {
   // Private Functions
   // ----------------------------------------------------------------------
 
-  function _formatComponentOptions(compOptions, compType, value) {
+  function _formatComponentOptions(compOptions, compType, map, value) {
     if ($.type(compOptions) === "string") {
       const optionName = Util.lookupComponentOption(compOptions)
       compOptions = {}
@@ -68,7 +69,8 @@ var Core = ((Core) => {
 
     return compOptions = Util.convertComponentOptions({
       compOptions : compOptions,
-      compType    : compType
+      compType    : compType,
+      map         : map
     })
   }
 

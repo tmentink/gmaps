@@ -14,7 +14,8 @@
     settings         = Util.mergeWithGlobalSettings(settings)
     const mapOptions = Util.convertComponentOptions({
       compType    : Const.ComponentType.MAP,
-      compOptions : settings[Const.Setting.MAP_OPTIONS]
+      compOptions : settings[Const.Setting.MAP_OPTIONS],
+      map         : { settings : settings }
     })
 
     // check if element with mapId exists
