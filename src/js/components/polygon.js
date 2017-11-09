@@ -26,15 +26,17 @@ var Components = ((Components, ComponentType) => {
     // Public Methods
     // --------------------------------------------------------------------
 
-    getPath() {
+    getPath(index) {
       return Core.getCoordinates({
-        comp : this
+        comp  : this,
+        index : index
       })
     }
 
-    getPathString() {
+    getPathString(index) {
       return Core.getCoordinates({
         comp      : this,
+        index     : index,
         stringify : true
       })
     }

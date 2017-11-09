@@ -24,18 +24,20 @@ var Components = ((Components, ComponentType) => {
     // Public Methods
     // --------------------------------------------------------------------
 
-    getPath() {
+    getPath(index) {
       return Core.getCoordinates({
         compArray : this,
-        ids       : this.getIds()
+        ids       : this.getIds(),
+        index     : index
       })
     }
 
-    getPathString() {
+    getPathString(index) {
       return Core.getCoordinates({
         compArray : this,
         stringify : true,
-        ids       : this.getIds()
+        ids       : this.getIds(),
+        index     : index
       })
     }
 

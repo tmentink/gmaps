@@ -17,8 +17,9 @@ var Core = ((Core) => {
     Marker: function(obj) {
       return obj.getPosition()
     },
-    Polygon: function(obj) {
-      return obj.getPaths()
+    Polygon: function(obj, index) {
+      // eslint-disable-next-line eqeqeq
+      return index != null ? obj.getPaths().getAt(index) : obj.getPaths()
     },
     Polyline: function(obj) {
       return obj.getPath()
@@ -35,11 +36,12 @@ var Core = ((Core) => {
     let coords      = null
     const compArray = parms.compArray
     const ids       = Util.toArray(parms.ids)
+    const index     = parms.index
     const stringify = parms.stringify
     const retVal    = {}
 
     if (comp) {
-      coords = CoordinateFunctions[comp.type](comp.obj)
+      coords = CoordinateFunctions[comp.type](comp.obj, index)
       return _getCoords(coords, comp.map, stringify)
     }
 
@@ -47,7 +49,7 @@ var Core = ((Core) => {
       const id = ids[i]
       comp     = compArray.findById(id)
       if (comp) {
-        coords     = CoordinateFunctions[comp.type](comp.obj)
+        coords     = CoordinateFunctions[comp.type](comp.obj, index)
         retVal[id] = _getCoords(coords, comp.map, stringify)
       }
     }
