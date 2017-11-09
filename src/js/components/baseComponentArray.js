@@ -40,7 +40,8 @@ var Components = ((Components) => {
 
     findById(id) {
       return this.data.find(function(comp) {
-        return comp.id === id
+        // eslint-disable-next-line eqeqeq
+        return id != null ? comp.id === id.toString() : false
       })
     }
 
