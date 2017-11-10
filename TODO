@@ -5,11 +5,9 @@ Bugs:
 New Features/Functionality:
   ☐ Consider merging map.components with data layer
   ☐ Add InfoWindow option for markers
-  ☐ Add parameter to polygon getPath/getPathString to select path index
 
 
 Nice To Haves:
-  ☐ Add condition for toggle similar to jQuery
   ☐ Add getBoundsString()
   ☐ Auto calculate circle radius similar to shape
 

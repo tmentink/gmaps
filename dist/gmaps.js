@@ -1,5 +1,5 @@
 /*!
- * gmaps v1.0.0-alpha.8 (https://github.com/tmentink/gmaps)
+ * gmaps v1.0.0-alpha.9 (https://github.com/tmentink/gmaps)
  * Copyright 2017 Trent Mentink
  * Licensed under MIT
  */
@@ -201,7 +201,10 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       settings = Util.mergeWithGlobalSettings(settings);
       var mapOptions = Util.convertComponentOptions({
         compType: Const.ComponentType.MAP,
-        compOptions: settings[Const.Setting.MAP_OPTIONS]
+        compOptions: settings[Const.Setting.MAP_OPTIONS],
+        map: {
+          settings: settings
+        }
       });
       var mapId = settings[Const.Setting.MAP_ID];
       var mapContainer = document.getElementById(mapId);
@@ -754,7 +757,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     RectangleOptions[CompOption.STROKE_WEIGHT] = 1;
     RectangleOptions[CompOption.VISIBLE] = true;
     Settings[Type.CIRCLE_OPTIONS] = CircleOptions;
-    Settings[Type.DELIMITED_STRINGS] = true;
+    Settings[Type.DELIMITED_STRINGS] = false;
     Settings[Type.DELIMITER] = Delimiter;
     Settings[Type.LABEL_OPTIONS] = LabelOptions;
     Settings[Type.MAP_ID] = "gmap";
@@ -770,30 +773,45 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
   var Util = function(Util) {
     "use strict";
     var Conversions = {
-      bounds: function bounds(parms) {
-        if (parms.bounds) {
-          parms.bounds = Util.toLatLngBounds(parms.bounds);
+      bounds: function bounds(options, map) {
+        if (options.bounds) {
+          options.bounds = Util.toLatLngBounds({
+            map: map,
+            val: options.bounds
+          });
         }
       },
-      center: function center(parms) {
-        if (parms.center) {
-          parms.center = Util.toLatLng(parms.center);
+      center: function center(options, map) {
+        if (options.center) {
+          options.center = Util.toLatLng({
+            map: map,
+            val: options.center
+          });
         }
       },
-      path: function path(parms) {
-        if (parms.path) {
-          parms.path = Util.toLatLngArray(parms.path);
+      path: function path(options, map) {
+        if (options.path) {
+          options.path = Util.toLatLngArray({
+            map: map,
+            val: options.path
+          });
         }
       },
-      paths: function paths(parms) {
-        if (parms.paths || parms.path) {
-          parms.paths = Util.toLatLngArray(parms.paths || parms.path);
-          delete parms.path;
+      paths: function paths(options, map) {
+        if (options.paths || options.path) {
+          options.paths = Util.toLatLngArray({
+            map: map,
+            val: options.paths || options.path
+          });
+          delete options.path;
         }
       },
-      position: function position(parms) {
-        if (parms.position) {
-          parms.position = Util.toLatLng(parms.position);
+      position: function position(options, map) {
+        if (options.position) {
+          options.position = Util.toLatLng({
+            map: map,
+            val: options.position
+          });
         }
       }
     };
@@ -812,9 +830,10 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       var compOptions = parms.compOptions;
       var compType = parms.compType.replace("Array", "");
       var convertableOptions = _getConvertableOptions(compType);
+      var map = parms.map;
       for (var i = 0, i_end = convertableOptions.length; i < i_end; i++) {
         var option = convertableOptions[i];
-        Conversions[option.name](compOptions);
+        Conversions[option.name](compOptions, map);
       }
       return compOptions;
     };
@@ -873,29 +892,46 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     }
     return Util;
   }(Util || (Util = {}));
-  var Util = function(Util, Settings) {
+  var Util = function(Util, Setting) {
     "use strict";
+    var Delimiter = {
+      latLng: function latLng(map) {
+        return map.settings[Setting.DELIMITER].latLng || "|";
+      },
+      latLngArray: function latLngArray(map) {
+        return map.settings[Setting.DELIMITER].latLngArray || "~";
+      },
+      latLngBounds: function latLngBounds(map) {
+        return map.settings[Setting.DELIMITER].latLngBounds || "|";
+      }
+    };
     Util.toArray = function(val) {
       if ($.isArray(val) === false) {
         return [ val ];
       }
       return val;
     };
-    Util.toLatLng = function(val) {
+    Util.toLatLng = function(parms) {
+      var map = parms.map;
+      var val = parms.val;
       if ($.type(val) === "string") {
-        return Settings.delimitedStrings ? _strToLatLng(val) : JSON.parse(val);
+        return _useDelimitedStrings(map) ? _strToLatLng(val, map) : JSON.parse(val);
       }
       return val;
     };
-    Util.toLatLngArray = function(val) {
+    Util.toLatLngArray = function(parms) {
+      var map = parms.map;
+      var val = parms.val;
       if ($.type(val) === "string") {
-        return Settings.delimitedStrings ? _strToLatLngArray(val) : JSON.parse(val);
+        return _useDelimitedStrings(map) ? _strToLatLngArray(val, map) : JSON.parse(val);
       }
       return val;
     };
-    Util.toLatLngBounds = function(val) {
+    Util.toLatLngBounds = function(parms) {
+      var map = parms.map;
+      var val = parms.val;
       if ($.type(val) === "string") {
-        return Settings.delimitedStrings ? _strToLatLngBounds(val) : JSON.parse(val);
+        return _useDelimitedStrings(map) ? _strToLatLngBounds(val, map) : JSON.parse(val);
       }
       return val;
     };
@@ -906,39 +942,49 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       }
       return undefined;
     };
-    Util.toString = function(val) {
+    Util.toString = function(parms) {
+      var map = parms.map;
+      var val = parms.val;
       if (val instanceof google.maps.LatLng) {
-        return Settings.delimitedStrings ? val.toUrlValue(Settings.urlPrecision) : JSON.stringify(val, _jsonReplacer);
+        return _useDelimitedStrings(map) ? val.toUrlValue(_getUrlPrecision(map)) : _stringify(val, map);
       }
       if (val instanceof google.maps.MVCArray) {
         if (val.getAt(0) instanceof google.maps.MVCArray) {
-          return Settings.delimitedStrings ? _toMultiDelimitedString(val) : _toMultiJSONString(val);
+          return _useDelimitedStrings(map) ? _toMultiDelimitedString(val, map) : _toMultiJSONString(val, map);
         } else {
-          return Settings.delimitedStrings ? _toDelimitedString(val) : JSON.stringify(val.getArray(), _jsonReplacer);
+          return _useDelimitedStrings(map) ? _toDelimitedString(val, map) : _stringify(val.getArray(), map);
         }
       }
       return undefined;
     };
-    function _jsonReplacer(key, value) {
-      if (key === "lat" || key === "lng") {
-        return Number(value.toFixed(Settings.urlPrecision));
-      }
-      return value;
+    function _getUrlPrecision(map) {
+      return map.settings[Setting.URL_PRECISION] || 6;
+    }
+    function _stringify(val, map) {
+      return JSON.stringify(val, function(key, value) {
+        if (key === "lat" || key === "lng") {
+          return Number(value.toFixed(_getUrlPrecision(map)));
+        }
+        return value;
+      });
     }
     function _strToLatLng(str) {
       var points = str.split(",");
       return new google.maps.LatLng(parseFloat(points[0]), parseFloat(points[1]));
     }
-    function _strToLatLngArray(str) {
+    function _strToLatLngArray(str, map) {
       var latLngArray = [];
-      var coordPairs = str.split(Settings.delimiter.latLng || "|");
+      var coordPairs = str.split(Delimiter.latLng(map));
       for (var i = 0, i_end = coordPairs.length; i < i_end; i++) {
-        latLngArray.push(Util.toLatLng(coordPairs[i]));
+        latLngArray.push(Util.toLatLng({
+          map: map,
+          val: coordPairs[i]
+        }));
       }
       return latLngArray;
     }
-    function _strToLatLngBounds(str) {
-      var coordPairs = str.split(Settings.delimiter.latLngBounds || "|");
+    function _strToLatLngBounds(str, map) {
+      var coordPairs = str.split(Delimiter.latLngBounds(map));
       return {
         north: Number(coordPairs[0]),
         east: Number(coordPairs[1]),
@@ -946,35 +992,38 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
         west: Number(coordPairs[3])
       };
     }
-    function _toDelimitedString(MVCArray) {
+    function _toDelimitedString(MVCArray, map) {
       var str = "";
       MVCArray.forEach(function(el, i) {
         if (i > 0) {
-          str += Settings.delimiter.latLng || "|";
+          str += Delimiter.latLng(map);
         }
-        str += el.toUrlValue(Settings.urlPrecision || 6);
+        str += el.toUrlValue(_getUrlPrecision(map));
       });
       return str;
     }
-    function _toMultiDelimitedString(MVCArray) {
+    function _toMultiDelimitedString(MVCArray, map) {
       var str = "";
       MVCArray.forEach(function(el, i) {
         if (i > 0) {
-          str += Settings.delimiter.latLngArray || "~";
+          str += Delimiter.latLngArray(map);
         }
-        str += _toDelimitedString(el);
+        str += _toDelimitedString(el, map);
       });
       return str;
     }
-    function _toMultiJSONString(MVCArray) {
+    function _toMultiJSONString(MVCArray, map) {
       var arr = [];
       MVCArray.forEach(function(el) {
         arr.push(el.getArray());
       });
-      return JSON.stringify(arr, _jsonReplacer);
+      return _stringify(arr, map);
+    }
+    function _useDelimitedStrings(map) {
+      return map.settings[Setting.DELIMITED_STRINGS];
     }
     return Util;
-  }(Util || (Util = {}), gmap.settings);
+  }(Util || (Util = {}), Const.Setting);
   var Util = function(Util) {
     "use strict";
     Util.lookupComponentOption = function(value) {
@@ -1022,9 +1071,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     };
     return Util;
   }(Util || (Util = {}));
-  var Util = function(Util, GlobalSettings, Setting) {
+  var Util = function(Util, GlobalSettings) {
     "use strict";
-    var LocalSettings = [ Setting.CIRCLE_OPTIONS, Setting.LABEL_OPTIONS, Setting.MAP_ID, Setting.MAP_OPTIONS, Setting.MARKER_OPTIONS, Setting.ON_LOAD, Setting.POLYGON_OPTIONS, Setting.POLYLINE_OPTIONS, Setting.RECTANGLE_OPTIONS ];
     Util.renameSettings = function(userSettings) {
       Object.keys(userSettings).forEach(function(key) {
         Util.renameProperty({
@@ -1037,15 +1085,10 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     };
     Util.mergeWithGlobalSettings = function(userSettings) {
       userSettings = $.extend(true, {}, GlobalSettings, userSettings);
-      Object.keys(userSettings).forEach(function(key) {
-        if (LocalSettings.indexOf(key) === -1) {
-          delete userSettings[key];
-        }
-      });
       return userSettings;
     };
     return Util;
-  }(Util || (Util = {}), gmap.settings, Const.Setting);
+  }(Util || (Util = {}), gmap.settings);
   var Core = function(Core) {
     "use strict";
     Core.addComponent = function(parms) {
@@ -1076,7 +1119,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     function _add(map, type, compOptions) {
       compOptions = Util.convertComponentOptions({
         compType: type,
-        compOptions: compOptions
+        compOptions: compOptions,
+        map: map
       });
       if ($.type(compOptions.id) !== "string" && $.type(compOptions.id) !== "number") {
         compOptions.id = _getAutoId(map, type);
@@ -1253,8 +1297,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       Marker: function Marker(obj) {
         return obj.getPosition();
       },
-      Polygon: function Polygon(obj) {
-        return obj.getPaths();
+      Polygon: function Polygon(obj, index) {
+        return index != null ? obj.getPaths().getAt(index) : obj.getPaths();
       },
       Polyline: function Polyline(obj) {
         return obj.getPath();
@@ -1264,19 +1308,20 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       var comp = parms.comp;
       var coords = null;
       var compArray = parms.compArray;
-      var stringify = parms.stringify;
       var ids = Util.toArray(parms.ids);
+      var index = parms.index;
+      var stringify = parms.stringify;
       var retVal = {};
       if (comp) {
-        coords = CoordinateFunctions[comp.type](comp.obj);
-        return stringify ? Util.toString(coords) : coords;
+        coords = CoordinateFunctions[comp.type](comp.obj, index);
+        return _getCoords(coords, comp.map, stringify);
       }
       for (var i = 0, i_end = ids.length; i < i_end; i++) {
         var id = ids[i];
         comp = compArray.findById(id);
         if (comp) {
-          coords = CoordinateFunctions[comp.type](comp.obj);
-          retVal[id] = stringify ? Util.toString(coords) : coords;
+          coords = CoordinateFunctions[comp.type](comp.obj, index);
+          retVal[id] = _getCoords(coords, comp.map, stringify);
         }
       }
       return _formatRetVal(retVal);
@@ -1284,6 +1329,16 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     function _formatRetVal(retVal) {
       var keys = Object.keys(retVal);
       return keys.length === 1 ? retVal[keys[0]] : retVal;
+    }
+    function _getCoords(coords, map, stringify) {
+      var retVal = coords;
+      if (stringify) {
+        retVal = Util.toString({
+          map: map,
+          val: coords
+        });
+      }
+      return retVal;
     }
     return Core;
   }(Core || (Core = {}));
@@ -1312,7 +1367,11 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       return _display(parms.comp, parms.compArray, parms.ids, Action.SHOW);
     };
     Core.toggle = function(parms) {
-      return _display(parms.comp, parms.compArray, parms.ids, Action.TOGGLE);
+      var action = Action.TOGGLE;
+      if ($.type(parms.condition) === "boolean") {
+        action = parms.condition ? Action.SHOW : Action.HIDE;
+      }
+      return _display(parms.comp, parms.compArray, parms.ids, action);
     };
     function _display(comp, compArray, ids, action) {
       if ($.isArray(ids)) {
@@ -1509,8 +1568,9 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       var compOptions = parms.compOptions;
       var compType = parms.compType;
       var ids = parms.ids;
+      var map = parms.map;
       var value = parms.value;
-      compOptions = _formatComponentOptions(compOptions, compType, value);
+      compOptions = _formatComponentOptions(compOptions, compType, map, value);
       if ($.isArray(ids)) {
         return _multiSetOptions(compArray, ids, compOptions);
       }
@@ -1518,7 +1578,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
         return _setOptions(comp, compOptions);
       }
     };
-    function _formatComponentOptions(compOptions, compType, value) {
+    function _formatComponentOptions(compOptions, compType, map, value) {
       if ($.type(compOptions) === "string") {
         var optionName = Util.lookupComponentOption(compOptions);
         compOptions = {};
@@ -1528,7 +1588,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       }
       return compOptions = Util.convertComponentOptions({
         compOptions: compOptions,
-        compType: compType
+        compType: compType,
+        map: map
       });
     }
     function _formatRetVal(retVal) {
@@ -1735,7 +1796,10 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
         return this.obj.getCenter();
       },
       getCenterString: function getCenterString() {
-        return Util.toString(this.getCenter());
+        return Util.toString({
+          map: this,
+          val: this.getCenter()
+        });
       },
       getOptions: function getOptions(compOption) {
         return Core.getOptions({
@@ -1819,7 +1883,10 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       },
       setCenter: function setCenter(center) {
         if (center !== undefined) {
-          this.obj.setCenter(Util.toLatLng(center));
+          this.obj.setCenter(Util.toLatLng({
+            map: this,
+            val: center
+          }));
         }
         return this;
       },
@@ -1828,6 +1895,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
           comp: this,
           compOptions: compOptions,
           compType: this.type,
+          map: this,
           value: value
         });
       },
@@ -1956,7 +2024,10 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
         });
       };
       BaseComponent.prototype.getCenterString = function getCenterString() {
-        return Util.toString(this.getCenter());
+        return Util.toString({
+          map: this.map,
+          val: this.getCenter()
+        });
       };
       BaseComponent.prototype.getOptions = function getOptions(compOption) {
         return Core.getOptions({
@@ -1987,6 +2058,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
           comp: this,
           compOptions: compOptions,
           compType: this.type,
+          map: this.map,
           value: value
         });
       };
@@ -1995,9 +2067,10 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
           comp: this
         });
       };
-      BaseComponent.prototype.toggle = function toggle() {
+      BaseComponent.prototype.toggle = function toggle(condition) {
         return Core.toggle({
-          comp: this
+          comp: this,
+          condition: condition
         });
       };
       BaseComponent.prototype.zoom = function zoom() {
@@ -2037,7 +2110,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       };
       BaseComponentArray.prototype.findById = function findById(id) {
         return this.data.find(function(comp) {
-          return comp.id === id;
+          return id != null ? comp.id === id.toString() : false;
         });
       };
       BaseComponentArray.prototype.forEach = function forEach(fn) {
@@ -2057,7 +2130,10 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
         });
       };
       BaseComponentArray.prototype.getCenterString = function getCenterString() {
-        return Util.toString(this.getCenter());
+        return Util.toString({
+          map: this.map,
+          val: this.getCenter()
+        });
       };
       BaseComponentArray.prototype.getChildType = function getChildType() {
         return this.type.replace("Array", "");
@@ -2132,12 +2208,14 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
           compOptions: compOptions,
           compType: this.getChildType(),
           ids: this.getIds(),
+          map: this.map,
           value: value
         });
       };
-      BaseComponentArray.prototype.toggle = function toggle() {
+      BaseComponentArray.prototype.toggle = function toggle(condition) {
         return Core.toggle({
           compArray: this,
+          condition: condition,
           ids: this.getIds()
         });
       };
@@ -2552,14 +2630,16 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
           type: ComponentType.POLYGON
         }));
       }
-      Polygon.prototype.getPath = function getPath() {
-        return Core.getCoordinates({
-          comp: this
-        });
-      };
-      Polygon.prototype.getPathString = function getPathString() {
+      Polygon.prototype.getPath = function getPath(index) {
         return Core.getCoordinates({
           comp: this,
+          index: index
+        });
+      };
+      Polygon.prototype.getPathString = function getPathString(index) {
+        return Core.getCoordinates({
+          comp: this,
+          index: index,
           stringify: true
         });
       };
@@ -2598,17 +2678,19 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
           type: ComponentType.POLYGON_ARRAY
         }));
       }
-      PolygonArray.prototype.getPath = function getPath() {
+      PolygonArray.prototype.getPath = function getPath(index) {
         return Core.getCoordinates({
           compArray: this,
-          ids: this.getIds()
+          ids: this.getIds(),
+          index: index
         });
       };
-      PolygonArray.prototype.getPathString = function getPathString() {
+      PolygonArray.prototype.getPathString = function getPathString(index) {
         return Core.getCoordinates({
           compArray: this,
           stringify: true,
-          ids: this.getIds()
+          ids: this.getIds(),
+          index: index
         });
       };
       PolygonArray.prototype.off = function off(type) {
@@ -2812,5 +2894,5 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     Components.RectangleArray = RectangleArray;
     return Components;
   }(Components || (Components = {}), Const.ComponentType);
-  gmap.version = "1.0.0-alpha.8";
+  gmap.version = "1.0.0-alpha.9";
 }();
