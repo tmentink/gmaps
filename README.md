@@ -9,7 +9,7 @@
   <p align="center">
     The way maps were meant to be made
     <br>
-    <a href="http://projects.trentmentink.com/gmaps/"><strong>Explore Docs &raquo;</strong></a>
+    <a href="http://gmapsjs.com"><strong>Explore Docs &raquo;</strong></a>
   </p>
 </p>
 
@@ -18,7 +18,7 @@
 ## Table of contents
 
 - [Quick start](#quick-start)
-- [Documentation](#documentation)
+- [Documentation](http://gmapsjs.com)
 - [Credits](#credits)
 - [Author](http://www.trentmentink.com)
 - [Copyright and license](#copyright-and-license)
@@ -41,7 +41,7 @@ gmaps/
 
 ## Documentation
 
-Coming Soon!
+Documentation can be found at [gmapsjs.com](http://gmapsjs.com)
 
 ## Credits
 
