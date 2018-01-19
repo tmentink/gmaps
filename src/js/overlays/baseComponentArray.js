@@ -1,8 +1,8 @@
 // ------------------------------------------------------------------------
-// gmaps: components/baseComponentArray.js
+// gmaps: overlays/baseOverlayArray.js
 // ------------------------------------------------------------------------
 
-var Components = ((Components) => {
+var Overlays = ((Overlays) => {
   "use strict"
 
 
@@ -10,7 +10,7 @@ var Components = ((Components) => {
   // Class Definition
   // ----------------------------------------------------------------------
 
-  class BaseComponentArray {
+  class BaseOverlayArray {
 
     constructor(parms) {
       this.data = []
@@ -188,7 +188,7 @@ var Components = ((Components) => {
   // Namespace
   // ----------------------------------------------------------------------
 
-  Components.BaseComponentArray = BaseComponentArray
+  Overlays.BaseOverlayArray = BaseOverlayArray
 
-  return Components
-})(Components || (Components = {}))
+  return Overlays
+})(Overlays || (Overlays = {}))

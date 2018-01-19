@@ -1,8 +1,8 @@
 // ------------------------------------------------------------------------
-// gmaps: components/markerArray.js
+// gmaps: overlays/circleArray.js
 // ------------------------------------------------------------------------
 
-var Components = ((Components, ComponentType) => {
+var Overlays = ((Overlays, OverlayType) => {
   "use strict"
 
 
@@ -10,12 +10,12 @@ var Components = ((Components, ComponentType) => {
   // Class Definition
   // ----------------------------------------------------------------------
 
-  class MarkerArray extends Components.BaseComponentArray {
+  class RectangleArray extends Overlays.BaseOverlayArray {
 
     constructor(parms) {
       super({
         map       : parms.map,
-        type      : ComponentType.MARKER_ARRAY
+        type      : OverlayType.RECTANGLE_ARRAY
       })
     }
 
@@ -23,21 +23,6 @@ var Components = ((Components, ComponentType) => {
     // --------------------------------------------------------------------
     // Public Methods
     // --------------------------------------------------------------------
-
-    getPosition() {
-      return Core.getCoordinates({
-        compArray : this,
-        ids       : this.getIds()
-      })
-    }
-
-    getPositionString() {
-      return Core.getCoordinates({
-        compArray : this,
-        stringify : true,
-        ids       : this.getIds()
-      })
-    }
 
     off(type) {
       return Core.removeListener({
@@ -71,7 +56,7 @@ var Components = ((Components, ComponentType) => {
   // Namespace
   // ----------------------------------------------------------------------
 
-  Components.MarkerArray = MarkerArray
+  Overlays.RectangleArray = RectangleArray
 
-  return Components
-})(Components || (Components = {}), Const.ComponentType)
+  return Overlays
+})(Overlays || (Overlays = {}), Const.OverlayType)

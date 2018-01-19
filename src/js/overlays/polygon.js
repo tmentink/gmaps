@@ -1,8 +1,8 @@
 // ------------------------------------------------------------------------
-// gmaps: components/polylineArray.js
+// gmaps: overlays/polygon.js
 // ------------------------------------------------------------------------
 
-var Components = ((Components, ComponentType) => {
+var Overlays = ((Overlays, OverlayType) => {
   "use strict"
 
 
@@ -10,12 +10,14 @@ var Components = ((Components, ComponentType) => {
   // Class Definition
   // ----------------------------------------------------------------------
 
-  class PolylineArray extends Components.BaseComponentArray {
+  class Polygon extends Overlays.BaseOverlay {
 
     constructor(parms) {
       super({
-        map       : parms.map,
-        type      : ComponentType.POLYLINE_ARRAY
+        id      : parms.id,
+        obj     : new google.maps.Polygon(parms.options),
+        options : parms.options,
+        type    : OverlayType.POLYGON
       })
     }
 
@@ -24,43 +26,40 @@ var Components = ((Components, ComponentType) => {
     // Public Methods
     // --------------------------------------------------------------------
 
-    getPath() {
+    getPath(index) {
       return Core.getCoordinates({
-        compArray : this,
-        ids       : this.getIds()
+        comp  : this,
+        index : index
       })
     }
 
-    getPathString() {
+    getPathString(index) {
       return Core.getCoordinates({
-        compArray : this,
-        stringify : true,
-        ids       : this.getIds()
+        comp      : this,
+        index     : index,
+        stringify : true
       })
     }
 
     off(type) {
       return Core.removeListener({
-        compArray : this,
-        ids       : this.getIds(),
-        type      : type
+        comp : this,
+        type : type
       })
     }
 
     on(type, func) {
       return Core.addListener({
-        compArray : this,
-        func      : func,
-        ids       : this.getIds(),
-        type      : type
+        comp : this,
+        func : func,
+        type : type
       })
     }
 
     trigger(type) {
       return Core.triggerListener({
-        compArray : this,
-        ids       : this.getIds(),
-        type      : type
+        comp : this,
+        type : type
       })
     }
 
@@ -71,7 +70,7 @@ var Components = ((Components, ComponentType) => {
   // Namespace
   // ----------------------------------------------------------------------
 
-  Components.PolylineArray = PolylineArray
+  Overlays.Polygon = Polygon
 
-  return Components
-})(Components || (Components = {}), Const.ComponentType)
+  return Overlays
+})(Overlays || (Overlays = {}), Const.OverlayType)

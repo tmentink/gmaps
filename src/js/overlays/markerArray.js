@@ -1,8 +1,8 @@
 // ------------------------------------------------------------------------
-// gmaps: components/marker.js
+// gmaps: overlays/markerArray.js
 // ------------------------------------------------------------------------
 
-var Components = ((Components, ComponentType) => {
+var Overlays = ((Overlays, OverlayType) => {
   "use strict"
 
 
@@ -10,14 +10,12 @@ var Components = ((Components, ComponentType) => {
   // Class Definition
   // ----------------------------------------------------------------------
 
-  class Marker extends Components.BaseComponent {
+  class MarkerArray extends Overlays.BaseOverlayArray {
 
     constructor(parms) {
       super({
-        id      : parms.id,
-        obj     : new google.maps.Marker(parms.options),
-        options : parms.options,
-        type    : ComponentType.MARKER
+        map       : parms.map,
+        type      : OverlayType.MARKER_ARRAY
       })
     }
 
@@ -28,36 +26,41 @@ var Components = ((Components, ComponentType) => {
 
     getPosition() {
       return Core.getCoordinates({
-        comp : this
+        compArray : this,
+        ids       : this.getIds()
       })
     }
 
     getPositionString() {
       return Core.getCoordinates({
-        comp      : this,
-        stringify : true
+        compArray : this,
+        stringify : true,
+        ids       : this.getIds()
       })
     }
 
     off(type) {
       return Core.removeListener({
-        comp : this,
-        type : type
+        compArray : this,
+        ids       : this.getIds(),
+        type      : type
       })
     }
 
     on(type, func) {
       return Core.addListener({
-        comp : this,
-        func : func,
-        type : type
+        compArray : this,
+        func      : func,
+        ids       : this.getIds(),
+        type      : type
       })
     }
 
     trigger(type) {
       return Core.triggerListener({
-        comp : this,
-        type : type
+        compArray : this,
+        ids       : this.getIds(),
+        type      : type
       })
     }
 
@@ -68,7 +71,7 @@ var Components = ((Components, ComponentType) => {
   // Namespace
   // ----------------------------------------------------------------------
 
-  Components.Marker = Marker
+  Overlays.MarkerArray = MarkerArray
 
-  return Components
-})(Components || (Components = {}), Const.ComponentType)
+  return Overlays
+})(Overlays || (Overlays = {}), Const.OverlayType)

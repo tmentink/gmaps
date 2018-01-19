@@ -1,8 +1,8 @@
 // ------------------------------------------------------------------------
-// gmaps: components/baseComponent.js
+// gmaps: overlays/baseOverlay.js
 // ------------------------------------------------------------------------
 
-var Components = ((Components) => {
+var Overlays = ((Overlays) => {
   "use strict"
 
 
@@ -10,7 +10,7 @@ var Components = ((Components) => {
   // Class Definition
   // ----------------------------------------------------------------------
 
-  class BaseComponent {
+  class BaseOverlay {
 
     constructor(parms) {
       const id      = parms.id
@@ -128,7 +128,7 @@ var Components = ((Components) => {
   // Namespace
   // ----------------------------------------------------------------------
 
-  Components.BaseComponent = BaseComponent
+  Overlays.BaseOverlay = BaseOverlay
 
-  return Components
-})(Components || (Components = {}))
+  return Overlays
+})(Overlays || (Overlays = {}))

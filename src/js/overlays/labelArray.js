@@ -1,8 +1,8 @@
 // ------------------------------------------------------------------------
-// gmaps: components/labelArray.js
+// gmaps: overlays/labelArray.js
 // ------------------------------------------------------------------------
 
-var Components = ((Components, ComponentType) => {
+var Overlays = ((Overlays, OverlayType) => {
   "use strict"
 
 
@@ -10,12 +10,12 @@ var Components = ((Components, ComponentType) => {
   // Class Definition
   // ----------------------------------------------------------------------
 
-  class LabelArray extends Components.BaseComponentArray {
+  class LabelArray extends Overlays.BaseOverlayArray {
 
     constructor(parms) {
       super({
         map       : parms.map,
-        type      : ComponentType.LABEL_ARRAY
+        type      : OverlayType.LABEL_ARRAY
       })
     }
 
@@ -46,7 +46,7 @@ var Components = ((Components, ComponentType) => {
   // Namespace
   // ----------------------------------------------------------------------
 
-  Components.LabelArray = LabelArray
+  Overlays.LabelArray = LabelArray
 
-  return Components
-})(Components || (Components = {}), Const.ComponentType)
+  return Overlays
+})(Overlays || (Overlays = {}), Const.OverlayType)

@@ -1,8 +1,8 @@
 // ------------------------------------------------------------------------
-// gmaps: components/googleLabel.js
+// gmaps: overlays/googleLabel.js
 // ------------------------------------------------------------------------
 
-var Components = ((Components) => {
+var Overlays = ((Overlays) => {
   "use strict"
 
 
@@ -213,7 +213,7 @@ var Components = ((Components) => {
   // Namespace
   // ----------------------------------------------------------------------
 
-  Components.GoogleLabel = googleLabel
+  Overlays.GoogleLabel = googleLabel
 
-  return Components
-})(Components || (Components = {}))
+  return Overlays
+})(Overlays || (Overlays = {}))

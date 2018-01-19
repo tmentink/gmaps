@@ -1,8 +1,8 @@
 // ------------------------------------------------------------------------
-// gmaps: components/circle.js
+// gmaps: overlays/rectangle.js
 // ------------------------------------------------------------------------
 
-var Components = ((Components, ComponentType) => {
+var Overlays = ((Overlays, OverlayType) => {
   "use strict"
 
 
@@ -10,14 +10,14 @@ var Components = ((Components, ComponentType) => {
   // Class Definition
   // ----------------------------------------------------------------------
 
-  class Circle extends Components.BaseComponent {
+  class Rectangle extends Overlays.BaseOverlay {
 
     constructor(parms) {
       super({
         id      : parms.id,
-        obj     : new google.maps.Circle(parms.options),
+        obj     : new google.maps.Rectangle(parms.options),
         options : parms.options,
-        type    : ComponentType.CIRCLE
+        type    : OverlayType.RECTANGLE
       })
     }
 
@@ -55,7 +55,7 @@ var Components = ((Components, ComponentType) => {
   // Namespace
   // ----------------------------------------------------------------------
 
-  Components.Circle = Circle
+  Overlays.Rectangle = Rectangle
 
-  return Components
-})(Components || (Components = {}), Const.ComponentType)
+  return Overlays
+})(Overlays || (Overlays = {}), Const.OverlayType)

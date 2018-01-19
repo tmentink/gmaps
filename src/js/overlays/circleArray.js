@@ -1,8 +1,8 @@
 // ------------------------------------------------------------------------
-// gmaps: components/polyline.js
+// gmaps: overlays/circleArray.js
 // ------------------------------------------------------------------------
 
-var Components = ((Components, ComponentType) => {
+var Overlays = ((Overlays, OverlayType) => {
   "use strict"
 
 
@@ -10,14 +10,12 @@ var Components = ((Components, ComponentType) => {
   // Class Definition
   // ----------------------------------------------------------------------
 
-  class Polyline extends Components.BaseComponent {
+  class CircleArray extends Overlays.BaseOverlayArray {
 
     constructor(parms) {
       super({
-        id      : parms.id,
-        obj     : new google.maps.Polyline(parms.options),
-        options : parms.options,
-        type    : ComponentType.POLYLINE
+        map       : parms.map,
+        type      : OverlayType.CIRCLE_ARRAY
       })
     }
 
@@ -26,38 +24,28 @@ var Components = ((Components, ComponentType) => {
     // Public Methods
     // --------------------------------------------------------------------
 
-    getPath() {
-      return Core.getCoordinates({
-        comp : this
-      })
-    }
-
-    getPathString() {
-      return Core.getCoordinates({
-        comp      : this,
-        stringify : true
-      })
-    }
-
     off(type) {
       return Core.removeListener({
-        comp : this,
-        type : type
+        compArray : this,
+        ids       : this.getIds(),
+        type      : type
       })
     }
 
     on(type, func) {
       return Core.addListener({
-        comp : this,
-        func : func,
-        type : type
+        compArray : this,
+        func      : func,
+        ids       : this.getIds(),
+        type      : type
       })
     }
 
     trigger(type) {
       return Core.triggerListener({
-        comp : this,
-        type : type
+        compArray : this,
+        ids       : this.getIds(),
+        type      : type
       })
     }
 
@@ -68,7 +56,7 @@ var Components = ((Components, ComponentType) => {
   // Namespace
   // ----------------------------------------------------------------------
 
-  Components.Polyline = Polyline
+  Overlays.CircleArray = CircleArray
 
-  return Components
-})(Components || (Components = {}), Const.ComponentType)
+  return Overlays
+})(Overlays || (Overlays = {}), Const.OverlayType)

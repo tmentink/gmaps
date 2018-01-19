@@ -1,8 +1,8 @@
 // ------------------------------------------------------------------------
-// gmaps: components/polygon.js
+// gmaps: overlays/marker.js
 // ------------------------------------------------------------------------
 
-var Components = ((Components, ComponentType) => {
+var Overlays = ((Overlays, OverlayType) => {
   "use strict"
 
 
@@ -10,14 +10,14 @@ var Components = ((Components, ComponentType) => {
   // Class Definition
   // ----------------------------------------------------------------------
 
-  class Polygon extends Components.BaseComponent {
+  class Marker extends Overlays.BaseOverlay {
 
     constructor(parms) {
       super({
         id      : parms.id,
-        obj     : new google.maps.Polygon(parms.options),
+        obj     : new google.maps.Marker(parms.options),
         options : parms.options,
-        type    : ComponentType.POLYGON
+        type    : OverlayType.MARKER
       })
     }
 
@@ -26,17 +26,15 @@ var Components = ((Components, ComponentType) => {
     // Public Methods
     // --------------------------------------------------------------------
 
-    getPath(index) {
+    getPosition() {
       return Core.getCoordinates({
-        comp  : this,
-        index : index
+        comp : this
       })
     }
 
-    getPathString(index) {
+    getPositionString() {
       return Core.getCoordinates({
         comp      : this,
-        index     : index,
         stringify : true
       })
     }
@@ -70,7 +68,7 @@ var Components = ((Components, ComponentType) => {
   // Namespace
   // ----------------------------------------------------------------------
 
-  Components.Polygon = Polygon
+  Overlays.Marker = Marker
 
-  return Components
-})(Components || (Components = {}), Const.ComponentType)
+  return Overlays
+})(Overlays || (Overlays = {}), Const.OverlayType)

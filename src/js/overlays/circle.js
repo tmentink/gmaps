@@ -1,8 +1,8 @@
 // ------------------------------------------------------------------------
-// gmaps: components/circleArray.js
+// gmaps: overlays/circle.js
 // ------------------------------------------------------------------------
 
-var Components = ((Components, ComponentType) => {
+var Overlays = ((Overlays, OverlayType) => {
   "use strict"
 
 
@@ -10,12 +10,14 @@ var Components = ((Components, ComponentType) => {
   // Class Definition
   // ----------------------------------------------------------------------
 
-  class CircleArray extends Components.BaseComponentArray {
+  class Circle extends Overlays.BaseOverlay {
 
     constructor(parms) {
       super({
-        map       : parms.map,
-        type      : ComponentType.CIRCLE_ARRAY
+        id      : parms.id,
+        obj     : new google.maps.Circle(parms.options),
+        options : parms.options,
+        type    : OverlayType.CIRCLE
       })
     }
 
@@ -26,26 +28,23 @@ var Components = ((Components, ComponentType) => {
 
     off(type) {
       return Core.removeListener({
-        compArray : this,
-        ids       : this.getIds(),
-        type      : type
+        comp : this,
+        type : type
       })
     }
 
     on(type, func) {
       return Core.addListener({
-        compArray : this,
-        func      : func,
-        ids       : this.getIds(),
-        type      : type
+        comp : this,
+        func : func,
+        type : type
       })
     }
 
     trigger(type) {
       return Core.triggerListener({
-        compArray : this,
-        ids       : this.getIds(),
-        type      : type
+        comp : this,
+        type : type
       })
     }
 
@@ -56,7 +55,7 @@ var Components = ((Components, ComponentType) => {
   // Namespace
   // ----------------------------------------------------------------------
 
-  Components.CircleArray = CircleArray
+  Overlays.Circle = Circle
 
-  return Components
-})(Components || (Components = {}), Const.ComponentType)
+  return Overlays
+})(Overlays || (Overlays = {}), Const.OverlayType)

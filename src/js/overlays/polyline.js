@@ -1,8 +1,8 @@
 // ------------------------------------------------------------------------
-// gmaps: components/rectangle.js
+// gmaps: overlays/polyline.js
 // ------------------------------------------------------------------------
 
-var Components = ((Components, ComponentType) => {
+var Overlays = ((Overlays, OverlayType) => {
   "use strict"
 
 
@@ -10,14 +10,14 @@ var Components = ((Components, ComponentType) => {
   // Class Definition
   // ----------------------------------------------------------------------
 
-  class Rectangle extends Components.BaseComponent {
+  class Polyline extends Overlays.BaseOverlay {
 
     constructor(parms) {
       super({
         id      : parms.id,
-        obj     : new google.maps.Rectangle(parms.options),
+        obj     : new google.maps.Polyline(parms.options),
         options : parms.options,
-        type    : ComponentType.RECTANGLE
+        type    : OverlayType.POLYLINE
       })
     }
 
@@ -25,6 +25,19 @@ var Components = ((Components, ComponentType) => {
     // --------------------------------------------------------------------
     // Public Methods
     // --------------------------------------------------------------------
+
+    getPath() {
+      return Core.getCoordinates({
+        comp : this
+      })
+    }
+
+    getPathString() {
+      return Core.getCoordinates({
+        comp      : this,
+        stringify : true
+      })
+    }
 
     off(type) {
       return Core.removeListener({
@@ -55,7 +68,7 @@ var Components = ((Components, ComponentType) => {
   // Namespace
   // ----------------------------------------------------------------------
 
-  Components.Rectangle = Rectangle
+  Overlays.Polyline = Polyline
 
-  return Components
-})(Components || (Components = {}), Const.ComponentType)
+  return Overlays
+})(Overlays || (Overlays = {}), Const.OverlayType)

@@ -1,8 +1,8 @@
 // ------------------------------------------------------------------------
-// gmaps: components/polygonArray.js
+// gmaps: overlays/polygonArray.js
 // ------------------------------------------------------------------------
 
-var Components = ((Components, ComponentType) => {
+var Overlays = ((Overlays, OverlayType) => {
   "use strict"
 
 
@@ -10,12 +10,12 @@ var Components = ((Components, ComponentType) => {
   // Class Definition
   // ----------------------------------------------------------------------
 
-  class PolygonArray extends Components.BaseComponentArray {
+  class PolygonArray extends Overlays.BaseOverlayArray {
 
     constructor(parms) {
       super({
         map       : parms.map,
-        type      : ComponentType.POLYGON_ARRAY
+        type      : OverlayType.POLYGON_ARRAY
       })
     }
 
@@ -73,7 +73,7 @@ var Components = ((Components, ComponentType) => {
   // Namespace
   // ----------------------------------------------------------------------
 
-  Components.PolygonArray = PolygonArray
+  Overlays.PolygonArray = PolygonArray
 
-  return Components
-})(Components || (Components = {}), Const.ComponentType)
+  return Overlays
+})(Overlays || (Overlays = {}), Const.OverlayType)
