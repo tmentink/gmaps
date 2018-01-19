@@ -2,7 +2,7 @@
 // gmaps: util/convert.js
 // ------------------------------------------------------------------------
 
-var Util = ((Util, Setting) => {
+var Convert = ((Convert, Setting) => {
   "use strict"
 
 
@@ -27,7 +27,7 @@ var Util = ((Util, Setting) => {
   // Public Methods
   // ----------------------------------------------------------------------
 
-  Util.toArray = function(val) {
+  Convert.toArray = function(val) {
     if ($.isArray(val) === false) {
       return [val]
     }
@@ -35,7 +35,7 @@ var Util = ((Util, Setting) => {
     return val
   }
 
-  Util.toLatLng = function(parms) {
+  Convert.toLatLng = function(parms) {
     const map = parms.map
     const val = parms.val
 
@@ -46,7 +46,7 @@ var Util = ((Util, Setting) => {
     return val
   }
 
-  Util.toLatLngArray = function(parms) {
+  Convert.toLatLngArray = function(parms) {
     const map = parms.map
     const val = parms.val
 
@@ -57,7 +57,7 @@ var Util = ((Util, Setting) => {
     return val
   }
 
-  Util.toLatLngBounds = function(parms) {
+  Convert.toLatLngBounds = function(parms) {
     const map = parms.map
     const val = parms.val
 
@@ -68,7 +68,7 @@ var Util = ((Util, Setting) => {
     return val
   }
 
-  Util.toLowerCase = function(val) {
+  Convert.toLowerCase = function(val) {
     const regex = /\s+|\_+/g
 
     if ($.type(val) === "string") {
@@ -78,7 +78,7 @@ var Util = ((Util, Setting) => {
     return undefined
   }
 
-  Util.toString = function(parms) {
+  Convert.toString = function(parms) {
     const map = parms.map
     const val = parms.val
 
@@ -132,7 +132,7 @@ var Util = ((Util, Setting) => {
     const coordPairs  = str.split(Delimiter.latLng(map))
 
     for (var i = 0, i_end = coordPairs.length; i < i_end; i++) {
-      latLngArray.push(Util.toLatLng({
+      latLngArray.push(Convert.toLatLng({
         map : map,
         val : coordPairs[i]
       }))
@@ -193,5 +193,5 @@ var Util = ((Util, Setting) => {
   }
 
 
-  return Util
-})(Util || (Util = {}), Const.Setting)
+  return Convert
+})(Convert || (Convert = {}), Const.Setting)
