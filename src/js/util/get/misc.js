@@ -10,6 +10,12 @@ var Get = ((Get) => {
   // Public Functions
   // ----------------------------------------------------------------------
 
+  // obj {object}
+  Get.googleClass = function(obj) {
+    return Object.keys(Const.GoogleClasses)
+      .find(className => obj instanceof google.maps[className])
+  }
+
   // map      {gmap}
   // ovlArray {overlayArray}
   // type     {string}
