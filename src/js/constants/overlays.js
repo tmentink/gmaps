@@ -10,7 +10,7 @@ var Const = ((Const) => {
   // Overlay Constants
   // ----------------------------------------------------------------------
 
-  const Option = {
+  const Options = {
     ALIGN            : "align",
     ANCHOR_POINT     : "anchorPoint",
     ANIMATION        : "animation",
@@ -55,7 +55,7 @@ var Const = ((Const) => {
     Z_INDEX          : "zIndex"
   }
 
-  const Type = {
+  const Types = {
     CIRCLE          : "Circle",
     CIRCLE_ARRAY    : "CircleArray",
     LABEL           : "Label",
@@ -71,140 +71,140 @@ var Const = ((Const) => {
   }
 
   const Overlays = {}
-  Overlays[Type.CIRCLE] = {
+  Overlays[Types.CIRCLE] = {
     options : [
       {
-        name        : Option.CENTER,
+        name        : Options.CENTER,
         convertable : true,
         required    : true
       },
-      { name : Option.CLICKABLE },
-      { name : Option.DRAGGABLE },
-      { name : Option.EDITABLE },
-      { name : Option.FILL_COLOR },
-      { name : Option.FILL_OPACITY },
-      { name : Option.MAP },
+      { name : Options.CLICKABLE },
+      { name : Options.DRAGGABLE },
+      { name : Options.EDITABLE },
+      { name : Options.FILL_COLOR },
+      { name : Options.FILL_OPACITY },
+      { name : Options.MAP },
       {
-        name        : Option.RADIUS,
+        name        : Options.RADIUS,
         required    : true
       },
-      { name : Option.STROKE_COLOR },
-      { name : Option.STROKE_OPACITY },
-      { name : Option.STROKE_POSITION },
-      { name : Option.STROKE_WEIGHT },
-      { name : Option.VISIBLE },
-      { name : Option.Z_INDEX }
+      { name : Options.STROKE_COLOR },
+      { name : Options.STROKE_OPACITY },
+      { name : Options.STROKE_POSITION },
+      { name : Options.STROKE_WEIGHT },
+      { name : Options.VISIBLE },
+      { name : Options.Z_INDEX }
     ]
   }
-  Overlays[Type.LABEL] = {
+  Overlays[Types.LABEL] = {
     options : [
-      { name : Option.ALIGN },
-      { name : Option.FONT_COLOR },
-      { name : Option.FONT_FAMILY },
-      { name : Option.FONT_SIZE },
-      { name : Option.MAX_ZOOM },
-      { name : Option.MIN_ZOOM },
+      { name : Options.ALIGN },
+      { name : Options.FONT_COLOR },
+      { name : Options.FONT_FAMILY },
+      { name : Options.FONT_SIZE },
+      { name : Options.MAX_ZOOM },
+      { name : Options.MIN_ZOOM },
       {
-        name        : Option.POSITION,
+        name        : Options.POSITION,
         convertable : true,
         required    : true
       },
-      { name : Option.STROKE_WEIGHT },
-      { name : Option.STROKE_COLOR },
-      { name : Option.VISIBLE },
+      { name : Options.STROKE_WEIGHT },
+      { name : Options.STROKE_COLOR },
+      { name : Options.VISIBLE },
       {
-        name        : Option.TEXT,
+        name        : Options.TEXT,
         required    : true
       },
-      { name : Option.Z_INDEX }
+      { name : Options.Z_INDEX }
     ]
   }
-  Overlays[Type.MARKER] = {
+  Overlays[Types.MARKER] = {
     options : [
-      { name : Option.ANCHOR_POINT },
-      { name : Option.ANIMATION },
-      { name : Option.CLICKABLE },
-      { name : Option.CROSS_ON_DRAG },
-      { name : Option.CURSOR },
-      { name : Option.DRAGGABLE },
-      { name : Option.ICON },
-      { name : Option.LABEL },
-      { name : Option.MAP },
-      { name : Option.OPACITY },
-      { name : Option.OPTIMIZED },
-      { name : Option.PLACE },
+      { name : Options.ANCHOR_POINT },
+      { name : Options.ANIMATION },
+      { name : Options.CLICKABLE },
+      { name : Options.CROSS_ON_DRAG },
+      { name : Options.CURSOR },
+      { name : Options.DRAGGABLE },
+      { name : Options.ICON },
+      { name : Options.LABEL },
+      { name : Options.MAP },
+      { name : Options.OPACITY },
+      { name : Options.OPTIMIZED },
+      { name : Options.PLACE },
       {
-        name        : Option.POSITION,
+        name        : Options.POSITION,
         convertable : true,
         required    : true
       },
-      { name : Option.SHAPE },
-      { name : Option.TITLE },
-      { name : Option.VISIBLE },
-      { name : Option.Z_INDEX }
+      { name : Options.SHAPE },
+      { name : Options.TITLE },
+      { name : Options.VISIBLE },
+      { name : Options.Z_INDEX }
     ]
   }
-  Overlays[Type.POLYGON] = {
+  Overlays[Types.POLYGON] = {
     options : [
-      { name : Option.CLICKABLE },
-      { name : Option.DRAGGABLE },
-      { name : Option.EDITABLE },
-      { name : Option.FILL_COLOR },
-      { name : Option.FILL_OPACITY },
-      { name : Option.GEODESIC },
-      { name : Option.MAP },
+      { name : Options.CLICKABLE },
+      { name : Options.DRAGGABLE },
+      { name : Options.EDITABLE },
+      { name : Options.FILL_COLOR },
+      { name : Options.FILL_OPACITY },
+      { name : Options.GEODESIC },
+      { name : Options.MAP },
       {
-        name        : Option.PATHS,
+        name        : Options.PATHS,
         convertable : true,
         required    : true
       },
-      { name : Option.STROKE_COLOR },
-      { name : Option.STROKE_OPACITY },
-      { name : Option.STROKE_POSITION },
-      { name : Option.STROKE_WEIGHT },
-      { name : Option.VISIBLE },
-      { name : Option.Z_INDEX }
+      { name : Options.STROKE_COLOR },
+      { name : Options.STROKE_OPACITY },
+      { name : Options.STROKE_POSITION },
+      { name : Options.STROKE_WEIGHT },
+      { name : Options.VISIBLE },
+      { name : Options.Z_INDEX }
     ]
   }
-  Overlays[Type.POLYLINE] = {
+  Overlays[Types.POLYLINE] = {
     options : [
-      { name : Option.CLICKABLE },
-      { name : Option.DRAGGABLE },
-      { name : Option.EDITABLE },
-      { name : Option.GEODESIC },
-      { name : Option.ICONS },
-      { name : Option.MAP },
+      { name : Options.CLICKABLE },
+      { name : Options.DRAGGABLE },
+      { name : Options.EDITABLE },
+      { name : Options.GEODESIC },
+      { name : Options.ICONS },
+      { name : Options.MAP },
       {
-        name        : Option.PATH,
+        name        : Options.PATH,
         convertable : true,
         required    : true
       },
-      { name : Option.STROKE_COLOR },
-      { name : Option.STROKE_OPACITY },
-      { name : Option.STROKE_WEIGHT },
-      { name : Option.VISIBLE },
-      { name : Option.Z_INDEX }
+      { name : Options.STROKE_COLOR },
+      { name : Options.STROKE_OPACITY },
+      { name : Options.STROKE_WEIGHT },
+      { name : Options.VISIBLE },
+      { name : Options.Z_INDEX }
     ]
   }
-  Overlays[Type.RECTANGLE] = {
+  Overlays[Types.RECTANGLE] = {
     options : [
       {
-        name        : Option.BOUNDS,
+        name        : Options.BOUNDS,
         convertable : true,
         required    : true
       },
-      { name : Option.CLICKABLE },
-      { name : Option.DRAGGABLE },
-      { name : Option.EDITABLE },
-      { name : Option.FILL_COLOR },
-      { name : Option.FILL_OPACITY },
-      { name : Option.MAP },
-      { name : Option.STROKE_COLOR },
-      { name : Option.STROKE_OPACITY },
-      { name : Option.STROKE_POSITION },
-      { name : Option.STROKE_WEIGHT },
-      { name : Option.VISIBLE },
-      { name : Option.Z_INDEX }
+      { name : Options.CLICKABLE },
+      { name : Options.DRAGGABLE },
+      { name : Options.EDITABLE },
+      { name : Options.FILL_COLOR },
+      { name : Options.FILL_OPACITY },
+      { name : Options.MAP },
+      { name : Options.STROKE_COLOR },
+      { name : Options.STROKE_OPACITY },
+      { name : Options.STROKE_POSITION },
+      { name : Options.STROKE_WEIGHT },
+      { name : Options.VISIBLE },
+      { name : Options.Z_INDEX }
     ]
   }
 
@@ -213,9 +213,9 @@ var Const = ((Const) => {
   // Namespace
   // ----------------------------------------------------------------------
 
-  Const.Overlays      = Overlays
-  Const.OverlayOption = Option
-  Const.OverlayType   = Type
+  Const.Overlays       = Overlays
+  Const.OverlayOptions = Options
+  Const.OverlayTypes   = Types
 
 
   return Const

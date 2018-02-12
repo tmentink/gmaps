@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// gmaps: constants/misc.js
+// gmaps: constants/events.js
 // ------------------------------------------------------------------------
 
 var Const = ((Const) => {
@@ -7,10 +7,10 @@ var Const = ((Const) => {
 
 
   // ----------------------------------------------------------------------
-  // Misc Constants
+  // Event Constants
   // ----------------------------------------------------------------------
 
-  Const.EventType = {
+  Const.EventTypes = {
     ANIMATION_CHANGED   : "animation_changed",
     BOUNDS_CHANGED      : "bounds_changed",
     CENTER_CHANGED      : "center_changed",
@@ -43,21 +43,6 @@ var Const = ((Const) => {
     VISIBLE_CHANGED     : "visible_changed",
     ZINDEX_CHANGED      : "zindex_changed",
     ZOOM_CHANGED        : "zoom_changed"
-  }
-
-  Const.Setting = {
-    CIRCLE_OPTIONS    : "circleOptions",
-    DELIMITED_STRINGS : "delimitedStrings",
-    DELIMITER         : "delimiter",
-    LABEL_OPTIONS     : "labelOptions",
-    MAP_ID            : "mapId",
-    MAP_OPTIONS       : "mapOptions",
-    MARKER_OPTIONS    : "markerOptions",
-    ON_LOAD           : "onLoad",
-    POLYGON_OPTIONS   : "polygonOptions",
-    POLYLINE_OPTIONS  : "polylineOptions",
-    RECTANGLE_OPTIONS : "rectangleOptions",
-    URL_PRECISION     : "urlPrecision"
   }
 
 

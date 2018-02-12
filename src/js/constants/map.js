@@ -10,7 +10,7 @@ var Const = ((Const) => {
   // Map Constants
   // ----------------------------------------------------------------------
 
-  const Option = {
+  const Options = {
     BACKGROUND_COLOR            : "backgroundColor",
     CENTER                      : "center",
     CLICKABLE_ICONS             : "clickableIcons",
@@ -98,8 +98,8 @@ var Const = ((Const) => {
   // Namespace
   // ----------------------------------------------------------------------
 
-  Const.Map       = Map
-  Const.MapOption = Option
+  Const.Map        = Map
+  Const.MapOptions = Options
 
 
   return Const
