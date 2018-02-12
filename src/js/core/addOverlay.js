@@ -35,7 +35,7 @@ var Core = ((Core) => {
   // ----------------------------------------------------------------------
 
   function add(p) {
-    const id = Get.formattedId({
+    p.options.id = Get.formattedId({
       id   : p.options.id,
       map  : p.map,
       type : p.type
@@ -50,7 +50,7 @@ var Core = ((Core) => {
 
     if (IsValid.overlayOptions(p.options)) {
       return new Overlays[p.type]({
-        id      : id
+        id      : p.options.id
         options : p.options
       })
     }
