@@ -109,10 +109,10 @@ var Get = ((Get) => {
   Get.mergedOptions = function(p) {
     const namespace = Lookup.setting(`${p.type}Options`)
     const defaults  = p.map.settings[namespace] || {}
-    
+
     p.options     = $.extend({}, defaults, p.options)
     p.options.map = p.map.obj
-    
+
     return p.convert
       ? Get.convertedOptions(p)
       : p.options

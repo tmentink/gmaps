@@ -39,7 +39,7 @@ var Convert = ((Convert, Setting) => {
 
   // map {gmap}
   // val {googleObject}
-  Convert.toString = function(p) {  
+  Convert.toString = function(p) {
     p.delimitedStrings = p.map.settings[Setting.DELIMITED_STRINGS]
     p.urlPrecision     = p.map.settings[Setting.URL_PRECISION]
     return Conversions[Get.googleClass(p.val)](p)
@@ -63,7 +63,7 @@ var Convert = ((Convert, Setting) => {
 
   function toJSON(p) {
     p.val = p.val.getArray()
-    
+
     return JSON.stringify(p.val, function(key, val) {
       return (key === "lat" || key === "lng")
         ? Number(val.toFixed(p.digits))
@@ -78,7 +78,7 @@ var Convert = ((Convert, Setting) => {
       if (i > 0) str += p.map.settings[Setting.DELIMITER].latLngArray
       str += toDelimited({
         map : p.map,
-        val :
+        val : el
       })
     })
 

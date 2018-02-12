@@ -11,16 +11,16 @@ var Const = ((Const) => {
   // ----------------------------------------------------------------------
 
   Const.GoogleClasses = {
-    CIRCLE         : "Circle",    
+    CIRCLE         : "Circle",
     INFO_WINDOW    : "InfoWindow",
     LAT_LNG        : "LatLng",
     LAT_LNG_BOUNDS : "LatLngBounds",
     MAP            : "Map",
     MARKER         : "Marker",
-    MVC_ARRAY      : "MVCArray"
+    MVC_ARRAY      : "MVCArray",
     POLYLINE       : "Polyline",
     POLYGON        : "Polygon",
-    RECTANGLE      : "Rectangle" 
+    RECTANGLE      : "Rectangle"
   }
 
 

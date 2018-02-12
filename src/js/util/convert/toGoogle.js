@@ -55,7 +55,7 @@ var Convert = ((Convert, Setting) => {
     return new google.maps.LatLng(parseFloat(points[0]), parseFloat(points[1]))
   }
 
-  function strToLatLngArray(p) { 
+  function strToLatLngArray(p) {
     const delimiter   = p.map.settings[Settings.DELIMITER].latLng
     const latLngs     = p.val.split(delimiter)
     const latLngArray = []

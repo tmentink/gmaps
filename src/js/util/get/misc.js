@@ -23,7 +23,7 @@ var Get = ((Get) => {
     let map  = p.map
     let type = `${p.type}Array`
 
-    if (p.ovlArray != null) {
+    if (p.ovlArray !== undefined) {
       map  = p.ovlArray.map
       type = p.ovlArray.type
     }

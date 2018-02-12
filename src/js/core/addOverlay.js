@@ -50,7 +50,7 @@ var Core = ((Core) => {
 
     if (IsValid.overlayOptions(p.options)) {
       return new Overlays[p.type]({
-        id      : p.options.id
+        id      : p.options.id,
         options : p.options
       })
     }
