@@ -37,6 +37,9 @@
     "no-undef": [
       "off"
     ],
+    "no-unused-vars": [
+      "off"
+    ],
     "quotes": [
       "error",
       "double"
