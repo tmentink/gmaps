@@ -10,39 +10,33 @@ var Convert = ((Convert, Setting) => {
   // Public Functions
   // ----------------------------------------------------------------------
 
-  // map {gmap}
-  // val {string}
-  Convert.toLatLng = function(p) {
-    if (Is.LatLng(p.val)) return p.val
+  Convert.toLatLng = function({map, val}) {
+    if (Is.LatLng(val)) return val
 
-    if ($.type(p.val) === "string") {
-      return p.map.settings[Setting.DELIMITED_STRINGS]
-        ? strToLatLng(p.val)
-        : JSON.parse(p.val)
+    if ($.type(val) === "string") {
+      return map.settings[Setting.DELIMITED_STRINGS]
+        ? strToLatLng(val)
+        : JSON.parse(val)
     }
   }
 
-  // map {gmap}
-  // val {string}
-  Convert.toLatLngArray = function(p) {
-    if (Is.MVCArray(p.val)) return p.val
+  Convert.toLatLngArray = function({map, val}) {
+    if (Is.MVCArray(val)) return val
 
-    if ($.type(p.val) === "string") {
-      return p.map.settings[Setting.DELIMITED_STRINGS]
-        ? strToLatLngArray(p)
-        : JSON.parse(p.val)
+    if ($.type(val) === "string") {
+      return map.settings[Setting.DELIMITED_STRINGS]
+        ? strToLatLngArray(arguments[0])
+        : JSON.parse(val)
     }
   }
 
-  // map {gmap}
-  // val {string}
-  Convert.toLatLngBounds = function(p) {
-    if (Is.LatLngBounds(p.val)) return p.val
+  Convert.toLatLngBounds = function({map, val}) {
+    if (Is.LatLngBounds(val)) return val
 
-    if ($.type(p.val) === "string") {
-      return p.map.settings[Setting.DELIMITED_STRINGS]
-        ? strToLatLngBounds(p)
-        : JSON.parse(p.val)
+    if ($.type(val) === "string") {
+      return map.settings[Setting.DELIMITED_STRINGS]
+        ? strToLatLngBounds(arguments[0])
+        : JSON.parse(val)
     }
   }
 
@@ -55,9 +49,9 @@ var Convert = ((Convert, Setting) => {
     return new google.maps.LatLng(parseFloat(points[0]), parseFloat(points[1]))
   }
 
-  function strToLatLngArray(p) {
-    const delimiter   = p.map.settings[Settings.DELIMITER].latLng
-    const latLngs     = p.val.split(delimiter)
+  function strToLatLngArray({map, val}) {
+    const delimiter   = map.settings[Settings.DELIMITER].latLng
+    const latLngs     = val.split(delimiter)
     const latLngArray = []
 
     for (var i = 0, i_end = latLngs.length; i < i_end; i++) {
@@ -67,9 +61,9 @@ var Convert = ((Convert, Setting) => {
     return latLngArray
   }
 
-  function strToLatLngBounds(p) {
-    const delimiter  = p.map.settings[Settings.DELIMITER].latLngBounds
-    const latLngs    = p.val.split(delimiter)
+  function strToLatLngBounds({map, val}) {
+    const delimiter = map.settings[Settings.DELIMITER].latLngBounds
+    const latLngs   = val.split(delimiter)
 
     return {
       north : Number(latLngs[0]),

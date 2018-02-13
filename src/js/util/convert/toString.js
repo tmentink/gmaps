@@ -11,24 +11,27 @@ var Convert = ((Convert, Setting) => {
   // ----------------------------------------------------------------------
 
   const Conversions = {
-    LatLng: function(p) {
-      return p.delimitedStrings
-        ? toDelimited(p)
-        : toJSON(p)
+    LatLng: function({map, val, delimited}) {
+      const args = arguments[0]
+      return delimited
+        ? toDelimited(args)
+        : toJSON(args)
     },
-    MVCArray: function (p) {
-      if (Is.MVCArray(p.val.getAt(0))) {
-        return Conversions.NestedMVCArray(p)
+    MVCArray: function ({map, val, delimited}) {
+      const args = arguments[0]
+      if (Is.MVCArray(val.getAt(0))) {
+        return Conversions.NestedMVCArray(args)
       }
 
-      return p.delimitedStrings
-        ? toDelimited(p)
-        : toJSON(p)
+      return delimited
+        ? toDelimited(args)
+        : toJSON(args)
     },
-    NestedMVCArray: function (p) {
-      return p.delimitedStrings
-        ? toMultiDelimited(p)
-        : toMultiJSON(p)
+    NestedMVCArray: function ({map, val, delimited}) {
+      const args = arguments[0]
+      return delimited
+        ? toMultiDelimited(args)
+        : toMultiJSON(args)
     }
   }
 
@@ -37,12 +40,12 @@ var Convert = ((Convert, Setting) => {
   // Public Functions
   // ----------------------------------------------------------------------
 
-  // map {gmap}
-  // val {googleObject}
-  Convert.toString = function(p) {
-    p.delimitedStrings = p.map.settings[Setting.DELIMITED_STRINGS]
-    p.urlPrecision     = p.map.settings[Setting.URL_PRECISION]
-    return Conversions[Get.googleClass(p.val)](p)
+  Convert.toString = function({map, val}) {
+    const args     = arguments[0]
+    args.delimited = map.settings[Setting.DELIMITED_STRINGS]
+    args.precision = map.settings[Setting.URL_PRECISION]
+
+    return Conversions[Get.googleClass(val)](args)
   }
 
 
@@ -50,52 +53,50 @@ var Convert = ((Convert, Setting) => {
   // Private Functions
   // ----------------------------------------------------------------------
 
-  function toDelimited(p) {
+  function toDelimited({map, val, precision}) {
     let str = ""
 
-    p.val.forEach(function(el, i) {
-      if (i > 0) str += p.map.settings[Setting.DELIMITER].latLng
-      str += el.toUrlValue(p.digits)
+    val.forEach(function(el, i) {
+      if (i > 0) str += map.settings[Setting.DELIMITER].latLng
+      str += el.toUrlValue(precision)
     })
 
     return str
   }
 
-  function toJSON(p) {
-    p.val = p.val.getArray()
+  function toJSON({map, val, precision}) {
+    val = val.getArray()
 
-    return JSON.stringify(p.val, function(key, val) {
+    return JSON.stringify(val, (key, value) => {
       return (key === "lat" || key === "lng")
-        ? Number(val.toFixed(p.digits))
-        : val
+        ? Number(value.toFixed(precision))
+        : value
     })
   }
 
-  function toMultiDelimited(p) {
-    let str = ""
+  function toMultiDelimited({map, val, precision}) {
+    const args = arguments[0]
+    let str    = ""
 
-    p.val.forEach(function(el, i) {
-      if (i > 0) str += p.map.settings[Setting.DELIMITER].latLngArray
-      str += toDelimited({
-        map : p.map,
-        val : el
-      })
+    val.forEach(function(el, i) {
+      if (i > 0) str += map.settings[Setting.DELIMITER].latLngArray
+      args.val = el
+      str += toDelimited(args)
     })
 
     return str
   }
 
-  function toMultiJSON(p) {
-    const arr = []
+  function toMultiJSON({map, val, precision}) {
+    const args = arguments[0]
+    const arr  = []
 
-    p.val.forEach(function(el) {
+    val.forEach(function(el) {
       arr.push(el.getArray())
     })
 
-    return toJSON({
-      map : p.map,
-      val : arr
-    })
+    args.val = arr
+    return toJSON(args)
   }
 
 

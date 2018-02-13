@@ -10,12 +10,9 @@ var Error = ((Error) => {
   // Public Functions
   // ----------------------------------------------------------------------
 
-  // method {string}
-  // msg    {string}
-  // obj    {object}
-  Error.throw = function(p) {
+  Error.throw = function({method, msg, args}) {
     // eslint-disable-next-line no-console
-    console.error(`${p.method}: ${p.msg}`, p.obj || "")
+    console.error(`${method}: ${msg}`, args)
     return false
   }
 

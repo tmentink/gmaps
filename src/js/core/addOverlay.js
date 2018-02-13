@@ -10,23 +10,22 @@ var Core = ((Core) => {
   // Public Functions
   // ----------------------------------------------------------------------
 
-  // map     {gmap}
-  // options {object || array<object>}
-  // type    {string}
-  Core.addOverlay = function(p) {
-    p.type = Lookup.overlayType(p.type)
+  Core.addOverlay = function({map, options, type}) {
+    const args = arguments[0]
+    type       = Lookup.overlayType(type)
 
-    if (IsValid.overlayType(p.type) === false) {
+    if (IsValid.overlayType(type) === false) {
       return Error.throw({
         method  : "addOverlay",
-        msg     : `${p.type} is not a valid overlay type`,
-        obj     : {type: p.type}
+        msg     : `${args.type} is not a valid overlay type`,
+        args    : args
       })
     }
 
-    return $.isArray(p.options)
-      ? multiAdd(p)
-      : add(p)
+    args.type = type
+    return $.isArray(options)
+      ? multiAdd(args)
+      : add(args)
   }
 
 
@@ -34,37 +33,27 @@ var Core = ((Core) => {
   // Private Functions
   // ----------------------------------------------------------------------
 
-  function add(p) {
-    p.options.id = Get.formattedId({
-      id   : p.options.id,
-      map  : p.map,
-      type : p.type
-    })
+  function add({map, options, type}) {
+    const args   = arguments[0]
+    args.convert = true
+    options.id   = Get.formattedId(args)
+    options      = Get.mergedOptions(args)
 
-    p.options = Get.mergedOptions({
-      convert : true,
-      map     : p.map,
-      options : p.options,
-      type    : p.type
-    })
-
-    if (IsValid.overlayOptions(p.options)) {
-      return new Overlays[p.type]({
-        id      : p.options.id,
-        options : p.options
+    if (IsValid.overlayOptions(options)) {
+      return new Overlays[type]({
+        id      : options.id,
+        options : options
       })
     }
   }
 
-  function multiAdd(p) {
-    const overlayArray = Get.newOverlayArray(p)
+  function multiAdd({map, options, type}) {
+    const args         = arguments[0]
+    const overlayArray = Get.newOverlayArray(args)
 
-    for (var i = 0, i_end = p.options.length; i < i_end; i++) {
-      const overlay = add({
-        map     : p.map,
-        options : p.options[i],
-        type    : p.type
-      })
+    for (var i = 0, i_end = options.length; i < i_end; i++) {
+      args.options  = options[i]
+      const overlay = add(args)
 
       if (overlay) overlayArray.push(overlay)
     }

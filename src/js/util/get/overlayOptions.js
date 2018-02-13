@@ -71,51 +71,45 @@ var Get = ((Get) => {
   // Public Functions
   // ----------------------------------------------------------------------
 
-  // map     {gmap}
-  // options {object}
-  // type    {string}
-  Get.convertedOptions = function(p) {
+  Get.convertedOptions = function({map, options, type}) {
     const convertableOptions = Get.filteredOptions({
       filter : "convertable",
-      type   : p.type
+      type   : type
     })
 
     for (var i = 0, i_end = convertableOptions.length; i < i_end; i++) {
       const opt = convertableOptions[i]
-      Conversions[opt.name](p.options, p.map)
+      Conversions[opt.name](options, map)
     }
 
-    return p.options
+    return options
   }
 
-  // filter {string}
-  // type   {string}
-  Get.filteredOptions = function(p) {
-    const options = Const.Overlays[p.type].options
-    return options.filter(opt => opt[p.filter] === true)
+  Get.filteredOptions = function({type, filter}) {
+    const options    = Const.Overlays[type].options
+    const filterType = {
+      string   : (opt) => opt[filter] === true,
+      function : filter,
+    }
+
+    return options.filter(filterType[$.type(filter)])
   }
 
-  // id   {string || number}
-  // map  {gmap}
-  // type {string}
-  Get.formattedId = function(p) {
-    return FormatID[$.type(p.id)](p.id) || FormatID["auto"](p.map, p.type)
+  Get.formattedId = function({map, options, type}) {
+    const id = options.id
+    return FormatID[$.type(id)](id) || FormatID["auto"](map, type)
   }
 
-  // convert {boolean}
-  // map     {gmap}
-  // options {object}
-  // type    {string}
-  Get.mergedOptions = function(p) {
-    const namespace = Lookup.setting(`${p.type}Options`)
-    const defaults  = p.map.settings[namespace] || {}
+  Get.mergedOptions = function({map, options, type, convert}) {
+    const args      = arguments[0]
+    const namespace = Lookup.setting(`${type}Options`)
+    const defaults  = map.settings[namespace] || {}
+    options         = $.extend({}, defaults, options)
+    options.map     = map.obj
 
-    p.options     = $.extend({}, defaults, p.options)
-    p.options.map = p.map.obj
-
-    return p.convert
-      ? Get.convertedOptions(p)
-      : p.options
+    return convert
+      ? Get.convertedOptions(args)
+      : options
   }
 
 

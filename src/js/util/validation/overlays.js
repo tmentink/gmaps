@@ -10,34 +10,27 @@ var IsValid = ((IsValid) => {
   // Public Functions
   // ----------------------------------------------------------------------
 
-  // map     {gmap}
-  // options {object}
-  // type    {string}
-  IsValid.overlayOptions = function(p) {
-    const id      = p.options.id
-    const map     = p.map
-    const options = p.options
-    const type    = p.type
+  IsValid.overlayOptions = function({map, options, type}) {
+    const args = arguments[0]
+    args.id    = options.id
 
-    // check if Id already exists
-    if (isExistingId(map, type, id)) {
+    if (isExistingId(args)) {
       return Error.throw({
-        method  : "add",
-        message : `A ${type} with an id of ${id} already exists`,
-        obj     : options
+        method : "addOverlay",
+        msg    : `A ${type} with an id of ${id} already exists`,
+        args   : args
       })
     }
 
-    // check if all required options have values
-    const reqOptions = Get.filteredOptions({ filter: "requried", type: type })
+    const reqOptions = Get.filteredOptions({filter: "requried", type: type})
     for (var i = 0, i_end = reqOptions.length; i < i_end; i++) {
       const opt = reqOptions[i].name
 
       if (isEmpty(options[opt])) {
         return Error.throw({
-          method  : "add",
-          message : `${opt} must have a value`,
-          obj     : options
+          method : "addOverlay",
+          msg    : `${opt} must have a value`,
+          args   : args
         })
       }
     }
@@ -61,7 +54,7 @@ var IsValid = ((IsValid) => {
         || val === undefined
   }
 
-  function isExistingId(map, type, id) {
+  function isExistingId({map, type, id}) {
     return map.overlays[type].includes(id)
   }
 

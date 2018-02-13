@@ -10,22 +10,17 @@ var Get = ((Get) => {
   // Public Functions
   // ----------------------------------------------------------------------
 
-  // obj {object}
   Get.googleClass = function(obj) {
     return Object.keys(Const.GoogleClasses)
       .find(className => obj instanceof google.maps[className])
   }
 
-  // map      {gmap}
-  // ovlArray {overlayArray}
-  // type     {string}
-  Get.newOverlayArray = function(p) {
-    let map  = p.map
-    let type = `${p.type}Array`
+  Get.newOverlayArray = function({map, ovlArray, type}) {
+    type = `${type}Array`
 
-    if (p.ovlArray !== undefined) {
-      map  = p.ovlArray.map
-      type = p.ovlArray.type
+    if (ovlArray !== undefined) {
+      map  = ovlArray.map
+      type = ovlArray.type
     }
 
     return new Overlays[type]({ map: map })
