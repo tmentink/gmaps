@@ -12,11 +12,11 @@ var Overlays = ((Overlays) => {
 
   class BaseOverlayArray {
 
-    constructor(parms) {
+    constructor({map, type}) {
       this.data = []
-      this.map  = parms.map
+      this.map  = map
       this.seed = 0
-      this.type = parms.type
+      this.type = type
     }
 
 

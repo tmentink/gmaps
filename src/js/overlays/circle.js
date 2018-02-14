@@ -2,7 +2,7 @@
 // gmaps: overlays/circle.js
 // ------------------------------------------------------------------------
 
-var Overlays = ((Overlays, OverlayType) => {
+var Overlays = ((Overlays, OverlayTypes, GoogleClasses) => {
   "use strict"
 
 
@@ -12,12 +12,12 @@ var Overlays = ((Overlays, OverlayType) => {
 
   class Circle extends Overlays.BaseOverlay {
 
-    constructor(parms) {
+    constructor({map, options}) {
       super({
-        id      : parms.id,
-        obj     : new google.maps.Circle(parms.options),
-        options : parms.options,
-        type    : OverlayType.CIRCLE
+        map     : map,
+        obj     : new google.maps[GoogleClasses.CIRCLE](options),
+        options : options,
+        type    : OverlayTypes.CIRCLE
       })
     }
 
@@ -58,4 +58,4 @@ var Overlays = ((Overlays, OverlayType) => {
   Overlays.Circle = Circle
 
   return Overlays
-})(Overlays || (Overlays = {}), Const.OverlayType)
+})(Overlays || (Overlays = {}), Const.OverlayTypes, Const.GoogleClasses)

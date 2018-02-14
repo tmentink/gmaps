@@ -2,7 +2,7 @@
 // gmaps: overlays/marker.js
 // ------------------------------------------------------------------------
 
-var Overlays = ((Overlays, OverlayType) => {
+var Overlays = ((Overlays, OverlayTypes, GoogleClasses) => {
   "use strict"
 
 
@@ -12,12 +12,12 @@ var Overlays = ((Overlays, OverlayType) => {
 
   class Marker extends Overlays.BaseOverlay {
 
-    constructor(parms) {
+    constructor({map, options}) {
       super({
-        id      : parms.id,
-        obj     : new google.maps.Marker(parms.options),
-        options : parms.options,
-        type    : OverlayType.MARKER
+        map     : map,
+        obj     : new google.maps[GoogleClasses.MARKER](options),
+        options : options,
+        type    : OverlayTypes.MARKER
       })
     }
 
@@ -71,4 +71,4 @@ var Overlays = ((Overlays, OverlayType) => {
   Overlays.Marker = Marker
 
   return Overlays
-})(Overlays || (Overlays = {}), Const.OverlayType)
+})(Overlays || (Overlays = {}), Const.OverlayTypes, Const.GoogleClasses)

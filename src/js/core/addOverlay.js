@@ -41,7 +41,7 @@ var Core = ((Core) => {
 
     if (IsValid.overlayOptions(options)) {
       return new Overlays[type]({
-        id      : options.id,
+        map     : map,
         options : options
       })
     }

@@ -2,7 +2,7 @@
 // gmaps: overlays/polylineArray.js
 // ------------------------------------------------------------------------
 
-var Overlays = ((Overlays, OverlayType) => {
+var Overlays = ((Overlays, OverlayTypes) => {
   "use strict"
 
 
@@ -12,10 +12,10 @@ var Overlays = ((Overlays, OverlayType) => {
 
   class PolylineArray extends Overlays.BaseOverlayArray {
 
-    constructor(parms) {
+    constructor({map}) {
       super({
-        map       : parms.map,
-        type      : OverlayType.POLYLINE_ARRAY
+        map  : map,
+        type : OverlayTypes.POLYLINE_ARRAY
       })
     }
 
@@ -74,4 +74,4 @@ var Overlays = ((Overlays, OverlayType) => {
   Overlays.PolylineArray = PolylineArray
 
   return Overlays
-})(Overlays || (Overlays = {}), Const.OverlayType)
+})(Overlays || (Overlays = {}), Const.OverlayTypes)

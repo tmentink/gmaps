@@ -2,7 +2,7 @@
 // gmaps: overlays/labelArray.js
 // ------------------------------------------------------------------------
 
-var Overlays = ((Overlays, OverlayType) => {
+var Overlays = ((Overlays, OverlayTypes) => {
   "use strict"
 
 
@@ -12,10 +12,10 @@ var Overlays = ((Overlays, OverlayType) => {
 
   class LabelArray extends Overlays.BaseOverlayArray {
 
-    constructor(parms) {
+    constructor({map}) {
       super({
-        map       : parms.map,
-        type      : OverlayType.LABEL_ARRAY
+        map  : map,
+        type : OverlayTypes.LABEL_ARRAY
       })
     }
 
@@ -49,4 +49,4 @@ var Overlays = ((Overlays, OverlayType) => {
   Overlays.LabelArray = LabelArray
 
   return Overlays
-})(Overlays || (Overlays = {}), Const.OverlayType)
+})(Overlays || (Overlays = {}), Const.OverlayTypes)

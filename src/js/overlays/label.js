@@ -2,7 +2,7 @@
 // gmaps: overlays/label.js
 // ------------------------------------------------------------------------
 
-var Overlays = ((Overlays, OverlayType) => {
+var Overlays = ((Overlays, OverlayTypes) => {
   "use strict"
 
 
@@ -12,12 +12,12 @@ var Overlays = ((Overlays, OverlayType) => {
 
   class Label extends Overlays.BaseOverlay {
 
-    constructor(parms) {
+    constructor({map, options}) {
       super({
-        id      : parms.id,
-        obj     : new Overlays.GoogleLabel(parms.options),
-        options : parms.options,
-        type    : OverlayType.LABEL
+        map     : map,
+        obj     : new Overlays.GoogleLabel(options),
+        options : options,
+        type    : OverlayTypes.LABEL
       })
     }
 
@@ -31,4 +31,4 @@ var Overlays = ((Overlays, OverlayType) => {
   Overlays.Label = Label
 
   return Overlays
-})(Overlays || (Overlays = {}), Const.OverlayType)
+})(Overlays || (Overlays = {}), Const.OverlayTypes)

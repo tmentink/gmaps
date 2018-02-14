@@ -2,7 +2,7 @@
 // gmaps: overlays/rectangle.js
 // ------------------------------------------------------------------------
 
-var Overlays = ((Overlays, OverlayType) => {
+var Overlays = ((Overlays, OverlayTypes, GoogleClasses) => {
   "use strict"
 
 
@@ -12,12 +12,12 @@ var Overlays = ((Overlays, OverlayType) => {
 
   class Rectangle extends Overlays.BaseOverlay {
 
-    constructor(parms) {
+    constructor({map, options}) {
       super({
-        id      : parms.id,
-        obj     : new google.maps.Rectangle(parms.options),
-        options : parms.options,
-        type    : OverlayType.RECTANGLE
+        map     : map,
+        obj     : new google.maps[GoogleClasses.RECTANGLE](options),
+        options : options,
+        type    : OverlayTypes.RECTANGLE
       })
     }
 
@@ -58,4 +58,4 @@ var Overlays = ((Overlays, OverlayType) => {
   Overlays.Rectangle = Rectangle
 
   return Overlays
-})(Overlays || (Overlays = {}), Const.OverlayType)
+})(Overlays || (Overlays = {}), Const.OverlayTypes, Const.GoogleClasses)

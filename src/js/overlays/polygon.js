@@ -2,7 +2,7 @@
 // gmaps: overlays/polygon.js
 // ------------------------------------------------------------------------
 
-var Overlays = ((Overlays, OverlayType) => {
+var Overlays = ((Overlays, OverlayTypes, GoogleClasses) => {
   "use strict"
 
 
@@ -12,12 +12,12 @@ var Overlays = ((Overlays, OverlayType) => {
 
   class Polygon extends Overlays.BaseOverlay {
 
-    constructor(parms) {
+    constructor({map, options}) {
       super({
-        id      : parms.id,
-        obj     : new google.maps.Polygon(parms.options),
-        options : parms.options,
-        type    : OverlayType.POLYGON
+        map     : map,
+        obj     : new google.maps[GoogleClasses.POLYGON](options),
+        options : options,
+        type    : OverlayTypes.POLYGON
       })
     }
 
@@ -73,4 +73,4 @@ var Overlays = ((Overlays, OverlayType) => {
   Overlays.Polygon = Polygon
 
   return Overlays
-})(Overlays || (Overlays = {}), Const.OverlayType)
+})(Overlays || (Overlays = {}), Const.OverlayTypes, Const.GoogleClasses)

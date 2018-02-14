@@ -2,7 +2,7 @@
 // gmaps: overlays/circleArray.js
 // ------------------------------------------------------------------------
 
-var Overlays = ((Overlays, OverlayType) => {
+var Overlays = ((Overlays, OverlayTypes) => {
   "use strict"
 
 
@@ -12,10 +12,10 @@ var Overlays = ((Overlays, OverlayType) => {
 
   class RectangleArray extends Overlays.BaseOverlayArray {
 
-    constructor(parms) {
+    constructor({map}) {
       super({
-        map       : parms.map,
-        type      : OverlayType.RECTANGLE_ARRAY
+        map  : map,
+        type : OverlayTypes.RECTANGLE_ARRAY
       })
     }
 
@@ -59,4 +59,4 @@ var Overlays = ((Overlays, OverlayType) => {
   Overlays.RectangleArray = RectangleArray
 
   return Overlays
-})(Overlays || (Overlays = {}), Const.OverlayType)
+})(Overlays || (Overlays = {}), Const.OverlayTypes)

@@ -12,27 +12,23 @@ var Overlays = ((Overlays) => {
 
   class BaseOverlay {
 
-    // id      {string}
-    // obj     {google object}
-    // options {object}
-    // type    {string}
-    constructor(p) {
-      this.id   = p.id
+    constructor({map, obj, options, type}) {
+      this.id   = options.id
       this.init = {
-        options : p.options
+        options : options
       }
-      this.map  = p.options.map.gmaps.parent
-      this.obj  = p.obj
+      this.map  = map
+      this.obj  = obj
       this.obj["gmaps"] = {
-        id      : p.id,
-        map     : p.options.map.gmaps.parent,
+        id      : this.id,
+        map     : map,
         parent  : this,
         version : gmap.version
       }
-      this.type = p.type
+      this.type = type
 
       // add overlay to map.overlays
-      this.map.overlays[p.type].push(this)
+      this.map.overlays[type].push(this)
     }
 
 
