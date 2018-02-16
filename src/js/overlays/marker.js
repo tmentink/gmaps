@@ -6,10 +6,6 @@ var Overlays = ((Overlays, OverlayTypes, GoogleClasses) => {
   "use strict"
 
 
-  // ----------------------------------------------------------------------
-  // Class Definition
-  // ----------------------------------------------------------------------
-
   class Marker extends Overlays.BaseOverlay {
 
     constructor({map, options}) {
@@ -23,7 +19,7 @@ var Overlays = ((Overlays, OverlayTypes, GoogleClasses) => {
 
 
     // --------------------------------------------------------------------
-    // Public Methods
+    // Public
     // --------------------------------------------------------------------
 
     getPosition() {
@@ -69,6 +65,7 @@ var Overlays = ((Overlays, OverlayTypes, GoogleClasses) => {
   // ----------------------------------------------------------------------
 
   Overlays.Marker = Marker
+
 
   return Overlays
 })(Overlays || (Overlays = {}), Const.OverlayTypes, Const.GoogleClasses)

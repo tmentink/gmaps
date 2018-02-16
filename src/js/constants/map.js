@@ -6,10 +6,6 @@ var Const = ((Const) => {
   "use strict"
 
 
-  // ----------------------------------------------------------------------
-  // Map Constants
-  // ----------------------------------------------------------------------
-
   const Options = {
     BACKGROUND_COLOR            : "backgroundColor",
     CENTER                      : "center",
@@ -49,47 +45,47 @@ var Const = ((Const) => {
 
   const Map = {
     options : [
-      { name : Option.BACKGROUND_COLOR },
+      { name : Options.BACKGROUND_COLOR },
       {
-        name : Option.CENTER,
+        name : Options.CENTER,
         convertable : true,
         required    : true
       },
-      { name : Option.CLICKABLE_ICONS },
-      { name : Option.DISABLE_DEFAULT_UI },
-      { name : Option.DISABLE_DOUBLE_CLICK_ZOOM },
-      { name : Option.DRAGGABLE },
-      { name : Option.DRAGGABLE_CURSOR },
-      { name : Option.DRAGGING_CURSOR },
-      { name : Option.FULLSCREEN_CONTROL },
-      { name : Option.FULLSCREEN_CONTROL_OPTIONS },
-      { name : Option.GESTURE_HANDLING },
-      { name : Option.HEADING },
-      { name : Option.KEYBOARD_SHORTCUTS },
-      { name : Option.MAP_TYPE_CONTROL },
-      { name : Option.MAP_TYPE_CONTROL_OPTIONS },
-      { name : Option.MAP_TYPE_ID },
-      { name : Option.MAX_ZOOM },
-      { name : Option.MIN_ZOOM },
-      { name : Option.NO_CLEAR },
-      { name : Option.PAN_CONTROL },
-      { name : Option.PAN_CONTROL_OPTIONS },
-      { name : Option.ROTATE_CONTROL },
-      { name : Option.ROTATE_CONTROL_OPTIONS },
-      { name : Option.SCALE_CONTROL },
-      { name : Option.SCALE_CONTROL_OPTIONS },
-      { name : Option.SCROLL_WHEEL },
-      { name : Option.STREET_VIEW },
-      { name : Option.STREET_VIEW_CONTROL },
-      { name : Option.STREET_VIEW_CONTROL_OPTIONS },
-      { name : Option.STYLES },
-      { name : Option.TILT },
+      { name : Options.CLICKABLE_ICONS },
+      { name : Options.DISABLE_DEFAULT_UI },
+      { name : Options.DISABLE_DOUBLE_CLICK_ZOOM },
+      { name : Options.DRAGGABLE },
+      { name : Options.DRAGGABLE_CURSOR },
+      { name : Options.DRAGGING_CURSOR },
+      { name : Options.FULLSCREEN_CONTROL },
+      { name : Options.FULLSCREEN_CONTROL_OPTIONS },
+      { name : Options.GESTURE_HANDLING },
+      { name : Options.HEADING },
+      { name : Options.KEYBOARD_SHORTCUTS },
+      { name : Options.MAP_TYPE_CONTROL },
+      { name : Options.MAP_TYPE_CONTROL_OPTIONS },
+      { name : Options.MAP_TYPE_ID },
+      { name : Options.MAX_ZOOM },
+      { name : Options.MIN_ZOOM },
+      { name : Options.NO_CLEAR },
+      { name : Options.PAN_CONTROL },
+      { name : Options.PAN_CONTROL_OPTIONS },
+      { name : Options.ROTATE_CONTROL },
+      { name : Options.ROTATE_CONTROL_OPTIONS },
+      { name : Options.SCALE_CONTROL },
+      { name : Options.SCALE_CONTROL_OPTIONS },
+      { name : Options.SCROLL_WHEEL },
+      { name : Options.STREET_VIEW },
+      { name : Options.STREET_VIEW_CONTROL },
+      { name : Options.STREET_VIEW_CONTROL_OPTIONS },
+      { name : Options.STYLES },
+      { name : Options.TILT },
       {
-        name     : Option.ZOOM,
+        name     : Options.ZOOM,
         required : true
       },
-      { name : Option.ZOOM_CONTROL },
-      { name : Option.ZOOM_CONTROL_OPTIONS }
+      { name : Options.ZOOM_CONTROL },
+      { name : Options.ZOOM_CONTROL_OPTIONS }
     ]
   }
 

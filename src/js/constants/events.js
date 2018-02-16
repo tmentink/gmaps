@@ -6,10 +6,6 @@ var Const = ((Const) => {
   "use strict"
 
 
-  // ----------------------------------------------------------------------
-  // Event Constants
-  // ----------------------------------------------------------------------
-
   Const.EventTypes = {
     ANIMATION_CHANGED   : "animation_changed",
     BOUNDS_CHANGED      : "bounds_changed",

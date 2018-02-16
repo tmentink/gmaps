@@ -6,10 +6,6 @@ var Overlays = ((Overlays, OverlayTypes) => {
   "use strict"
 
 
-  // ----------------------------------------------------------------------
-  // Class Definition
-  // ----------------------------------------------------------------------
-
   class CircleArray extends Overlays.BaseOverlayArray {
 
     constructor({map}) {
@@ -21,7 +17,7 @@ var Overlays = ((Overlays, OverlayTypes) => {
 
 
     // --------------------------------------------------------------------
-    // Public Methods
+    // Public
     // --------------------------------------------------------------------
 
     off(type) {
@@ -57,6 +53,7 @@ var Overlays = ((Overlays, OverlayTypes) => {
   // ----------------------------------------------------------------------
 
   Overlays.CircleArray = CircleArray
+
 
   return Overlays
 })(Overlays || (Overlays = {}), Const.OverlayTypes)

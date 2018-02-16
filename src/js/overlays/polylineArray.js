@@ -6,10 +6,6 @@ var Overlays = ((Overlays, OverlayTypes) => {
   "use strict"
 
 
-  // ----------------------------------------------------------------------
-  // Class Definition
-  // ----------------------------------------------------------------------
-
   class PolylineArray extends Overlays.BaseOverlayArray {
 
     constructor({map}) {
@@ -21,7 +17,7 @@ var Overlays = ((Overlays, OverlayTypes) => {
 
 
     // --------------------------------------------------------------------
-    // Public Methods
+    // Public
     // --------------------------------------------------------------------
 
     getPath() {
@@ -72,6 +68,7 @@ var Overlays = ((Overlays, OverlayTypes) => {
   // ----------------------------------------------------------------------
 
   Overlays.PolylineArray = PolylineArray
+
 
   return Overlays
 })(Overlays || (Overlays = {}), Const.OverlayTypes)

@@ -6,10 +6,6 @@ var Overlays = ((Overlays) => {
   "use strict"
 
 
-  // ----------------------------------------------------------------------
-  // Class Definition
-  // ----------------------------------------------------------------------
-
   class BaseOverlay {
 
     constructor({map, obj, options, type}) {
@@ -33,7 +29,7 @@ var Overlays = ((Overlays) => {
 
 
     // --------------------------------------------------------------------
-    // Public Methods
+    // Public
     // --------------------------------------------------------------------
 
     getBounds() {
@@ -126,6 +122,7 @@ var Overlays = ((Overlays) => {
   // ----------------------------------------------------------------------
 
   Overlays.BaseOverlay = BaseOverlay
+
 
   return Overlays
 })(Overlays || (Overlays = {}))

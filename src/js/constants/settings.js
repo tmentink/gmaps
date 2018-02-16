@@ -6,10 +6,6 @@ var Const = ((Const) => {
   "use strict"
 
 
-  // ----------------------------------------------------------------------
-  // Setting Constants
-  // ----------------------------------------------------------------------
-
   Const.Settings = {
     CIRCLE_OPTIONS    : "circleOptions",
     DELIMITED_STRINGS : "delimitedStrings",

@@ -6,10 +6,6 @@ var Overlays = ((Overlays, OverlayTypes, GoogleClasses) => {
   "use strict"
 
 
-  // ----------------------------------------------------------------------
-  // Class Definition
-  // ----------------------------------------------------------------------
-
   class Polygon extends Overlays.BaseOverlay {
 
     constructor({map, options}) {
@@ -23,7 +19,7 @@ var Overlays = ((Overlays, OverlayTypes, GoogleClasses) => {
 
 
     // --------------------------------------------------------------------
-    // Public Methods
+    // Public
     // --------------------------------------------------------------------
 
     getPath(index) {
@@ -71,6 +67,7 @@ var Overlays = ((Overlays, OverlayTypes, GoogleClasses) => {
   // ----------------------------------------------------------------------
 
   Overlays.Polygon = Polygon
+
 
   return Overlays
 })(Overlays || (Overlays = {}), Const.OverlayTypes, Const.GoogleClasses)

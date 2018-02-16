@@ -7,7 +7,7 @@ var IsValid = ((IsValid) => {
 
 
   // ----------------------------------------------------------------------
-  // Public Functions
+  // Public
   // ----------------------------------------------------------------------
 
   IsValid.overlayOptions = function({map, options, type}) {
@@ -38,14 +38,13 @@ var IsValid = ((IsValid) => {
     return true
   }
 
-  // type {string}
   IsValid.overlayType = function(type) {
     return Object.keys(Const.Overlays).includes(type)
   }
 
 
   // ----------------------------------------------------------------------
-  // Private Functions
+  // Private
   // ----------------------------------------------------------------------
 
   function isEmpty(val) {

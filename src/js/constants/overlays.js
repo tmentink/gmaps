@@ -6,10 +6,6 @@ var Const = ((Const) => {
   "use strict"
 
 
-  // ----------------------------------------------------------------------
-  // Overlay Constants
-  // ----------------------------------------------------------------------
-
   const Options = {
     ALIGN            : "align",
     ANCHOR_POINT     : "anchorPoint",

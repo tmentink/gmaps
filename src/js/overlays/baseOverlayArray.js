@@ -6,10 +6,6 @@ var Overlays = ((Overlays) => {
   "use strict"
 
 
-  // ----------------------------------------------------------------------
-  // Class Definition
-  // ----------------------------------------------------------------------
-
   class BaseOverlayArray {
 
     constructor({map, type}) {
@@ -21,7 +17,7 @@ var Overlays = ((Overlays) => {
 
 
     // --------------------------------------------------------------------
-    // Public Methods
+    // Public
     // --------------------------------------------------------------------
 
     copy() {
@@ -189,6 +185,7 @@ var Overlays = ((Overlays) => {
   // ----------------------------------------------------------------------
 
   Overlays.BaseOverlayArray = BaseOverlayArray
+
 
   return Overlays
 })(Overlays || (Overlays = {}))

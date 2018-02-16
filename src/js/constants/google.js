@@ -6,10 +6,6 @@ var Const = ((Const) => {
   "use strict"
 
 
-  // ----------------------------------------------------------------------
-  // Google Constants
-  // ----------------------------------------------------------------------
-
   Const.GoogleClasses = {
     CIRCLE         : "Circle",
     INFO_WINDOW    : "InfoWindow",

@@ -7,7 +7,20 @@ var Convert = ((Convert, Setting) => {
 
 
   // ----------------------------------------------------------------------
-  // Constants
+  // Public
+  // ----------------------------------------------------------------------
+
+  Convert.toString = function({map, val}) {
+    const args     = arguments[0]
+    args.delimited = map.settings[Setting.DELIMITED_STRINGS]
+    args.precision = map.settings[Setting.URL_PRECISION]
+
+    return Conversions[Get.googleClass(val)](args)
+  }
+
+
+  // ----------------------------------------------------------------------
+  // Private
   // ----------------------------------------------------------------------
 
   const Conversions = {
@@ -34,24 +47,6 @@ var Convert = ((Convert, Setting) => {
         : toMultiJSON(args)
     }
   }
-
-
-  // ----------------------------------------------------------------------
-  // Public Functions
-  // ----------------------------------------------------------------------
-
-  Convert.toString = function({map, val}) {
-    const args     = arguments[0]
-    args.delimited = map.settings[Setting.DELIMITED_STRINGS]
-    args.precision = map.settings[Setting.URL_PRECISION]
-
-    return Conversions[Get.googleClass(val)](args)
-  }
-
-
-  // ----------------------------------------------------------------------
-  // Private Functions
-  // ----------------------------------------------------------------------
 
   function toDelimited({map, val, precision}) {
     let str = ""
