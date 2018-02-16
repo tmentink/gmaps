@@ -7,68 +7,7 @@ var Get = ((Get) => {
 
 
   // ----------------------------------------------------------------------
-  // Constants
-  // ----------------------------------------------------------------------
-
-  const Conversions = {
-    bounds: function(options, map) {
-      if (options.bounds) {
-        options.bounds = Convert.toLatLngBounds({
-          map : map,
-          val : options.bounds
-        })
-      }
-    },
-    center: function(options, map) {
-      if (options.center) {
-        options.center = Convert.toLatLng({
-          map : map,
-          val : options.center
-        })
-      }
-    },
-    path: function(options, map) {
-      if (options.path) {
-        options.path = Convert.toLatLngArray({
-          map : map,
-          val : options.path
-        })
-      }
-    },
-    paths: function(options, map) {
-      if (options.paths || options.path) {
-        options.paths = Convert.toLatLngArray({
-          map : map,
-          val : options.paths || options.path
-        })
-        delete options.path
-      }
-    },
-    position: function(options, map) {
-      if (options.position) {
-        options.position = Convert.toLatLng({
-          map : map,
-          val : options.position
-        })
-      }
-    }
-  }
-
-  const FormatID = {
-    auto: function(map, type) {
-      return `__${map.overlays[type].seed++}__`
-    },
-    number: function(id) {
-      return id.toString()
-    },
-    string: function(id) {
-      return id
-    }
-  }
-
-
-  // ----------------------------------------------------------------------
-  // Public Functions
+  // Public
   // ----------------------------------------------------------------------
 
   Get.convertedOptions = function({map, options, type}) {
@@ -79,7 +18,7 @@ var Get = ((Get) => {
 
     for (var i = 0, i_end = convertableOptions.length; i < i_end; i++) {
       const opt = convertableOptions[i]
-      Conversions[opt.name](options, map)
+      Conversions[opt.name](arguments[0])
     }
 
     return options
@@ -97,7 +36,7 @@ var Get = ((Get) => {
 
   Get.formattedId = function({map, options, type}) {
     const id = options.id
-    return FormatID[$.type(id)](id) || FormatID["auto"](map, type)
+    return FormatID[$.type(id)](id) || FormatID["auto"](arguments[0])
   }
 
   Get.mergedOptions = function({map, options, type, convert}) {
@@ -110,6 +49,67 @@ var Get = ((Get) => {
     return convert
       ? Get.convertedOptions(args)
       : options
+  }
+
+
+  // ----------------------------------------------------------------------
+  // Private
+  // ----------------------------------------------------------------------
+
+  const Conversions = {
+    bounds: function({options, map}) {
+      if (options.bounds) {
+        options.bounds = Convert.toLatLngBounds({
+          map : map,
+          val : options.bounds
+        })
+      }
+    },
+    center: function({options, map}) {
+      if (options.center) {
+        options.center = Convert.toLatLng({
+          map : map,
+          val : options.center
+        })
+      }
+    },
+    path: function({options, map}) {
+      if (options.path) {
+        options.path = Convert.toLatLngArray({
+          map : map,
+          val : options.path
+        })
+      }
+    },
+    paths: function({options, map}) {
+      if (options.paths || options.path) {
+        options.paths = Convert.toLatLngArray({
+          map : map,
+          val : options.paths || options.path
+        })
+        delete options.path
+      }
+    },
+    position: function({options, map}) {
+      if (options.position) {
+        options.position = Convert.toLatLng({
+          map : map,
+          val : options.position
+        })
+      }
+    }
+  }
+
+  const FormatID = {
+    auto: function({map, type}) {
+      return `__${map.overlays[type].seed++}__`
+    },
+    number: function(id) {
+      return id.toString()
+    },
+    string: function(id) {
+      return id
+    }
   }
 
 
