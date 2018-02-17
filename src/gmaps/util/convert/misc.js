@@ -8,21 +8,15 @@ var Convert = ((Convert) => {
   // ----------------------------------------------------------------------
 
   Convert.toArray = function(val) {
-    if ($.isArray(val) === false) {
-      return [val]
-    }
-
-    return val
+    return Is.Array(val)
+      ? val
+      : [val]
   }
 
   Convert.toLowerCase = function(val) {
-    const regex = /\s+|_+/g
-
-    if ($.type(val) === "string") {
-      return val.toLowerCase().replace(regex, "")
-    }
-
-    return undefined
+    return Is.String(val)
+      ? val.toLowerCase().replace(regex, "")
+      : undefined
   }
 
 

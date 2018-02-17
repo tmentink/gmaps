@@ -20,7 +20,7 @@ var Core = ((Core) => {
     }
 
     args.type = type
-    return $.isArray(options)
+    return Is.Array(options)
       ? multiAdd(args)
       : add(args)
   }

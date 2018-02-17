@@ -10,7 +10,7 @@ var Convert = ((Convert, Setting) => {
   Convert.toLatLng = function({map, val}) {
     if (Is.LatLng(val)) return val
 
-    if ($.type(val) === "string") {
+    if (Is.String(val)) {
       return map.settings[Setting.DELIMITED_STRINGS]
         ? strToLatLng(val)
         : JSON.parse(val)
@@ -20,7 +20,7 @@ var Convert = ((Convert, Setting) => {
   Convert.toLatLngArray = function({map, val}) {
     if (Is.MVCArray(val)) return val
 
-    if ($.type(val) === "string") {
+    if (Is.String(val)) {
       return map.settings[Setting.DELIMITED_STRINGS]
         ? strToLatLngArray(arguments[0])
         : JSON.parse(val)
@@ -30,7 +30,7 @@ var Convert = ((Convert, Setting) => {
   Convert.toLatLngBounds = function({map, val}) {
     if (Is.LatLngBounds(val)) return val
 
-    if ($.type(val) === "string") {
+    if (Is.String(val)) {
       return map.settings[Setting.DELIMITED_STRINGS]
         ? strToLatLngBounds(arguments[0])
         : JSON.parse(val)
