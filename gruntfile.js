@@ -22,7 +22,7 @@ module.exports = function(grunt) {
     },
 
     // --------------------------------------------------------------------
-    // Grunt Tasks
+    // Tasks
     // --------------------------------------------------------------------
 
     babel: {
@@ -37,24 +37,19 @@ module.exports = function(grunt) {
     },
     concat: {
       gmaps: {
-        src: ["src/js/vendor/**/*.js",
-              "src/js/constructor.js",
-              "src/js/constants/**/*.js",
-              "src/js/settings.js",
-              "src/js/util/**/*.js",
-              "src/js/core/**/*.js",
-              "src/js/prototype.js",
-              "src/js/shapes/**/*.js",
-              "src/js/components/baseComponent.js",
-              "src/js/components/baseComponentArray.js",
-              "src/js/components/googleLabel.js",
-              "src/js/components/**/*.js",
+        src: ["vendor/**/*.js",
+              "src/polyfills/**/*.js",
+              "src/gmaps/constructor.js",
+              "src/gmaps/constants/**/*.js",
+              "src/gmaps/settings.js",
+              "src/gmaps/prototype.js",
+              "src/gmaps/**/*.js"
              ],
-        dest: "src/js/main.js"
+        dest: "src/main.js"
       }
     },
     eslint: {
-      target: ["src/js/**/*.js"]
+      target: ["src/**/*.js"]
     },
     stamp: {
       gmaps: {
@@ -68,7 +63,7 @@ module.exports = function(grunt) {
       }
     },
     uglify: {
-      dev: {
+      compiled: {
         options: {
           banner: "<%= banner %>",
           beautify: true,
@@ -82,18 +77,12 @@ module.exports = function(grunt) {
         src: "<%= concat.gmaps.dest %>",
         dest: "dist/<%= pkg.name %>.js",
       },
-      dist: {
+      minified: {
         options: {
           banner: "<%= banner %>"
         },
         src: "<%= concat.gmaps.dest %>",
         dest: "dist/<%= pkg.name %>.min.js",
-      }
-    },
-    watch: {
-      js: {
-        files: ["src/js/**/*.js"],
-        tasks: ["concat", "stamp", "babel", "uglify:dev", "clean"]
       }
     }
   })
