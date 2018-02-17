@@ -25,7 +25,7 @@ var Get = ((Get) => {
 
   Get.type = function(val) {
     return Object.prototype.toString.call(val)
-      .replace(/^\[object (.+)\]$/, '$1').toLowerCase()
+      .replace(/^\[object (.+)\]$/, "$1").toLowerCase()
   }
 
 
