@@ -16,7 +16,7 @@ var Convert = ((Convert) => {
   }
 
   Convert.toLowerCase = function(val) {
-    const regex = /\s+|\_+/g
+    const regex = /\s+|_+/g
 
     if ($.type(val) === "string") {
       return val.toLowerCase().replace(regex, "")
