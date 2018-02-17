@@ -23,6 +23,11 @@ var Get = ((Get) => {
     return new Overlays[type]({ map: map })
   }
 
+  Get.type = function(val) {
+    return Object.prototype.toString.call(val)
+      .replace(/^\[object (.+)\]$/, '$1').toLowerCase()
+  }
+
 
   return Get
 })(Get || (Get = {}))
