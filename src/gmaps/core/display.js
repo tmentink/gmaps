@@ -61,7 +61,7 @@ var Core = ((Core) => {
   function multiDisplay({action, ovlArray}) {
     const args        = arguments[0]
     const ids         = ovlArray.getIds()
-    const newOvlArray = Get.newOverlayArray(args)
+    const newOvlArray = Get.newOverlayArray({ovlArray: ovlArray})
 
     for (var i = 0, i_end = ids.length; i < i_end; i++) {
       args.ovl = ovlArray.findById(ids[i])
