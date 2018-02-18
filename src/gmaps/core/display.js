@@ -10,12 +10,14 @@ var Core = ((Core) => {
   Core.hide = function({ovl, ovlArray}) {
     const args  = arguments[0]
     args.action = Action.HIDE
+
     return display(args)
   }
 
   Core.show = function({ovl, ovlArray}) {
     const args  = arguments[0]
     args.action = Action.SHOW
+
     return display(args)
   }
 
