@@ -45,17 +45,17 @@ var Core = ((Core) => {
   }
 
   function multiAdd({map, options, type}) {
-    const args         = arguments[0]
-    const overlayArray = Get.newOverlayArray(args)
+    const args        = arguments[0]
+    const newOvlArray = Get.newOverlayArray(args)
 
     for (var i = 0, i_end = options.length; i < i_end; i++) {
-      args.options  = options[i]
-      const overlay = add(args)
+      args.options = options[i]
+      const ovl    = add(args)
 
-      if (overlay) overlayArray.push(overlay)
+      if (ovl) newOvlArray.push(ovl)
     }
 
-    return overlayArray
+    return newOvlArray
   }
 
 

@@ -20,7 +20,7 @@ var Get = ((Get) => {
       type = ovlArray.type
     }
 
-    return new Overlays[type]({ map: map })
+    return new Overlays[type]({map: map})
   }
 
   Get.type = function(val) {
