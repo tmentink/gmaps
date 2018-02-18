@@ -1,5 +1,5 @@
 
-var Convert = ((Convert, Setting) => {
+var Convert = ((Convert, Settings) => {
   "use strict"
 
 
@@ -9,8 +9,8 @@ var Convert = ((Convert, Setting) => {
 
   Convert.toString = function({map, val}) {
     const args     = arguments[0]
-    args.delimited = map.settings[Setting.DELIMITED_STRINGS]
-    args.precision = map.settings[Setting.URL_PRECISION]
+    args.delimited = map.settings[Settings.DELIMITED_STRINGS]
+    args.precision = map.settings[Settings.URL_PRECISION]
 
     return Conversions[Get.googleClass(val)](args)
   }
@@ -49,7 +49,7 @@ var Convert = ((Convert, Setting) => {
     let str = ""
 
     val.forEach(function(el, i) {
-      if (i > 0) str += map.settings[Setting.DELIMITER].latLng
+      if (i > 0) str += map.settings[Settings.DELIMITER].latLng
       str += el.toUrlValue(precision)
     })
 
@@ -71,7 +71,7 @@ var Convert = ((Convert, Setting) => {
     let str    = ""
 
     val.forEach(function(el, i) {
-      if (i > 0) str += map.settings[Setting.DELIMITER].latLngArray
+      if (i > 0) str += map.settings[Settings.DELIMITER].latLngArray
       args.val = el
       str += toDelimited(args)
     })
@@ -93,4 +93,4 @@ var Convert = ((Convert, Setting) => {
 
 
   return Convert
-})(Convert || (Convert = {}), Const.Setting)
+})(Convert || (Convert = {}), Const.Settings)

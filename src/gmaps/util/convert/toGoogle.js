@@ -1,5 +1,5 @@
 
-var Convert = ((Convert, Setting) => {
+var Convert = ((Convert, Settings) => {
   "use strict"
 
 
@@ -11,7 +11,7 @@ var Convert = ((Convert, Setting) => {
     if (Is.LatLng(val)) return val
 
     if (Is.String(val)) {
-      return map.settings[Setting.DELIMITED_STRINGS]
+      return map.settings[Settings.DELIMITED_STRINGS]
         ? strToLatLng(val)
         : JSON.parse(val)
     }
@@ -21,7 +21,7 @@ var Convert = ((Convert, Setting) => {
     if (Is.MVCArray(val)) return val
 
     if (Is.String(val)) {
-      return map.settings[Setting.DELIMITED_STRINGS]
+      return map.settings[Settings.DELIMITED_STRINGS]
         ? strToLatLngArray(arguments[0])
         : JSON.parse(val)
     }
@@ -31,7 +31,7 @@ var Convert = ((Convert, Setting) => {
     if (Is.LatLngBounds(val)) return val
 
     if (Is.String(val)) {
-      return map.settings[Setting.DELIMITED_STRINGS]
+      return map.settings[Settings.DELIMITED_STRINGS]
         ? strToLatLngBounds(arguments[0])
         : JSON.parse(val)
     }
@@ -73,4 +73,4 @@ var Convert = ((Convert, Setting) => {
 
 
   return Convert
-})(Convert || (Convert = {}), Const.Setting)
+})(Convert || (Convert = {}), Const.Settings)
