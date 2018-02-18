@@ -1,5 +1,5 @@
 
-var Core = ((Core, ComponentType) => {
+var Core = ((Core) => {
   "use strict"
 
 
@@ -7,21 +7,18 @@ var Core = ((Core, ComponentType) => {
   // Public
   // ----------------------------------------------------------------------
 
-  Core.reset = function(parms) {
-    const comp      = parms.comp
-    const compArray = parms.compArray
-    const ids       = parms.ids
+  Core.reset = function({ovl, ovlArray}) {
+    const args = arguments[0]
 
-    if ($.isArray(ids)) {
-      return _multiReset(compArray, ids)
-    }
+    return ovlArray
+      ? multiReset(ovlArray)
+      : reset(ovl)
+  }
 
-    if (comp) {
-      if (comp.type === ComponentType.MAP) {
-        comp.obj.fitBounds(comp.init.bounds)
-      }
-      return _reset(comp)
-    }
+  Core.resetMap = function({map}) {
+    map.obj.fitBounds(map.init.bounds)
+    map.obj.setOptions(map.init.options)
+    return map
   }
 
 
@@ -29,24 +26,24 @@ var Core = ((Core, ComponentType) => {
   // Private
   // ----------------------------------------------------------------------
 
-  function _reset(comp) {
-    comp.obj.setOptions(comp.init.options)
-    return comp
+  function reset(ovl) {
+    ovl.obj.setOptions(ovl.init.options)
+    return ovl
   }
 
-  function _multiReset(compArray, ids) {
-    const newCompArray = Util.getNewComponentArray(compArray)
+  function multiReset(ovlArray) {
+    const args        = arguments[0]
+    const ids         = ovlArray.getIds()
+    const newOvlArray = Get.newOverlayArray({ovlArray: ovlArray})
 
     for (var i = 0, i_end = ids.length; i < i_end; i++) {
-      const comp = compArray.findById(ids[i])
-      if (comp) {
-        newCompArray.push(_reset(comp))
-      }
+      const ovl = ovlArray.findById(ids[i])
+      if (ovl) newOvlArray.push(reset(ovl))
     }
 
-    return newCompArray
+    return newOvlArray
   }
 
 
   return Core
-})(Core || (Core = {}), Const.ComponentType)
+})(Core || (Core = {}))
