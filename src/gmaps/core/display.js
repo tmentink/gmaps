@@ -7,21 +7,27 @@ var Core = ((Core) => {
   // Public
   // ----------------------------------------------------------------------
 
-  Core.hide = function(parms) {
-    return _display(parms.comp, parms.compArray, parms.ids, Action.HIDE)
+  Core.hide = function({ovl, ovlArray}) {
+    const args  = arguments[0]
+    args.action = Action.HIDE
+    return display(args)
   }
 
-  Core.show = function(parms) {
-    return _display(parms.comp, parms.compArray, parms.ids, Action.SHOW)
+  Core.show = function({ovl, ovlArray}) {
+    const args  = arguments[0]
+    args.action = Action.SHOW
+    return display(args)
   }
 
-  Core.toggle = function(parms) {
-    let action = Action.TOGGLE
-    if ($.type(parms.condition) === "boolean") {
-      action = parms.condition ? Action.SHOW : Action.HIDE
+  Core.toggle = function({condition, ovl, ovlArray}) {
+    const args  = arguments[0]
+    args.action = Action.TOGGLE
+
+    if (Is.Boolean(condition)) {
+      args.action = condition ? Action.SHOW : Action.HIDE
     }
 
-    return _display(parms.comp, parms.compArray, parms.ids, action)
+    return display(args)
   }
 
 
@@ -42,37 +48,34 @@ var Core = ((Core) => {
     show: function() {
       return true
     },
-    toggle: function(comp) {
-      return !comp.obj.getVisible()
+    toggle: function(ovl) {
+      return !ovl.obj.getVisible()
     }
   }
 
-  function _display(comp, compArray, ids, action) {
-    if ($.isArray(ids)) {
-      return _multiDisplay(compArray, ids, action)
-    }
-
-    if (comp) {
-      return _setVisibility(comp, action)
-    }
+  function display({action, ovl}) {
+    ovl.obj.setOptions({visible: Visibility[action](ovl)})
+    return ovl
   }
 
-  function _multiDisplay(compArray, ids, action) {
-    const newCompArray = Util.getNewComponentArray(compArray)
+  function multiDisplay({action, ovlArray}) {
+    const args        = arguments[0]
+    const ids         = ovlArray.getIds()
+    const newOvlArray = Get.newOverlayArray(args)
 
     for (var i = 0, i_end = ids.length; i < i_end; i++) {
-      const comp = compArray.findById(ids[i])
-      if (comp) {
-        newCompArray.push(_setVisibility(comp, action))
-      }
+      args.ovl = ovlArray.findById(ids[i])
+      if (args.ovl) newOvlArray.push(display(args))
     }
 
-    return newCompArray
+    return newOvlArray
   }
 
-  function _setVisibility(comp, action) {
-    comp.obj.setOptions({ "visible": Visibility[action](comp) })
-    return comp
+  function setDisplay({action, ovl, ovlArray}) {
+    const args = arguments[0]
+    return ovlArray
+      ? multiDisplay(args)
+      : display(args)
   }
 
 
