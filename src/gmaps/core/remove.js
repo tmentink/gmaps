@@ -7,45 +7,26 @@ var Core = ((Core) => {
   // Public
   // ----------------------------------------------------------------------
 
-  Core.pop = function(parms) {
-    const count = parms.count || 1
-    const map   = parms.map
-    const type  = Util.lookupComponentType(parms.type)
-    return _pop(map.components[type], count, Action.POP)
+  Core.pop = function({count, ovlArray}) {
+    const args  = arguments[0]
+    args.action = Action.POP
+
+    return pop(args)
   }
 
-  Core.remove = function(parms) {
-    let ids    = parms.ids
-    const map  = parms.map
-    const type = Util.lookupComponentType(parms.type)
+  Core.remove = function({ovl, ovlArray}) {
+    const args = arguments[0]
 
-    if (Util.validMapComponent(type)) {
-      const compArray = map.components[type]
-      ids = ids || compArray.getIds()
-
-      if ($.isArray(ids)) {
-        return _multiRemove(compArray, ids)
-      }
-
-      const comp = compArray.findById(ids)
-      if (comp) {
-        return _remove(comp)
-      }
-    }
-    else {
-      return Util.throwError({
-        method  : "remove",
-        message : `${type} is not a valid map component`,
-        obj     : {type: type}
-      })
-    }
+    return ovlArray
+      ? multiRemove(ovlArray)
+      : remove(ovl)
   }
 
-  Core.shift = function(parms) {
-    const count = parms.count || 1
-    const map   = parms.map
-    const type  = Util.lookupComponentType(parms.type)
-    return _pop(map.components[type], count, Action.SHIFT)
+  Core.shift = function({count, ovlArray}) {
+    const args  = arguments[0]
+    args.action = Action.SHIFT
+
+    return pop(args)
   }
 
 
@@ -59,48 +40,48 @@ var Core = ((Core) => {
   }
 
   const RemoveFunction = {
-    pop: function(compArray) {
-      const comp = compArray.data.pop()
-      comp.obj.setMap(null)
-      return comp
+    pop: function(ovlArray) {
+      const ovl = ovlArray.data.pop()
+      ovl.obj.setMap(null)
+      return ovl
     },
-    shift: function(compArray) {
-      const comp = compArray.data.shift()
-      comp.obj.setMap(null)
-      return comp
+    shift: function(ovlArray) {
+      const ovl = ovlArray.data.shift()
+      ovl.obj.setMap(null)
+      return ovl
     }
   }
 
-  function _remove(comp) {
-    const compArray = comp.map.components[comp.type]
-    const index     = compArray.data.indexOf(comp)
+  function remove(ovl) {
+    const ovlArray = ovl.map.components[ovl.type]
+    const index    = ovlArray.data.indexOf(ovl)
 
-    comp.obj.setMap(null)
-    return compArray.data.splice(index, 1)[0]
+    ovl.obj.setMap(null)
+    return ovlArray.data.splice(index, 1)[0]
   }
 
-  function _multiRemove(compArray, ids) {
-    const newCompArray = Util.getNewComponentArray(compArray)
+  function multiRemove(ovlArray) {
+    const args        = arguments[0]
+    const ids         = ovlArray.getIds()
+    const newOvlArray = Get.newOverlayArray({ovlArray: ovlArray})
 
     for (var i = 0, i_end = ids.length; i < i_end; i++) {
-      const comp = compArray.findById(ids[i])
-      if (comp) {
-        newCompArray.push(_remove(comp))
-      }
+      args.ovl = ovlArray.findById(ids[i])
+      if (args.ovl) newOvlArray.push(remove(args))
     }
 
-    return newCompArray
+    return newOvlArray
   }
 
-  function _pop(compArray, count, action) {
-    const newCompArray = Util.getNewComponentArray(compArray)
+  function pop({action, count=1, ovlArray}) {
+    const newOvlArray = Get.newOverlayArray({ovlArray: ovlArray})
 
-    while (count > 0 && compArray.data.length > 0) {
-      newCompArray.push(RemoveFunction[action](compArray))
+    while (count > 0 && ovlArray.data.length > 0) {
+      newOvlArray.push(RemoveFunction[action](ovlArray))
       count --
     }
 
-    return newCompArray
+    return newOvlArray
   }
 
 
