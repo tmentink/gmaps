@@ -7,18 +7,17 @@ var Core = ((Core) => {
   // Public
   // ----------------------------------------------------------------------
 
-  Core.search = function(parms) {
-    const ids       = parms.ids
-    const map       = parms.map
-    const matching  = parms.matching
-    const type      = parms.type
-    const compArray = map.components[type]
+  Core.search = function({ids, matching, ovlArray}) {
+    const args        = arguments[0]
+    args.ids          = formatIds(ids)
+    const map         = ovlArray.map
+    const newOvlArray = Get.newOverlayArray({ovlArray: ovlArray})
 
-    const newCompArray = Util.getNewComponentArray(compArray)
-    newCompArray.data  = ids !== undefined ?
-      _getDataByIds(compArray, _formatIds(ids), matching) : compArray.data.slice(0)
+    newOvlArray.data  = ids === undefined
+      ? ovlArray.data.slice(0)
+      : getDataByIds(args)
 
-    return newCompArray
+    return newOvlArray
   }
 
 
@@ -26,16 +25,15 @@ var Core = ((Core) => {
   // Private
   // ----------------------------------------------------------------------
 
-  function _formatIds(ids) {
-    return Util.toArray(ids).map(function(id) {
-      return id.toString()
-    })
+  function formatIds(ids) {
+    return Convert.toArray(ids).map(id => id.toString())
   }
 
-  function _getDataByIds(compArray, ids, matching) {
-    return compArray.data.filter(function(comp) {
-      return matching === true ?
-        ids.indexOf(comp.id) !== -1 : ids.indexOf(comp.id) === -1
+  function getDataByIds({ids, matching, ovlArray}) {
+    return ovlArray.data.filter(ovl => {
+      return matching === true
+        ? ids.indexOf(ovl.id) !== -1
+        : ids.indexOf(ovl.id) === -1
     })
   }
 
