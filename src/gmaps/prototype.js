@@ -134,14 +134,6 @@
       })
     },
 
-    remove: function(type, ids) {
-      return Core.remove({
-        ids  : ids,
-        map  : this,
-        type : type
-      })
-    },
-
     reset: function() {
       return Core.reset({
         comp: this

@@ -70,6 +70,10 @@ var Overlays = ((Overlays) => {
       })
     }
 
+    remove() {
+      return Core.remove({ovl: this})
+    }
+
     reset() {
       return Core.reset({
         comp : this

@@ -121,6 +121,10 @@ var Overlays = ((Overlays) => {
       return this.data.push(comp)
     }
 
+    remove() {
+      return Core.remove({ovlArray: this})
+    }
+
     reset() {
       return Core.reset({
         compArray : this,

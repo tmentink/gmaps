@@ -53,7 +53,7 @@ var Core = ((Core) => {
   }
 
   function remove(ovl) {
-    const ovlArray = ovl.map.components[ovl.type]
+    const ovlArray = ovl.map.overlays[ovl.type]
     const index    = ovlArray.data.indexOf(ovl)
 
     ovl.obj.setMap(null)
@@ -66,8 +66,8 @@ var Core = ((Core) => {
     const newOvlArray = Get.newOverlayArray({ovlArray: ovlArray})
 
     for (var i = 0, i_end = ids.length; i < i_end; i++) {
-      args.ovl = ovlArray.findById(ids[i])
-      if (args.ovl) newOvlArray.push(remove(args))
+      const ovl = ovlArray.findById(ids[i])
+      if (ovl) newOvlArray.push(remove(ovl))
     }
 
     return newOvlArray
