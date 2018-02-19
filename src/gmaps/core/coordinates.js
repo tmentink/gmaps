@@ -7,30 +7,10 @@ var Core = ((Core) => {
   // Public
   // ----------------------------------------------------------------------
 
-  Core.getCoordinates = function(parms) {
-    let comp        = parms.comp
-    let coords      = null
-    const compArray = parms.compArray
-    const ids       = Util.toArray(parms.ids)
-    const index     = parms.index
-    const stringify = parms.stringify
-    const retVal    = {}
-
-    if (comp) {
-      coords = CoordinateFunctions[comp.type](comp.obj, index)
-      return _getCoords(coords, comp.map, stringify)
-    }
-
-    for (var i = 0, i_end = ids.length; i < i_end; i++) {
-      const id = ids[i]
-      comp     = compArray.findById(id)
-      if (comp) {
-        coords     = CoordinateFunctions[comp.type](comp.obj, index)
-        retVal[id] = _getCoords(coords, comp.map, stringify)
-      }
-    }
-
-    return _formatRetVal(retVal)
+  Core.getCoordinates = function({index, ovl, ovlArray, stringify}) {
+    return ovlArray
+      ? multiGetCoords(args)
+      : getCoords(args)
   }
 
 
@@ -38,38 +18,54 @@ var Core = ((Core) => {
   // Private
   // ----------------------------------------------------------------------
 
-  const CoordinateFunctions = {
-    Label: function(obj) {
-      return obj.getPosition()
+  const Coordinates = {
+    Label: function({ovl}) {
+      return ovl.obj.getPosition()
     },
-    Marker: function(obj) {
-      return obj.getPosition()
+    Marker: function({ovl}) {
+      return ovl.obj.getPosition()
     },
-    Polygon: function(obj, index) {
-      // eslint-disable-next-line eqeqeq
-      return index != null ? obj.getPaths().getAt(index) : obj.getPaths()
+    Polygon: function({index, ovl}) {
+      return index >= 0
+        ? ovl.obj.getPaths().getAt(index)
+        : ovl.obj.getPaths()
     },
-    Polyline: function(obj) {
-      return obj.getPath()
+    Polyline: function({ovl}) {
+      return ovl.obj.getPath()
     }
   }
 
-  function _formatRetVal(retVal) {
+  function formatCoords({val, map, stringify}) {
+    return stringify
+      ? Convert.toString(arguments[0])
+      : val
+  }
+
+  function formatRetVal(retVal) {
     const keys = Object.keys(retVal)
-    return keys.length === 1 ? retVal[keys[0]] : retVal
+    return keys.length === 1
+      ? retVal[keys[0]]
+      : retVal
   }
 
-  function _getCoords(coords, map, stringify) {
-    let retVal = coords
+  function getCoords({index, ovl, stringify}) {
+    const args = arguments[0]
+    args.val   = Coordinates[ovl.type](args)
 
-    if (stringify) {
-      retVal = Util.toString({
-        map : map,
-        val : coords
-      })
+    return formatCoords(args)
+  }
+
+  function multiGetCoords({index, ovlArray, stringify}) {
+    const args   = arguments[0]
+    const ids    = ovlArray.getIds()
+    const retVal = {}
+
+    for (var i = 0, i_end = ids.length; i < i_end; i++) {
+      args.ovl = ovlArray.findById(ids[i])
+      if (args.ovl) retVal[id] = getCoords(args)
     }
 
-    return retVal
+    return formatRetVal(retVal)
   }
 
 
