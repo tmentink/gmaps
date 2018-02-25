@@ -21,13 +21,13 @@ var Convert = ((Convert, Settings) => {
   // ----------------------------------------------------------------------
 
   const Conversions = {
-    LatLng: function({map, val, delimited}) {
+    LatLng({map, val, delimited}) {
       const args = arguments[0]
       return delimited
         ? toDelimited(args)
         : toJSON(args)
     },
-    MVCArray: function ({map, val, delimited}) {
+    MVCArray ({map, val, delimited}) {
       const args = arguments[0]
       if (Is.MVCArray(val.getAt(0))) {
         return Conversions.NestedMVCArray(args)
@@ -37,7 +37,7 @@ var Convert = ((Convert, Settings) => {
         ? toDelimited(args)
         : toJSON(args)
     },
-    NestedMVCArray: function ({map, val, delimited}) {
+    NestedMVCArray ({map, val, delimited}) {
       const args = arguments[0]
       return delimited
         ? toMultiDelimited(args)

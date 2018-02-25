@@ -54,7 +54,7 @@ var Get = ((Get) => {
   // ----------------------------------------------------------------------
 
   const Conversions = {
-    bounds: function({options, map}) {
+    bounds({options, map}) {
       if (options.bounds) {
         options.bounds = Convert.toLatLngBounds({
           map : map,
@@ -62,7 +62,7 @@ var Get = ((Get) => {
         })
       }
     },
-    center: function({options, map}) {
+    center({options, map}) {
       if (options.center) {
         options.center = Convert.toLatLng({
           map : map,
@@ -70,7 +70,7 @@ var Get = ((Get) => {
         })
       }
     },
-    path: function({options, map}) {
+    path({options, map}) {
       if (options.path) {
         options.path = Convert.toLatLngArray({
           map : map,
@@ -78,7 +78,7 @@ var Get = ((Get) => {
         })
       }
     },
-    paths: function({options, map}) {
+    paths({options, map}) {
       if (options.paths || options.path) {
         options.paths = Convert.toLatLngArray({
           map : map,
@@ -87,7 +87,7 @@ var Get = ((Get) => {
         delete options.path
       }
     },
-    position: function({options, map}) {
+    position({options, map}) {
       if (options.position) {
         options.position = Convert.toLatLng({
           map : map,
@@ -98,13 +98,13 @@ var Get = ((Get) => {
   }
 
   const FormatID = {
-    auto: function({map, type}) {
+    auto({map, type}) {
       return `__${map.overlays[type].seed++}__`
     },
-    number: function(id) {
+    number(id) {
       return id.toString()
     },
-    string: function(id) {
+    string(id) {
       return id
     }
   }

@@ -63,22 +63,22 @@ var Core = ((Core) => {
   // ----------------------------------------------------------------------
 
   const BoundsFunction = {
-    Circle: function(comp) {
+    Circle(comp) {
       return comp.obj.getBounds()
     },
-    Label: function(comp) {
+    Label(comp) {
       return _getBoundsByPosition(comp)
     },
-    Marker: function(comp) {
+    Marker(comp) {
       return _getBoundsByPosition(comp)
     },
-    Polygon: function(comp) {
+    Polygon(comp) {
       return _getBoundsByPaths(comp)
     },
-    Polyline: function(comp) {
+    Polyline(comp) {
       return _getBoundsByPath(comp)
     },
-    Rectangle: function(comp) {
+    Rectangle(comp) {
       return comp.obj.getBounds()
     }
   }

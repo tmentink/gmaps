@@ -40,12 +40,12 @@ var Core = ((Core) => {
   }
 
   const RemoveFunction = {
-    pop: function(ovlArray) {
+    pop(ovlArray) {
       const ovl = ovlArray.data.pop()
       ovl.obj.setMap(null)
       return ovl
     },
-    shift: function(ovlArray) {
+    shift(ovlArray) {
       const ovl = ovlArray.data.shift()
       ovl.obj.setMap(null)
       return ovl

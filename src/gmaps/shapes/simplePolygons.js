@@ -35,12 +35,12 @@
   ]
 
   const ShapeDegrees = {
-    decagon   : [ 36, 72, 108, 144, 180, 216, 252, 288, 324, 360 ],
-    hexagon   : [ 30, 90, 150, 210, 270, 330 ],
-    pentagon  : [ 72, 144, 216, 288, 360 ],
-    rectangle : [ 60, 120, 240, 300 ],
-    square    : [ 45, 135, 225, 315 ],
-    triangle  : [ 120, 240, 360 ]
+    decagon   : [36, 72, 108, 144, 180, 216, 252, 288, 324, 360],
+    hexagon   : [30, 90, 150, 210, 270, 330],
+    pentagon  : [72, 144, 216, 288, 360],
+    rectangle : [60, 120, 240, 300],
+    square    : [45, 135, 225, 315],
+    triangle  : [120, 240, 360]
   }
 
   function _getShapePath(map, parms, type) {

@@ -41,19 +41,19 @@ var Core = ((Core) => {
   }
 
   const Execute = {
-    add: function({func, ovl, type}) {
+    add({func, ovl, type}) {
       google.maps.event.addListener(ovl.obj, type, func)
       return ovl
     },
-    remove_all: function({ovl}) {
+    remove_all({ovl}) {
       google.maps.event.clearInstanceListeners(ovl.obj)
       return ovl
     },
-    remove_type: function({ovl, type}) {
+    remove_type({ovl, type}) {
       google.maps.event.clearListeners(ovl.obj, type)
       return ovl
     },
-    trigger: function({ovl, type}) {
+    trigger({ovl, type}) {
       google.maps.event.trigger(ovl.obj, type, {})
       return ovl
     }

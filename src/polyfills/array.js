@@ -9,7 +9,7 @@
 
   if (!Array.prototype.find) {
     Object.defineProperty(Array.prototype, "find", {
-      value: function(predicate) {
+      value(predicate) {
 
         // eslint-disable-next-line eqeqeq
         if (this == null) {
@@ -46,7 +46,7 @@
 
   if (!Array.prototype.includes) {
     Object.defineProperty(Array.prototype, "includes", {
-      value: function(searchElement, fromIndex) {
+      value(searchElement, fromIndex) {
 
         // eslint-disable-next-line eqeqeq
         if (this == null) {

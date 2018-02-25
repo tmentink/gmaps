@@ -44,13 +44,13 @@ var Core = ((Core) => {
   }
 
   const Visibility = {
-    hide: function() {
+    hide() {
       return false
     },
-    show: function() {
+    show() {
       return true
     },
-    toggle: function(ovl) {
+    toggle(ovl) {
       return !ovl.obj.getVisible()
     }
   }

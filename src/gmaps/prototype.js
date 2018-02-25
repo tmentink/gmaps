@@ -9,7 +9,7 @@
 
   gmap.prototype = {
 
-    add: function(type, compOptions) {
+    add(type, compOptions) {
       return Core.addComponent({
         compOptions : compOptions,
         map         : this,
@@ -17,7 +17,7 @@
       })
     },
 
-    circles: function(ids) {
+    circles(ids) {
       return Core.search({
         ids      : ids,
         map      : this,
@@ -26,55 +26,55 @@
       })
     },
 
-    fitBounds: function(comps) {
+    fitBounds(comps) {
       return Core.fitBounds({
         map   : this,
         comps : comps
       })
     },
 
-    geolocate: function(options) {
+    geolocate(options) {
       return Core.geolocate({
         map     : this,
         options : options
       })
     },
 
-    getBounds: function() {
+    getBounds() {
       return this.obj.getBounds()
     },
 
-    getCenter: function() {
+    getCenter() {
       return this.obj.getCenter()
     },
 
-    getCenterString: function() {
+    getCenterString() {
       return Util.toString({
         map : this,
         val : this.getCenter()
       })
     },
 
-    getOptions: function(compOption) {
+    getOptions(compOption) {
       return Core.getOptions({
         comp       : this,
         compOption : compOption
       })
     },
 
-    getDiv: function() {
+    getDiv() {
       return this.obj.getDiv()
     },
 
-    getProjection: function() {
+    getProjection() {
       return this.obj.getProjection()
     },
 
-    getZoom: function() {
+    getZoom() {
       return this.obj.getZoom()
     },
 
-    labels: function(ids) {
+    labels(ids) {
       return Core.search({
         ids      : ids,
         map      : this,
@@ -83,7 +83,7 @@
       })
     },
 
-    markers: function(ids) {
+    markers(ids) {
       return Core.search({
         ids      : ids,
         map      : this,
@@ -92,14 +92,14 @@
       })
     },
 
-    off: function(type) {
+    off(type) {
       return Core.removeListener({
         comp : this,
         type : type
       })
     },
 
-    on: function(type, func) {
+    on(type, func) {
       return Core.addListener({
         comp : this,
         func : func,
@@ -107,7 +107,7 @@
       })
     },
 
-    polygons: function(ids) {
+    polygons(ids) {
       return Core.search({
         ids      : ids,
         map      : this,
@@ -116,7 +116,7 @@
       })
     },
 
-    polylines: function(ids) {
+    polylines(ids) {
       return Core.search({
         ids      : ids,
         map      : this,
@@ -125,7 +125,7 @@
       })
     },
 
-    rectangles: function(ids) {
+    rectangles(ids) {
       return Core.search({
         ids      : ids,
         map      : this,
@@ -134,13 +134,13 @@
       })
     },
 
-    reset: function() {
+    reset() {
       return Core.reset({
         comp: this
       })
     },
 
-    setCenter: function(center) {
+    setCenter(center) {
       if (center !== undefined) {
         this.obj.setCenter(Util.toLatLng({
           map : this,
@@ -150,7 +150,7 @@
       return this
     },
 
-    setOptions: function(compOptions, value) {
+    setOptions(compOptions, value) {
       return Core.setOptions({
         comp        : this,
         compOptions : compOptions,
@@ -160,7 +160,7 @@
       })
     },
 
-    setZoom: function(zoom) {
+    setZoom(zoom) {
       if (zoom !== undefined) {
         this.obj.setZoom(zoom)
       }

@@ -8,7 +8,7 @@ var Util = ((Util) => {
   // ----------------------------------------------------------------------
 
   const Conversions = {
-    bounds: function(options, map) {
+    bounds(options, map) {
       if (options.bounds) {
         options.bounds = Util.toLatLngBounds({
           map : map,
@@ -16,7 +16,7 @@ var Util = ((Util) => {
         })
       }
     },
-    center: function(options, map) {
+    center(options, map) {
       if (options.center) {
         options.center = Util.toLatLng({
           map : map,
@@ -24,7 +24,7 @@ var Util = ((Util) => {
         })
       }
     },
-    path: function(options, map) {
+    path(options, map) {
       if (options.path) {
         options.path = Util.toLatLngArray({
           map : map,
@@ -32,7 +32,7 @@ var Util = ((Util) => {
         })
       }
     },
-    paths: function(options, map) {
+    paths(options, map) {
       if (options.paths || options.path) {
         options.paths = Util.toLatLngArray({
           map : map,
@@ -41,7 +41,7 @@ var Util = ((Util) => {
         delete options.path
       }
     },
-    position: function(options, map) {
+    position(options, map) {
       if (options.position) {
         options.position = Util.toLatLng({
           map : map,

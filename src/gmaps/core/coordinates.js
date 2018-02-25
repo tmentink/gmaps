@@ -19,18 +19,18 @@ var Core = ((Core) => {
   // ----------------------------------------------------------------------
 
   const Coordinates = {
-    Label: function({ovl}) {
+    Label({ovl}) {
       return ovl.obj.getPosition()
     },
-    Marker: function({ovl}) {
+    Marker({ovl}) {
       return ovl.obj.getPosition()
     },
-    Polygon: function({index, ovl}) {
+    Polygon({index, ovl}) {
       return index >= 0
         ? ovl.obj.getPaths().getAt(index)
         : ovl.obj.getPaths()
     },
-    Polyline: function({ovl}) {
+    Polyline({ovl}) {
       return ovl.obj.getPath()
     }
   }
