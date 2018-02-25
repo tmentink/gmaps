@@ -4,38 +4,39 @@ var Lookup = ((Lookup) => {
 
 
   // ----------------------------------------------------------------------
-  // Public Methods
+  // Public
   // ----------------------------------------------------------------------
 
   Lookup.eventType = function(value) {
-    value = Convert.toLowerCase(value)
-    return _lookup(Const.EventType, value) || value
+    return lookup(Const.EventTypes, value) || value
+  }
+
+  Lookup.mapOption = function(value) {
+    return lookup(Const.MapOptions, value) || value
   }
 
   Lookup.overlayOption = function(value) {
-    value = Convert.toLowerCase(value)
-    return _lookup(Const.OverlayOption, value) || value
+    return lookup(Const.OverlayOptions, value) || value
   }
 
   Lookup.overlayType = function(value) {
-    value = Convert.toLowerCase(value)
-    return _lookup(Const.OverlayType, value, true) || value
+    return lookup(Const.OverlayTypes, value, true) || value
   }
 
   Lookup.setting = function(value) {
-    value = Convert.toLowerCase(value)
-    return _lookup(Const.Setting, value) || value
+    return lookup(Const.Settings, value) || value
   }
 
 
   // ----------------------------------------------------------------------
-  // Private Functions
+  // Private
   // ----------------------------------------------------------------------
 
-  function _lookup(constant, value, plural) {
-    const key = Object.keys(constant).find(function(key) {
-      key = Convert.toLowerCase(key)
-      return key === value || (plural && `${key}s` === value)
+  function lookup(constant, value, plural) {
+    value = Convert.toLowerCase(value)
+    const key = Object.keys(constant).find(function(k) {
+      k = Convert.toLowerCase(k)
+      return k === value || (plural && `${k}s` === value)
     })
 
     return constant[key]
