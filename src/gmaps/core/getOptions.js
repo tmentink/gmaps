@@ -7,6 +7,15 @@ var Core = ((Core) => {
   // Public
   // ----------------------------------------------------------------------
 
+  Core.getMapOptions = function({map, option}) {
+    const obj = Util.extend({}, map.obj)
+    option    = Lookup.mapOption(option)
+
+    return option !== undefined
+      ? obj[option]
+      : getAllObjectsOptions({obj, map})
+  }
+
   Core.getOptions = function({option, ovl, ovlArray}) {
     const args  = arguments[0]
     args.option = Lookup.overlayOption(option)
@@ -28,8 +37,10 @@ var Core = ((Core) => {
       : retVal
   }
 
-  function getAllObjectsOptions({obj, ovl}) {
-    const options = Const.Overlays[ovl.type].options.map(opt => opt.name)
+  function getAllObjectsOptions({obj, map, ovl}) {
+    const options = ovl !== undefined
+      ? Const.Overlays[ovl.type].options.map(opt => opt.name)
+      : Const.Map.options.map(opt => opt.name)
 
     Object.keys(obj).forEach((key) => {
       if (options.indexOf(key) === -1) delete obj[key]
