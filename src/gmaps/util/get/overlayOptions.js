@@ -7,20 +7,6 @@ var Get = ((Get) => {
   // Public
   // ----------------------------------------------------------------------
 
-  Get.convertedOptions = function({map, options, type}) {
-    const convertableOptions = Get.filteredOptions({
-      filter : "convertable",
-      type   : type
-    })
-
-    for (var i = 0, i_end = convertableOptions.length; i < i_end; i++) {
-      const opt = convertableOptions[i]
-      Conversions[opt.name](arguments[0])
-    }
-
-    return options
-  }
-
   Get.filteredOptions = function({type, filter}) {
     const options    = Const.Overlays[type].options
     const filterType = {
@@ -64,50 +50,6 @@ var Get = ((Get) => {
   // ----------------------------------------------------------------------
   // Private
   // ----------------------------------------------------------------------
-
-  const Conversions = {
-    bounds({options, map}) {
-      if (options.bounds) {
-        options.bounds = Convert.toLatLngBounds({
-          map : map,
-          val : options.bounds
-        })
-      }
-    },
-    center({options, map}) {
-      if (options.center) {
-        options.center = Convert.toLatLng({
-          map : map,
-          val : options.center
-        })
-      }
-    },
-    path({options, map}) {
-      if (options.path) {
-        options.path = Convert.toLatLngArray({
-          map : map,
-          val : options.path
-        })
-      }
-    },
-    paths({options, map}) {
-      if (options.paths || options.path) {
-        options.paths = Convert.toLatLngArray({
-          map : map,
-          val : options.paths || options.path
-        })
-        delete options.path
-      }
-    },
-    position({options, map}) {
-      if (options.position) {
-        options.position = Convert.toLatLng({
-          map : map,
-          val : options.position
-        })
-      }
-    }
-  }
 
   const FormatID = {
     auto({map, type}) {
