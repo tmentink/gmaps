@@ -8,6 +8,7 @@ var Core = ((Core) => {
   // ----------------------------------------------------------------------
 
   Core.getCoordinates = function({index, ovl, ovlArray, stringify}) {
+    const args = arguments[0]
     return ovlArray
       ? multiGetCoords(args)
       : getCoords(args)
