@@ -17,12 +17,6 @@ var Overlays = ((Overlays) => {
     // Public
     // --------------------------------------------------------------------
 
-    copy() {
-      return Util.copy({
-        compArray : this
-      })
-    }
-
     filter(fn) {
       return this.data.filter(fn)
     }
