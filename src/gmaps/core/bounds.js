@@ -1,5 +1,5 @@
 
-var Core = ((Core) => {
+var Core = ((Core, GoogleClasses) => {
   "use strict"
 
 
@@ -7,18 +7,14 @@ var Core = ((Core) => {
   // Public
   // ----------------------------------------------------------------------
 
-  Core.fitBounds = function(parms) {
-    const comps = parms.comps
-    const map   = parms.map
-
-    if (comps instanceof google.maps.LatLngBounds) {
-      map.obj.fitBounds(comps)
+  Core.fitBounds = function({map, ovls}) {
+    if (Is.LatLngBounds(ovls)) {
+      map.obj.fitBounds(ovls)
     }
-    else if ($.type(comps) === "object") {
-      const bounds = _getBoundsByComponents(map.components, comps)
-      map.obj.fitBounds(bounds)
+    else if (Is.Object(ovls)) {
+      map.obj.fitBounds(Get.boundsByOverlayObject({map, ovls}))
     }
-    else if (comps === "init" || comps === "initial") {
+    else if (ovls === "init" || ovls === "initial") {
       map.obj.fitBounds(map.init.bounds)
       map.obj.setZoom(map.init.options.zoom)
     }
@@ -26,34 +22,17 @@ var Core = ((Core) => {
     return map
   }
 
-  Core.getBounds = function(parms) {
-    const bounds    = new google.maps.LatLngBounds()
-    let comp        = parms.comp
-    const compArray = parms.compArray
-    const ids       = Util.toArray(parms.ids)
+  Core.getBounds = function({ids, ovl, ovlArray}) {
+    const args  = arguments[0]
+    args.bounds = new google.maps[GoogleClasses.LAT_LNG_BOUND]()
 
-    if (comp) {
-      bounds.union(BoundsFunction[comp.type](comp))
-    }
-    else {
-      for (var i = 0, i_end = ids.length; i < i_end; i++) {
-        comp = compArray.findById(ids[i])
-        if (comp) {
-          bounds.union(BoundsFunction[compArray.getChildType()](comp))
-        }
-      }
-    }
-
-    return bounds
+    return ovlArray
+      ? multiGetBounds(args)
+      : getBounds(args)
   }
 
-  Core.getCenter = function(parms) {
-    const bounds = Core.getBounds({
-      comp      : parms.comp,
-      compArray : parms.compArray,
-      ids       : parms.ids
-    })
-
+  Core.getCenter = function({ovl, ovlArray}) {
+    const bounds = Core.getBounds(arguments[0])
     return bounds.getCenter()
   }
 
@@ -63,79 +42,40 @@ var Core = ((Core) => {
   // ----------------------------------------------------------------------
 
   const BoundsFunction = {
-    Circle(comp) {
-      return comp.obj.getBounds()
+    Circle(ovl) {
+      return ovl.obj.getBounds()
     },
-    Label(comp) {
-      return _getBoundsByPosition(comp)
+    Label(ovl) {
+      return Get.boundsByPosition({bounds, ovl})
     },
-    Marker(comp) {
-      return _getBoundsByPosition(comp)
+    Marker(ovl) {
+      return Get.boundsByPosition({bounds, ovl})
     },
-    Polygon(comp) {
-      return _getBoundsByPaths(comp)
+    Polygon(ovl) {
+      return Get.boundsByPaths({bounds, ovl})
     },
-    Polyline(comp) {
-      return _getBoundsByPath(comp)
+    Polyline(ovl) {
+      return Get.boundsByPath({bounds, ovl})
     },
-    Rectangle(comp) {
-      return comp.obj.getBounds()
+    Rectangle(ovl) {
+      return ovl.obj.getBounds()
     }
   }
 
-  function _getBoundsByComponents(mapComps, comps) {
-    const bounds = new google.maps.LatLngBounds()
-    const types  = Object.keys(comps)
+  function getBounds({bounds, ovl}) {
+    return bounds.union(BoundsFunction[ovl.type](arguments[0]))
+  }
 
-    for (var i = 0, i_end = types.length; i < i_end; i++) {
-      const type = Util.lookupComponentType(types[i])
-      const ids  = _getIds(mapComps[type], comps[types[i]])
+  function multiGetBounds({bounds, ids, ovlArray}) {
+    const args = arguments[0]
+    ids        = ids || ovlArray.getIds()
 
-      bounds.union(Core.getBounds({
-        compArray : mapComps[type],
-        ids       : ids
-      }))
+    for (var i = 0, i_end = ids.length; i < i_end; i++) {
+      args.ovl = ovlArray.findById(ids[i])
+      if (args.ovl) bounds.union(BoundsFunction[ovl.type](args))
     }
-
-    return bounds
-  }
-
-  function _getBoundsByPath(comp) {
-    const bounds = new google.maps.LatLngBounds()
-    const path  = comp.obj.getPath()
-
-    for (var i = 0, i_end = path.length; i < i_end; i++) {
-      bounds.extend(path.getAt(i))
-    }
-
-    return bounds
-  }
-
-  function _getBoundsByPaths(comp) {
-    const bounds = new google.maps.LatLngBounds()
-    const paths  = comp.obj.getPaths()
-
-    for (var i = 0, i_end = paths.length; i < i_end; i++) {
-      const path = paths.getAt(i)
-
-      for (var j = 0, j_end = path.getLength(); j < j_end; j++) {
-        bounds.extend(path.getAt(j))
-      }
-    }
-
-    return bounds
-  }
-
-  function _getBoundsByPosition(comp) {
-    const bounds = new google.maps.LatLngBounds()
-    bounds.extend(comp.obj.getPosition())
-    return bounds
-  }
-
-  function _getIds(compArray, ids) {
-    return ids === null || ids === "all" ? compArray.getIds() : ids
   }
 
 
   return Core
-})(Core || (Core = {}))
+})(Core || (Core = {}), Const.GoogleClasses)
