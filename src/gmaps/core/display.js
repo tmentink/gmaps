@@ -11,14 +11,18 @@ var Core = ((Core) => {
     const args  = arguments[0]
     args.action = Action.HIDE
 
-    return display(args)
+    return ovlArray
+      ? multiDisplay(args)
+      : display(args)
   }
 
   Core.show = function({ovl, ovlArray}) {
     const args  = arguments[0]
     args.action = Action.SHOW
 
-    return display(args)
+    return ovlArray
+      ? multiDisplay(args)
+      : display(args)
   }
 
   Core.toggle = function({condition, ovl, ovlArray}) {
@@ -29,7 +33,9 @@ var Core = ((Core) => {
       args.action = condition ? Action.SHOW : Action.HIDE
     }
 
-    return display(args)
+    return ovlArray
+      ? multiDisplay(args)
+      : display(args)
   }
 
 
@@ -71,13 +77,6 @@ var Core = ((Core) => {
     }
 
     return newOvlArray
-  }
-
-  function setDisplay({action, ovl, ovlArray}) {
-    const args = arguments[0]
-    return ovlArray
-      ? multiDisplay(args)
-      : display(args)
   }
 
 
