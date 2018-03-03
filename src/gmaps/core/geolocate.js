@@ -1,5 +1,5 @@
 
-var Core = ((Core, ComponentType) => {
+var Core = ((Core, OverlayOptions) => {
   "use strict"
 
 
@@ -7,28 +7,24 @@ var Core = ((Core, ComponentType) => {
   // Public
   // ----------------------------------------------------------------------
 
-  Core.geolocate = function(parms) {
-    const map     = parms.map
-    const options = $.extend({}, DefaultOptions, parms.options || {})
+  Core.geolocate = function({map, options}) {
+    if (!window.navigator.geolocation) return false
 
-    if (window.navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(function (position) {
-        const center = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude
-        }
+    options = Util.extend({}, DefaultOptions, options || {})
 
-        _addUpdateMarkers(map, center, options.showMarkers)
+    navigator.geolocation.getCurrentPosition((position) => {
+      const center = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude
+      }
 
-        return map.setOptions({
-          center : center,
-          zoom   : options.zoom
-        })
-      }, _error, options)
-    }
-    else {
-      return false
-    }
+      addUpdateMarkers(map, center, options.showMarkers)
+
+      return map.setOptions({
+        center : center,
+        zoom   : options.zoom
+      })
+    }, error, options)
   }
 
 
@@ -66,11 +62,11 @@ var Core = ((Core, ComponentType) => {
     "geolocate_outer"
   ]
 
-  function _addUpdateMarkers(map, position, showMarkers) {
-    if (showMarkers === true && _markerExists(map) === false) {
-      map.add(ComponentType.MARKER, [
-        _getMarkerOptions(MarkerIds[1], position),
-        _getMarkerOptions(MarkerIds[0], position)
+  function addUpdateMarkers(map, position, showMarkers) {
+    if (showMarkers === true && markerExists(map) === false) {
+      map.addOverlay(OverlayOptions.MARKER, [
+        getMarkerOptions(MarkerIds[1], position),
+        getMarkerOptions(MarkerIds[0], position)
       ])
     }
 
@@ -80,14 +76,14 @@ var Core = ((Core, ComponentType) => {
     })
   }
 
-  function _error(error) {
-    return Util.throwError({
-      method  : "geoLocate",
-      message : error.message
+  function error(error) {
+    return Error.throw({
+      method : "geoLocate",
+      msg    : error.message
     })
   }
 
-  function _getMarkerOptions(id, position) {
+  function getMarkerOptions(id, position) {
     return {
       id       : id,
       position : position,
@@ -95,12 +91,12 @@ var Core = ((Core, ComponentType) => {
     }
   }
 
-  function _markerExists(map) {
-    const markers = map.components[ComponentType.MARKER]
+  function markerExists(map) {
+    const markers = map.overlays[OverlayOptions.MARKER]
     return markers.includes(MarkerIds[0]) === true ||
            markers.includes(MarkerIds[1]) === true
   }
 
 
   return Core
-})(Core || (Core = {}), Const.ComponentType)
+})(Core || (Core = {}), Const.OverlayOptions)
