@@ -3,26 +3,23 @@
   "use strict"
 
   const gmap = function(settings) {
-    if ($.isPlainObject(settings)) {
-      Util.renameSettings(settings)
+    if (Is.Object(settings)) {
+      settings = Get.renamedSettings({settings})
     }
 
-    // merge and convert map settings
-    settings         = Util.mergeWithGlobalSettings(settings)
-    const mapOptions = Util.convertComponentOptions({
-      compType    : Const.ComponentType.MAP,
-      compOptions : settings[Const.Setting.MAP_OPTIONS],
-      map         : { settings : settings }
+    settings = Get.mergedSettings({
+      convert  : true,
+      settings : settings
     })
 
     // check if element with mapId exists
     const mapId        = settings[Const.Setting.MAP_ID]
     const mapContainer = document.getElementById(mapId)
     if (!mapContainer) {
-      return Util.throwError({
-        method  : "new gmap",
-        message : `Could not find an element with an Id of ${mapId}`,
-        obj     : settings
+      return Error.throw({
+        method : "new gmap",
+        msg    : `Could not find an element with an Id of ${mapId}`,
+        args   : settings
       })
     }
 
@@ -31,40 +28,38 @@
     // Class Definition
     // ----------------------------------------------------------------------
 
-    this.components = {
-      Circle    : new Components.CircleArray    ({ map: this }),
-      Label     : new Components.LabelArray     ({ map: this }),
-      Marker    : new Components.MarkerArray    ({ map: this }),
-      Polygon   : new Components.PolygonArray   ({ map: this }),
-      Polyline  : new Components.PolylineArray  ({ map: this }),
-      Rectangle : new Components.RectangleArray ({ map: this })
-    }
     this.init = {
       bounds  : undefined,
       options : mapOptions
     }
-    this.obj = new google.maps.Map(mapContainer, mapOptions)
+    this.obj = new google.maps[Const.GoogleClasses.MAP](mapContainer, mapOptions)
     this.obj["gmaps"] = {
       id      : mapId,
       map     : this,
       parent  : this,
       version : gmap.version
     }
+    this.overlays = {
+      Circle    : new Overlays.CircleArray    ({map: this}),
+      Label     : new Overlays.LabelArray     ({map: this}),
+      Marker    : new Overlays.MarkerArray    ({map: this}),
+      Polygon   : new Overlays.PolygonArray   ({map: this}),
+      Polyline  : new Overlays.PolylineArray  ({map: this}),
+      Rectangle : new Overlays.RectangleArray ({map: this})
+    }
     this.settings = settings
-    this.type     = Const.ComponentType.MAP
+    this.type     = "Map"
     this.version  = gmap.version
 
     // save reference to controls, data and bounds after map has finished loading
-    google.maps.event.addListenerOnce(this.obj, Const.EventType.TILES_LOADED, () => {
+    google.maps.event.addListenerOnce(this.obj, Const.EventTypes.TILES_LOADED, () => {
       this.controls    = this.obj.controls
       this.data        = this.obj.data
       this.init.bounds = this.obj.getBounds()
 
       // call onLoad callback
-      const onLoad = settings[Const.Setting.ON_LOAD]
-      if ($.type(onLoad) === "function") {
-        onLoad(this)
-      }
+      const onLoad = settings[Const.Settings.ON_LOAD]
+      if (Is.Function(onLoad)) onLoad(this)
     })
   }
 
