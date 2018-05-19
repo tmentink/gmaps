@@ -18,7 +18,8 @@ var Overlays = ((Overlays) => {
         parent  : this,
         version : gmap.version
       }
-      this.type = type
+      this.parent = map.overlays[type]
+      this.type   = type
 
       // add overlay to map.overlays
       this.map.overlays[type].push(this)
@@ -31,85 +32,84 @@ var Overlays = ((Overlays) => {
 
     getBounds() {
       return Core.getBounds({
-        comp : this
+        ovl : this
       })
     }
 
     getCenter() {
       return Core.getCenter({
-        comp : this
+        ovl : this
       })
     }
 
     getCenterString() {
-      return Util.toString({
+      return Convert.toString({
         map : this.map,
         val : this.getCenter()
       })
     }
 
-    getOptions(compOption) {
+    getOptions(option) {
       return Core.getOptions({
-        comp       : this,
-        compOption : compOption
+        option : option,
+        ovl    : this
       })
     }
 
     hide() {
       return Core.hide({
-        comp : this
+        ovl : this
       })
     }
 
     others() {
       return Core.search({
         ids      : [this.id],
-        map      : this.map,
         matching : false,
-        type     : this.type
+        ovlArray : this.parent
       })
     }
 
     remove() {
-      return Core.remove({ovl: this})
+      return Core.remove({
+        ovl : this
+      })
     }
 
     reset() {
       return Core.reset({
-        comp : this
+        ovl : this
       })
     }
 
-    setOptions(compOptions, value) {
+    setOptions(option, value) {
       return Core.setOptions({
-        comp        : this,
-        compOptions : compOptions,
-        compType    : this.type,
-        map         : this.map,
-        value       : value
+        option : option,
+        ovl    : this,
+        value  : value
       })
     }
 
     show() {
       return Core.show({
-        comp : this
+        ovl : this
       })
     }
 
     toggle(condition) {
       return Core.toggle({
-        comp      : this,
-        condition : condition
+        condition : condition,
+        ovl       : this
       })
     }
 
     zoom() {
-      const comps = {}
-      comps[this.type] = this.id
+      const ovls = {}
+      ovls[this.type] = this.id
 
       Core.fitBounds({
-        map   : this.map,
-        comps : comps
+        map  : this.map,
+        ovls : ovls
       })
 
       return this

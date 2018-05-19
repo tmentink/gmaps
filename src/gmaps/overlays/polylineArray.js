@@ -19,41 +19,39 @@ var Overlays = ((Overlays, OverlayTypes) => {
 
     getPath() {
       return Core.getCoordinates({
-        compArray : this,
-        ids       : this.getIds()
+        ovlArray : this
       })
     }
 
     getPathString() {
       return Core.getCoordinates({
-        compArray : this,
-        stringify : true,
-        ids       : this.getIds()
+        ovlArray  : this,
+        stringify : true
       })
     }
 
     off(type) {
       return Core.removeListener({
-        compArray : this,
-        ids       : this.getIds(),
-        type      : type
+        ids      : this.getIds(),
+        ovlArray : this,
+        type     : type
       })
     }
 
     on(type, func) {
       return Core.addListener({
-        compArray : this,
-        func      : func,
-        ids       : this.getIds(),
-        type      : type
+        func     : func,
+        ids      : this.getIds(),
+        ovlArray : this,
+        type     : type
       })
     }
 
     trigger(type) {
       return Core.triggerListener({
-        compArray : this,
-        ids       : this.getIds(),
-        type      : type
+        ids      : this.getIds(),
+        ovlArray : this,
+        type     : type
       })
     }
 

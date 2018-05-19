@@ -1,5 +1,5 @@
 
-!((ComponentType) => {
+!((OverlayTypes) => {
   "use strict"
 
 
@@ -9,27 +9,26 @@
 
   gmap.prototype = {
 
-    add(type, compOptions) {
-      return Core.addComponent({
-        compOptions : compOptions,
-        map         : this,
-        type        : type
+    addOverlay(type, options) {
+      return Core.addOverlay({
+        map     : this,
+        options : options,
+        type    : type
       })
     },
 
     circles(ids) {
       return Core.search({
         ids      : ids,
-        map      : this,
         matching : true,
-        type     : ComponentType.CIRCLE
+        ovlArray : this.overlays[OverlayTypes.CIRCLE]
       })
     },
 
-    fitBounds(comps) {
+    fitBounds(ovls) {
       return Core.fitBounds({
-        map   : this,
-        comps : comps
+        map  : this,
+        ovls : ovls
       })
     },
 
@@ -49,16 +48,16 @@
     },
 
     getCenterString() {
-      return Util.toString({
+      return Convert.toString({
         map : this,
         val : this.getCenter()
       })
     },
 
-    getOptions(compOption) {
-      return Core.getOptions({
-        comp       : this,
-        compOption : compOption
+    getOptions(option) {
+      return Core.getMapOptions({
+        comp   : this,
+        option : option
       })
     },
 
@@ -77,31 +76,29 @@
     labels(ids) {
       return Core.search({
         ids      : ids,
-        map      : this,
         matching : true,
-        type     : ComponentType.LABEL
+        ovlArray : this.overlays[OverlayTypes.LABEL]
       })
     },
 
     markers(ids) {
       return Core.search({
         ids      : ids,
-        map      : this,
         matching : true,
-        type     : ComponentType.MARKER
+        ovlArray : this.overlays[OverlayTypes.MARKER]
       })
     },
 
     off(type) {
       return Core.removeListener({
-        comp : this,
+        ovl  : this,
         type : type
       })
     },
 
     on(type, func) {
       return Core.addListener({
-        comp : this,
+        ovl  : this,
         func : func,
         type : type
       })
@@ -110,39 +107,36 @@
     polygons(ids) {
       return Core.search({
         ids      : ids,
-        map      : this,
         matching : true,
-        type     : ComponentType.POLYGON
+        ovlArray : this.overlays[OverlayTypes.POLYGON]
       })
     },
 
     polylines(ids) {
       return Core.search({
         ids      : ids,
-        map      : this,
         matching : true,
-        type     : ComponentType.POLYLINE
+        ovlArray : this.overlays[OverlayTypes.POLYLINE]
       })
     },
 
     rectangles(ids) {
       return Core.search({
         ids      : ids,
-        map      : this,
         matching : true,
-        type     : ComponentType.RECTANGLE
+        ovlArray : this.overlays[OverlayTypes.RECTANGLE]
       })
     },
 
     reset() {
-      return Core.reset({
-        comp: this
+      return Core.resetMap({
+        map: this
       })
     },
 
     setCenter(center) {
       if (center !== undefined) {
-        this.obj.setCenter(Util.toLatLng({
+        this.obj.setCenter(Convert.toLatLng({
           map : this,
           val : center
         }))
@@ -150,13 +144,11 @@
       return this
     },
 
-    setOptions(compOptions, value) {
-      return Core.setOptions({
-        comp        : this,
-        compOptions : compOptions,
-        compType    : this.type,
-        map         : this,
-        value       : value
+    setOptions(option, value) {
+      return Core.setMapOptions({
+        map    : this,
+        option : option,
+        value  : value
       })
     },
 
@@ -169,7 +161,7 @@
 
     trigger(type) {
       return Core.triggerListener({
-        comp : this,
+        ovl  : this,
         type : type
       })
     }
@@ -178,4 +170,4 @@
 
 
   return gmap
-})(Const.ComponentType)
+})(Const.OverlayTypes)

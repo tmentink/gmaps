@@ -26,9 +26,11 @@ var Overlays = ((Overlays) => {
     }
 
     findById(id) {
-      return this.data.find(function(comp) {
+      return this.data.find((ovl) => {
         // eslint-disable-next-line eqeqeq
-        return id != null ? comp.id === id.toString() : false
+        return id != null
+          ? ovl.id === id.toString()
+          : false
       })
     }
 
@@ -39,20 +41,20 @@ var Overlays = ((Overlays) => {
 
     getBounds() {
       return Core.getBounds({
-        compArray : this,
-        ids       : this.getIds()
+        ids      : this.getIds(),
+        ovlArray : this
       })
     }
 
     getCenter() {
       return Core.getCenter({
-        compArray : this,
-        ids       : this.getIds()
+        ids      : this.getIds(),
+        ovlArray : this
       })
     }
 
     getCenterString() {
-      return Util.toString({
+      return Convert.toString({
         map : this.map,
         val : this.getCenter()
       })
@@ -63,30 +65,28 @@ var Overlays = ((Overlays) => {
     }
 
     getGoogleObjects() {
-      return this.data.map(function(comp) {
-        return comp.obj
+      return this.data.map((ovl) => {
+        return ovl.obj
       })
     }
 
     getIds() {
-      return this.data.map(function(comp) {
-        return comp.id
+      return this.data.map((ovl) => {
+        return ovl.id
       })
     }
 
-    getOptions(compOption) {
+    getOptions(option) {
       return Core.getOptions({
-        compArray  : this,
-        compOption : compOption,
-        compType   : this.getChildType(),
-        ids        : this.getIds()
+        option    : option,
+        ovlArray  : this
       })
     }
 
     hide() {
       return Core.hide({
-        compArray : this,
-        ids       : this.getIds()
+        ids      : this.getIds(),
+        ovlArray : this
       })
     }
 
@@ -97,76 +97,72 @@ var Overlays = ((Overlays) => {
     others() {
       return Core.search({
         ids      : this.getIds(),
-        map      : this.map,
         matching : false,
-        type     : this.getChildType()
+        ovlArray : this
       })
     }
 
     pop(count) {
       return Core.pop({
-        count : count,
-        map   : this.map,
-        type  : this.getChildType()
+        count    : count,
+        ovlArray : this.map
       })
     }
 
-    push(comp) {
-      return this.data.push(comp)
+    push(ovl) {
+      return this.data.push(ovl)
     }
 
     remove() {
-      return Core.remove({ovlArray: this})
+      return Core.remove({
+        ovlArray : this
+      })
     }
 
     reset() {
       return Core.reset({
-        compArray : this,
-        ids       : this.getIds()
+        ids      : this.getIds(),
+        ovlArray : this
       })
     }
 
     shift(count) {
       return Core.shift({
-        count : count,
-        map   : this.map,
-        type  : this.getChildType()
+        count    : count,
+        ovlArray : this.map
       })
     }
 
     show() {
       return Core.show({
-        compArray : this,
-        ids       : this.getIds()
+        ids      : this.getIds(),
+        ovlArray : this
       })
     }
 
-    setOptions(compOptions, value) {
+    setOptions(option, value) {
       return Core.setOptions({
-        compArray   : this,
-        compOptions : compOptions,
-        compType    : this.getChildType(),
-        ids         : this.getIds(),
-        map         : this.map,
-        value       : value
+        option   : option,
+        ovlArray : this,
+        value    : value
       })
     }
 
     toggle(condition) {
       return Core.toggle({
-        compArray : this,
         condition : condition,
-        ids       : this.getIds()
+        ids       : this.getIds(),
+        ovlArray  : this
       })
     }
 
     zoom() {
-      const comps = {}
-      comps[this.getChildType()] = this.getIds()
+      const ovls = {}
+      ovls[this.getChildType()] = this.getIds()
 
       Core.fitBounds({
-        map   : this.map,
-        comps : comps
+        map  : this.map,
+        ovls : ovls
       })
 
       return this

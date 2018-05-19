@@ -19,16 +19,14 @@ var Overlays = ((Overlays, OverlayTypes) => {
 
     getPosition() {
       return Core.getCoordinates({
-        compArray : this,
-        ids       : this.getIds()
+        ovlArray : this
       })
     }
 
     getPositionString() {
       return Core.getCoordinates({
-        compArray : this,
-        stringify : true,
-        ids       : this.getIds()
+        ovlArray  : this,
+        stringify : true
       })
     }
 

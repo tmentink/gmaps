@@ -21,35 +21,35 @@ var Overlays = ((Overlays, OverlayTypes, GoogleClasses) => {
 
     getPath() {
       return Core.getCoordinates({
-        comp : this
+        ovl : this
       })
     }
 
     getPathString() {
       return Core.getCoordinates({
-        comp      : this,
+        ovl       : this,
         stringify : true
       })
     }
 
     off(type) {
       return Core.removeListener({
-        comp : this,
+        ovl  : this,
         type : type
       })
     }
 
     on(type, func) {
       return Core.addListener({
-        comp : this,
         func : func,
+        ovl  : this,
         type : type
       })
     }
 
     trigger(type) {
       return Core.triggerListener({
-        comp : this,
+        ovl  : this,
         type : type
       })
     }

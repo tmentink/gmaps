@@ -21,22 +21,22 @@ var Overlays = ((Overlays, OverlayTypes, GoogleClasses) => {
 
     off(type) {
       return Core.removeListener({
-        comp : this,
+        ovl  : this,
         type : type
       })
     }
 
     on(type, func) {
       return Core.addListener({
-        comp : this,
         func : func,
+        ovl  : this,
         type : type
       })
     }
 
     trigger(type) {
       return Core.triggerListener({
-        comp : this,
+        ovl  : this,
         type : type
       })
     }
