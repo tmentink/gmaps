@@ -14,6 +14,8 @@ var Convert = ((Convert) => {
   }
 
   Convert.toLowerCase = function(val) {
+    const regex = /\s+|_+/g
+
     return Is.String(val)
       ? val.toLowerCase().replace(regex, "")
       : undefined
