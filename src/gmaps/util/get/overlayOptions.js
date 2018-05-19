@@ -23,15 +23,15 @@ var Get = ((Get) => {
   }
 
   Get.mergedOptions = function({map, options, type, convert}) {
-    const args      = arguments[0]
-    const namespace = Lookup.setting(`${type}Options`)
-    const defaults  = map.settings[namespace] || {}
-    options         = $.extend({}, defaults, options)
-    options.map     = map.obj
+    const args       = arguments[0]
+    const namespace  = Lookup.setting(`${type}Options`)
+    const defaults   = map.settings[namespace] || {}
+    args.options     = $.extend({}, defaults, options)
+    args.options.map = map.obj
 
     return convert
       ? Get.convertedOptions(args)
-      : options
+      : args.options
   }
 
 
