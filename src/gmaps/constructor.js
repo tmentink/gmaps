@@ -12,9 +12,11 @@
       settings : settings
     })
 
-    // check if element with mapId exists
-    const mapId        = settings[Const.Setting.MAP_ID]
+    const mapId        = settings[Const.Settings.MAP_ID]
     const mapContainer = document.getElementById(mapId)
+    const mapOptions   = settings[Const.Settings.MAP_OPTIONS]
+
+    // check if element with mapId exists
     if (!mapContainer) {
       return Error.throw({
         method : "new gmap",
