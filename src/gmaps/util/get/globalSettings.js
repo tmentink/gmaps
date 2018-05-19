@@ -8,13 +8,15 @@ var Get = ((Get, GlobalSettings) => {
   // ----------------------------------------------------------------------
 
   Get.mergedSettings = function({convert, settings}) {
-    settings      = Util.extend({}, GlobalSettings, settings)
-    const map     = {settings}
-    const options = settings[Const.Settings.MAP_OPTIONS]
+    settings = Util.extend({}, GlobalSettings, settings)
 
-    return convert
-      ? Get.convertedMapOptions({map, options})
-      : settings
+    if (convert) {
+      const map     = {settings}
+      const options = settings[Const.Settings.MAP_OPTIONS]
+      settings[Const.Settings.MAP_OPTIONS] = Get.convertedMapOptions({map, options})
+    }
+
+    return settings
   }
 
   Get.renamedSettings = function({settings}) {
