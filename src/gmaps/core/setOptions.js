@@ -9,11 +9,18 @@ var Core = ((Core) => {
 
   Core.setOptions = function({option, ovl, ovlArray, value}) {
     const args  = arguments[0]
-    args.option = formatUserOptions(args)
+    args.option = formatOverlayOptions(args)
 
     return ovlArray
       ? multSetOptions(args)
       : setOptions(args)
+  }
+
+  Core.setMapOptions = function({map, option, value}) {
+    return setOptions({
+      option : formatMapOptions(arguments[0]),
+      ovl    : map
+    })
   }
 
 
@@ -21,7 +28,23 @@ var Core = ((Core) => {
   // Private
   // ----------------------------------------------------------------------
 
-  function formatUserOptions({option, ovl, ovlArray, value}) {
+  function formatMapOptions({map, option, value}) {
+    const Format = {
+      object({option}) {
+        return Get.renamedMapOptions({options: option})
+      },
+      string({option, value}) {
+        return {[option]: value}
+      }
+    }
+
+    return Get.convertedMapOptions({
+      map     : map,
+      options : Format[Get.type(option)](arguments[0])
+    })
+  }
+
+  function formatOverlayOptions({option, ovl, ovlArray, value}) {
     const Format = {
       object({option}) {
         return Get.renamedOptions({options: option})

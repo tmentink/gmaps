@@ -34,18 +34,6 @@ var Get = ((Get) => {
       : options
   }
 
-  Get.renamedOptions = function({options}) {
-    Object.keys(options).forEach(function(key) {
-      Util.renameProperty({
-        newName : Lookup.overlayOption(key),
-        obj     : options,
-        oldName : key
-      })
-    })
-
-    return options
-  }
-
 
   // ----------------------------------------------------------------------
   // Private

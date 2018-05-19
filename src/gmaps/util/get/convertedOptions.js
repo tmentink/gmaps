@@ -23,6 +23,30 @@ var Get = ((Get) => {
     return convertOptions({convertableOpts, map, options})
   }
 
+  Get.renamedMapOptions = function({options}) {
+    Object.keys(options).forEach((key) => {
+      Util.renameProperty({
+        newName : Lookup.mapOption(key),
+        obj     : options,
+        oldName : key
+      })
+    })
+
+    return options
+  }
+
+  Get.renamedOptions = function({options}) {
+    Object.keys(options).forEach((key) => {
+      Util.renameProperty({
+        newName : Lookup.overlayOption(key),
+        obj     : options,
+        oldName : key
+      })
+    })
+
+    return options
+  }
+
 
   // ----------------------------------------------------------------------
   // Private
