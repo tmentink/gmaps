@@ -9,7 +9,6 @@ var Core = ((Core) => {
 
   Core.search = function({ids, matching, ovlArray}) {
     const args        = arguments[0]
-    args.ids          = formatIds(ids)
     const map         = ovlArray.map
     const newOvlArray = Get.newOverlayArray({ovlArray: ovlArray})
 
@@ -30,6 +29,7 @@ var Core = ((Core) => {
   }
 
   function getDataByIds({ids, matching, ovlArray}) {
+    ids = formatIds(ids)
     return ovlArray.data.filter(ovl => {
       return matching === true
         ? ids.indexOf(ovl.id) !== -1
