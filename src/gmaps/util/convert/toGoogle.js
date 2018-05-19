@@ -8,7 +8,7 @@ var Convert = ((Convert, Settings) => {
   // ----------------------------------------------------------------------
 
   Convert.toLatLng = function({map, val}) {
-    if (Is.LatLng(val)) return val
+    if (Is.LatLng(val) || Is.Object(val)) return val
 
     if (Is.String(val)) {
       return map.settings[Settings.DELIMITED_STRINGS]
@@ -18,7 +18,7 @@ var Convert = ((Convert, Settings) => {
   }
 
   Convert.toLatLngArray = function({map, val}) {
-    if (Is.MVCArray(val)) return val
+    if (Is.MVCArray(val) || Is.Array(val)) return val
 
     if (Is.String(val)) {
       return map.settings[Settings.DELIMITED_STRINGS]
@@ -28,7 +28,7 @@ var Convert = ((Convert, Settings) => {
   }
 
   Convert.toLatLngBounds = function({map, val}) {
-    if (Is.LatLngBounds(val)) return val
+    if (Is.LatLngBounds(val) || Is.Object(val)) return val
 
     if (Is.String(val)) {
       return map.settings[Settings.DELIMITED_STRINGS]
