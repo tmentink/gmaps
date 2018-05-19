@@ -36,7 +36,7 @@ var Core = ((Core) => {
     options.id   = Get.formattedId(args)
     options      = Get.mergedOptions(args)
 
-    if (IsValid.overlayOptions(options)) {
+    if (IsValid.overlayOptions({map, options, type})) {
       return new Overlays[type]({
         map     : map,
         options : options
