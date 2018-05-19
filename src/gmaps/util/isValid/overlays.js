@@ -14,7 +14,7 @@ var IsValid = ((IsValid) => {
     if (isExistingId(args)) {
       return Error.throw({
         method : "addOverlay",
-        msg    : `A ${type} with an id of ${id} already exists`,
+        msg    : `A ${type} with an id of ${args.id} already exists`,
         args   : args
       })
     }
