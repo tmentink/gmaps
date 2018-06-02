@@ -12,7 +12,7 @@ var Core = ((Core) => {
     args.option = formatOverlayOptions(args)
 
     return ovlArray
-      ? multSetOptions(args)
+      ? multiSetOptions(args)
       : setOptions(args)
   }
 
@@ -57,7 +57,7 @@ var Core = ((Core) => {
     return Get.convertedOptions({
       map     : ovlArray ? ovlArray.map : ovl.map,
       options : Format[Get.type(option)](arguments[0]),
-      type    : ovlArray ? ovlArray.type : ovl.type,
+      type    : ovlArray ? ovlArray.getChildType() : ovl.type,
     })
   }
 

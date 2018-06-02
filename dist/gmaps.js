@@ -1070,7 +1070,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     }
     return Core;
   }(Core || (Core = {}));
-  var Core = function(Core, OverlayOptions) {
+  var Core = function(Core, OverlayTypes) {
     "use strict";
     Core.geolocate = function(_ref22) {
       var map = _ref22.map, _ref22$options = _ref22.options, options = _ref22$options === undefined ? {} : _ref22$options;
@@ -1114,7 +1114,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     var MarkerIds = [ "geolocate_inner", "geolocate_outer" ];
     function addUpdateMarkers(map, position, showMarkers) {
       if (showMarkers === true && markerExists(map) === false) {
-        map.addOverlay(OverlayOptions.MARKER, [ getMarkerOptions(MarkerIds[1], position), getMarkerOptions(MarkerIds[0], position) ]);
+        map.addOverlay(OverlayTypes.MARKER, [ getMarkerOptions(MarkerIds[1], position), getMarkerOptions(MarkerIds[0], position) ]);
       }
       map.markers(MarkerIds).setOptions({
         position: position,
@@ -1135,11 +1135,11 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       };
     }
     function markerExists(map) {
-      var markers = map.overlays[OverlayOptions.MARKER];
+      var markers = map.overlays[OverlayTypes.MARKER];
       return markers.includes(MarkerIds[0]) === true || markers.includes(MarkerIds[1]) === true;
     }
     return Core;
-  }(Core || (Core = {}), Const.OverlayOptions);
+  }(Core || (Core = {}), Const.OverlayTypes);
   var Core = function(Core) {
     "use strict";
     Core.getMapOptions = function(_ref23) {
@@ -1393,7 +1393,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       var option = _ref45.option, ovl = _ref45.ovl, ovlArray = _ref45.ovlArray, value = _ref45.value;
       var args = arguments[0];
       args.option = formatOverlayOptions(args);
-      return ovlArray ? multSetOptions(args) : setOptions(args);
+      return ovlArray ? multiSetOptions(args) : setOptions(args);
     };
     Core.setMapOptions = function(_ref46) {
       var map = _ref46.map, option = _ref46.option, value = _ref46.value;
@@ -1440,7 +1440,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       return Get.convertedOptions({
         map: ovlArray ? ovlArray.map : ovl.map,
         options: Format[Get.type(option)](arguments[0]),
-        type: ovlArray ? ovlArray.type : ovl.type
+        type: ovlArray ? ovlArray.getChildType() : ovl.type
       });
     }
     function multiSetOptions(_ref55) {

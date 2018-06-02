@@ -1,5 +1,5 @@
 
-var Core = ((Core, OverlayOptions) => {
+var Core = ((Core, OverlayTypes) => {
   "use strict"
 
 
@@ -64,7 +64,7 @@ var Core = ((Core, OverlayOptions) => {
 
   function addUpdateMarkers(map, position, showMarkers) {
     if (showMarkers === true && markerExists(map) === false) {
-      map.addOverlay(OverlayOptions.MARKER, [
+      map.addOverlay(OverlayTypes.MARKER, [
         getMarkerOptions(MarkerIds[1], position),
         getMarkerOptions(MarkerIds[0], position)
       ])
@@ -92,11 +92,11 @@ var Core = ((Core, OverlayOptions) => {
   }
 
   function markerExists(map) {
-    const markers = map.overlays[OverlayOptions.MARKER]
+    const markers = map.overlays[OverlayTypes.MARKER]
     return markers.includes(MarkerIds[0]) === true ||
            markers.includes(MarkerIds[1]) === true
   }
 
 
   return Core
-})(Core || (Core = {}), Const.OverlayOptions)
+})(Core || (Core = {}), Const.OverlayTypes)
