@@ -739,7 +739,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       },
       getOptions: function getOptions(option) {
         return Core.getMapOptions({
-          comp: this,
+          map: this,
           option: option
         });
       },

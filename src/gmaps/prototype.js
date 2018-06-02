@@ -56,7 +56,7 @@
 
     getOptions(option) {
       return Core.getMapOptions({
-        comp   : this,
+        map    : this,
         option : option
       })
     },
