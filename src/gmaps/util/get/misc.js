@@ -8,8 +8,10 @@ var Get = ((Get) => {
   // ----------------------------------------------------------------------
 
   Get.googleClass = function(obj) {
-    return Object.keys(Const.GoogleClasses)
-      .find(className => obj instanceof google.maps[className])
+    const key = Object.keys(Const.GoogleClasses)
+      .find(k => obj instanceof google.maps[Const.GoogleClasses[k]])
+
+    return Const.GoogleClasses[key]
   }
 
   Get.newOverlayArray = function({map, ovlArray, type}) {

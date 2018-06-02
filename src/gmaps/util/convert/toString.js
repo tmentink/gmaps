@@ -1,5 +1,5 @@
 
-var Convert = ((Convert, Settings) => {
+var Convert = ((Convert, Settings, GoogleClasses) => {
   "use strict"
 
 
@@ -48,16 +48,21 @@ var Convert = ((Convert, Settings) => {
   function toDelimited({map, val, precision}) {
     let str = ""
 
-    val.forEach(function(el, i) {
-      if (i > 0) str += map.settings[Settings.DELIMITER].latLng
-      str += el.toUrlValue(precision)
-    })
+    if (Is.MVCArray(val)) {
+      val.forEach(function(el, i) {
+        if (i > 0) str += map.settings[Settings.DELIMITER].latLng
+        str += el.toUrlValue(precision)
+      })
+    }
+    else {
+      str += val.toUrlValue(precision)
+    }
 
     return str
   }
 
   function toJSON({map, val, precision}) {
-    val = val.getArray()
+    if (Is.MVCArray(val)) val = val.getArray()
 
     return JSON.stringify(val, (key, value) => {
       return (key === "lat" || key === "lng")
@@ -81,7 +86,7 @@ var Convert = ((Convert, Settings) => {
 
   function toMultiJSON({map, val, precision}) {
     const args = arguments[0]
-    const arr  = []
+    const arr  = new google.maps[GoogleClasses.MVC_ARRAY]
 
     val.forEach(function(el) {
       arr.push(el.getArray())
@@ -93,4 +98,4 @@ var Convert = ((Convert, Settings) => {
 
 
   return Convert
-})(Convert || (Convert = {}), Const.Settings)
+})(Convert || (Convert = {}), Const.Settings, Const.GoogleClasses)

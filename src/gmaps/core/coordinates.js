@@ -51,6 +51,7 @@ var Core = ((Core) => {
 
   function getCoords({index, ovl, stringify}) {
     const args = arguments[0]
+    args.map   = ovl.map
     args.val   = Coordinates[ovl.type](args)
 
     return formatCoords(args)
@@ -63,7 +64,7 @@ var Core = ((Core) => {
 
     for (var i = 0, i_end = ids.length; i < i_end; i++) {
       args.ovl = ovlArray.findById(ids[i])
-      if (args.ovl) retVal[id] = getCoords(args)
+      if (args.ovl) retVal[ids[i]] = getCoords(args)
     }
 
     return formatRetVal(retVal)

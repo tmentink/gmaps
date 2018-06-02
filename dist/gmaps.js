@@ -1000,6 +1000,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     function getCoords(_ref21) {
       var index = _ref21.index, ovl = _ref21.ovl, stringify = _ref21.stringify;
       var args = arguments[0];
+      args.map = ovl.map;
       args.val = Coordinates[ovl.type](args);
       return formatCoords(args);
     }
@@ -1010,7 +1011,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       var retVal = {};
       for (var i = 0, i_end = ids.length; i < i_end; i++) {
         args.ovl = ovlArray.findById(ids[i]);
-        if (args.ovl) retVal[id] = getCoords(args);
+        if (args.ovl) retVal[ids[i]] = getCoords(args);
       }
       return formatRetVal(retVal);
     }
@@ -2508,7 +2509,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     }
     return Convert;
   }(Convert || (Convert = {}), Const.Settings);
-  var Convert = function(Convert, Settings) {
+  var Convert = function(Convert, Settings, GoogleClasses) {
     "use strict";
     Convert.toString = function(_ref82) {
       var map = _ref82.map, val = _ref82.val;
@@ -2540,15 +2541,19 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     function toDelimited(_ref86) {
       var map = _ref86.map, val = _ref86.val, precision = _ref86.precision;
       var str = "";
-      val.forEach(function(el, i) {
-        if (i > 0) str += map.settings[Settings.DELIMITER].latLng;
-        str += el.toUrlValue(precision);
-      });
+      if (Is.MVCArray(val)) {
+        val.forEach(function(el, i) {
+          if (i > 0) str += map.settings[Settings.DELIMITER].latLng;
+          str += el.toUrlValue(precision);
+        });
+      } else {
+        str += val.toUrlValue(precision);
+      }
       return str;
     }
     function toJSON(_ref87) {
       var map = _ref87.map, val = _ref87.val, precision = _ref87.precision;
-      val = val.getArray();
+      if (Is.MVCArray(val)) val = val.getArray();
       return JSON.stringify(val, function(key, value) {
         return key === "lat" || key === "lng" ? Number(value.toFixed(precision)) : value;
       });
@@ -2567,7 +2572,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     function toMultiJSON(_ref89) {
       var map = _ref89.map, val = _ref89.val, precision = _ref89.precision;
       var args = arguments[0];
-      var arr = [];
+      var arr = new google.maps[GoogleClasses.MVC_ARRAY]();
       val.forEach(function(el) {
         arr.push(el.getArray());
       });
@@ -2575,7 +2580,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       return toJSON(args);
     }
     return Convert;
-  }(Convert || (Convert = {}), Const.Settings);
+  }(Convert || (Convert = {}), Const.Settings, Const.GoogleClasses);
   var Error = function(Error) {
     "use strict";
     Error.throw = function(_ref90) {
@@ -2772,9 +2777,10 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
   var Get = function(Get) {
     "use strict";
     Get.googleClass = function(obj) {
-      return Object.keys(Const.GoogleClasses).find(function(className) {
-        return obj instanceof google.maps[className];
+      var key = Object.keys(Const.GoogleClasses).find(function(k) {
+        return obj instanceof google.maps[Const.GoogleClasses[k]];
       });
+      return Const.GoogleClasses[key];
     };
     Get.newOverlayArray = function(_ref107) {
       var map = _ref107.map, ovlArray = _ref107.ovlArray, type = _ref107.type;
