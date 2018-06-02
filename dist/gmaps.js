@@ -1,6 +1,6 @@
 /*!
  * gmaps v1.0.0-alpha.9 (https://github.com/tmentink/gmaps)
- * Copyright 2017 Trent Mentink
+ * Copyright 2018 Trent Mentink
  * Licensed under MIT
  */
 
@@ -9,11 +9,6 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
 }
 
 !function() {
-  var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function(obj) {
-    return typeof obj;
-  } : function(obj) {
-    return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-  };
   function _possibleConstructorReturn(self, call) {
     if (!self) {
       throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
@@ -92,543 +87,76 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       });
     }
   }();
-  !function($) {
-    "use strict";
-    if (window.jQuery) {
-      return;
-    }
-    var class2type = {
-      "[object Boolean]": "boolean",
-      "[object Number]": "number",
-      "[object String]": "string",
-      "[object Function]": "function",
-      "[object Array]": "array",
-      "[object Date]": "date",
-      "[object RegExp]": "regexp",
-      "[object Object]": "object",
-      "[object Error]": "error"
-    };
-    var getProto = Object.getPrototypeOf;
-    var toString = class2type.toString;
-    var hasOwn = class2type.hasOwnProperty;
-    var fnToString = hasOwn.toString;
-    var ObjectFunctionString = fnToString.call(Object);
-    $.type = function(obj) {
-      if (!obj) {
-        return obj + "";
-      }
-      return (typeof obj === "undefined" ? "undefined" : _typeof(obj)) === "object" || typeof obj === "function" ? class2type[toString.call(obj)] || "object" : typeof obj === "undefined" ? "undefined" : _typeof(obj);
-    };
-    $.isWindow = function(obj) {
-      return obj !== null && obj === obj.window;
-    };
-    $.isFunction = function(obj) {
-      return $.type(obj) === "function";
-    };
-    $.isArray = Array.isArray || function(obj) {
-      return $.type(obj) === "array";
-    };
-    $.isNumeric = function(obj) {
-      var type = $.type(obj);
-      return (type === "number" || type === "string") && !isNaN(obj - parseFloat(obj));
-    };
-    $.isPlainObject = function(obj) {
-      var proto, Ctor;
-      if (!obj || toString.call(obj) !== "[object Object]") {
-        return false;
-      }
-      proto = getProto(obj);
-      if (!proto) {
-        return true;
-      }
-      Ctor = hasOwn.call(proto, "constructor") && proto.constructor;
-      return typeof Ctor === "function" && fnToString.call(Ctor) === ObjectFunctionString;
-    };
-    $.isEmptyObject = function(obj) {
-      var name;
-      for (name in obj) {
-        return false;
-      }
-      return true;
-    };
-    $.extend = function() {
-      var options, name, src, copy, copyIsArray, clone, target = arguments[0] || {}, i = 1, length = arguments.length, deep = false;
-      if (typeof target === "boolean") {
-        deep = target;
-        target = arguments[i] || {};
-        i++;
-      }
-      if ((typeof target === "undefined" ? "undefined" : _typeof(target)) !== "object" && !$.isFunction(target)) {
-        target = {};
-      }
-      if (i === length) {
-        target = this;
-        i--;
-      }
-      for (;i < length; i++) {
-        if ((options = arguments[i]) !== null) {
-          for (name in options) {
-            src = target[name];
-            copy = options[name];
-            if (target === copy) {
-              continue;
-            }
-            if (deep && copy && ($.isPlainObject(copy) || (copyIsArray = Array.isArray(copy)))) {
-              if (copyIsArray) {
-                copyIsArray = false;
-                clone = src && Array.isArray(src) ? src : [];
-              } else {
-                clone = src && $.isPlainObject(src) ? src : {};
-              }
-              target[name] = $.extend(deep, clone, copy);
-            } else if (copy !== undefined) {
-              target[name] = copy;
-            }
-          }
-        }
-      }
-      return target;
-    };
-    return $;
-  }(window.jQuery || ($ = {}));
   !function() {
     "use strict";
     var gmap = function gmap(settings) {
       var _this = this;
-      if ($.isPlainObject(settings)) {
-        Util.renameSettings(settings);
-      }
-      settings = Util.mergeWithGlobalSettings(settings);
-      var mapOptions = Util.convertComponentOptions({
-        compType: Const.ComponentType.MAP,
-        compOptions: settings[Const.Setting.MAP_OPTIONS],
-        map: {
+      if (Is.Object(settings)) {
+        settings = Get.renamedSettings({
           settings: settings
-        }
-      });
-      var mapId = settings[Const.Setting.MAP_ID];
-      var mapContainer = document.getElementById(mapId);
-      if (!mapContainer) {
-        return Util.throwError({
-          method: "new gmap",
-          message: "Could not find an element with an Id of " + mapId,
-          obj: settings
         });
       }
-      this.components = {
-        Circle: new Components.CircleArray({
-          map: this
-        }),
-        Label: new Components.LabelArray({
-          map: this
-        }),
-        Marker: new Components.MarkerArray({
-          map: this
-        }),
-        Polygon: new Components.PolygonArray({
-          map: this
-        }),
-        Polyline: new Components.PolylineArray({
-          map: this
-        }),
-        Rectangle: new Components.RectangleArray({
-          map: this
-        })
-      };
+      settings = Get.mergedSettings({
+        convert: true,
+        settings: settings
+      });
+      var mapId = settings[Const.Settings.MAP_ID];
+      var mapContainer = document.getElementById(mapId);
+      var mapOptions = settings[Const.Settings.MAP_OPTIONS];
+      if (!mapContainer) {
+        return Error.throw({
+          method: "new gmap",
+          msg: "Could not find an element with an Id of " + mapId,
+          args: settings
+        });
+      }
       this.init = {
         bounds: undefined,
         options: mapOptions
       };
-      this.obj = new google.maps.Map(mapContainer, mapOptions);
+      this.obj = new google.maps[Const.GoogleClasses.MAP](mapContainer, mapOptions);
       this.obj["gmaps"] = {
         id: mapId,
         map: this,
         parent: this,
         version: gmap.version
       };
+      this.overlays = {
+        Circle: new Overlays.CircleArray({
+          map: this
+        }),
+        Label: new Overlays.LabelArray({
+          map: this
+        }),
+        Marker: new Overlays.MarkerArray({
+          map: this
+        }),
+        Polygon: new Overlays.PolygonArray({
+          map: this
+        }),
+        Polyline: new Overlays.PolylineArray({
+          map: this
+        }),
+        Rectangle: new Overlays.RectangleArray({
+          map: this
+        })
+      };
       this.settings = settings;
-      this.type = Const.ComponentType.MAP;
+      this.type = "Map";
       this.version = gmap.version;
-      google.maps.event.addListenerOnce(this.obj, Const.EventType.TILES_LOADED, function() {
+      google.maps.event.addListenerOnce(this.obj, Const.EventTypes.TILES_LOADED, function() {
         _this.controls = _this.obj.controls;
         _this.data = _this.obj.data;
         _this.init.bounds = _this.obj.getBounds();
-        var onLoad = settings[Const.Setting.ON_LOAD];
-        if ($.type(onLoad) === "function") {
-          onLoad(_this);
-        }
+        var onLoad = settings[Const.Settings.ON_LOAD];
+        if (Is.Function(onLoad)) onLoad(_this);
       });
     };
     window.gmap = gmap;
   }();
   var Const = function(Const) {
     "use strict";
-    var Option = {
-      ALIGN: "align",
-      ANCHOR_POINT: "anchorPoint",
-      ANIMATION: "animation",
-      BACKGROUND_COLOR: "backgroundColor",
-      BOUNDS: "bounds",
-      CENTER: "center",
-      CLICKABLE: "clickable",
-      CLICKABLE_ICONS: "clickableIcons",
-      CONTENT: "content",
-      CROSS_ON_DRAG: "crossOnDrag",
-      CURSOR: "cursor",
-      DISABLE_AUTO_PAN: "disableAutoPan",
-      DISABLE_DEFAULT_UI: "disableDefaultUI",
-      DISABLE_DOUBLE_CLICK_ZOOM: "disableDoubleClickZoom",
-      DRAGGABLE: "draggable",
-      DRAGGABLE_CURSOR: "draggableCursor",
-      DRAGGING_CURSOR: "draggingCursor",
-      EDITABLE: "editable",
-      FILL_COLOR: "fillColor",
-      FILL_OPACITY: "fillOpacity",
-      FONT_COLOR: "fontColor",
-      FONT_FAMILY: "fontFamily",
-      FONT_SIZE: "fontSize",
-      FULLSCREEN_CONTROL: "fullscreenControl",
-      FULLSCREEN_CONTROL_OPTIONS: "fullscreenControlOptions",
-      GEODESIC: "geodesic",
-      GESTURE_HANDLING: "gestureHandling",
-      HEADING: "heading",
-      ICON: "icon",
-      ICONS: "icons",
-      KEYBOARD_SHORTCUTS: "keyboardShortcuts",
-      LABEL: "label",
-      MAP: "map",
-      MAP_TYPE_CONTROL: "mapTypeControl",
-      MAP_TYPE_CONTROL_OPTIONS: "mapTypeControlOptions",
-      MAP_TYPE_ID: "mapTypeId",
-      MAX_WIDTH: "maxWidth",
-      MAX_ZOOM: "maxZoom",
-      MIN_ZOOM: "minZoom",
-      NO_CLEAR: "noClear",
-      OPACITY: "opacity",
-      OPTIMIZED: "optimized",
-      PAN_CONTROL: "panControl",
-      PAN_CONTROL_OPTIONS: "panControlOptions",
-      PATH: "path",
-      PATHS: "paths",
-      PIXEL_OFFSET: "pixelOffset",
-      PLACE: "place",
-      POSITION: "position",
-      RADIUS: "radius",
-      ROTATE_CONTROL: "rotateControl",
-      ROTATE_CONTROL_OPTIONS: "rotateControlOptions",
-      SCALE_CONTROL: "scaleControl",
-      SCALE_CONTROL_OPTIONS: "scaleControlOptions",
-      SCROLL_WHEEL: "scrollWheel",
-      SHAPE: "shape",
-      STREET_VIEW: "streetView",
-      STREET_VIEW_CONTROL: "streetViewControl",
-      STREET_VIEW_CONTROL_OPTIONS: "streetViewControlOptions",
-      STROKE_COLOR: "strokeColor",
-      STROKE_OPACITY: "strokeOpacity",
-      STROKE_POSITION: "strokePosition",
-      STROKE_WEIGHT: "strokeWeight",
-      STYLES: "styles",
-      TILT: "tilt",
-      TITLE: "title",
-      TEXT: "text",
-      VISIBLE: "visible",
-      ZOOM: "zoom",
-      ZOOM_CONTROL: "zoomControl",
-      ZOOM_CONTROL_OPTIONS: "zoomControlOptions",
-      Z_INDEX: "zIndex"
-    };
-    var Type = {
-      CIRCLE: "Circle",
-      CIRCLE_ARRAY: "CircleArray",
-      LABEL: "Label",
-      LABEL_ARRAY: "LabelArray",
-      MAP: "Map",
-      MARKER: "Marker",
-      MARKER_ARRAY: "MarkerArray",
-      POLYGON: "Polygon",
-      POLYGON_ARRAY: "PolygonArray",
-      POLYLINE: "Polyline",
-      POLYLINE_ARRAY: "PolylineArray",
-      RECTANGLE: "Rectangle",
-      RECTANGLE_ARRAY: "RectangleArray"
-    };
-    var Components = {};
-    Components[Type.CIRCLE] = {
-      options: [ {
-        name: Option.CENTER,
-        convertable: true,
-        required: true
-      }, {
-        name: Option.CLICKABLE
-      }, {
-        name: Option.DRAGGABLE
-      }, {
-        name: Option.EDITABLE
-      }, {
-        name: Option.FILL_COLOR
-      }, {
-        name: Option.FILL_OPACITY
-      }, {
-        name: Option.MAP
-      }, {
-        name: Option.RADIUS,
-        required: true
-      }, {
-        name: Option.STROKE_COLOR
-      }, {
-        name: Option.STROKE_OPACITY
-      }, {
-        name: Option.STROKE_POSITION
-      }, {
-        name: Option.STROKE_WEIGHT
-      }, {
-        name: Option.VISIBLE
-      }, {
-        name: Option.Z_INDEX
-      } ]
-    };
-    Components[Type.LABEL] = {
-      options: [ {
-        name: Option.ALIGN
-      }, {
-        name: Option.FONT_COLOR
-      }, {
-        name: Option.FONT_FAMILY
-      }, {
-        name: Option.FONT_SIZE
-      }, {
-        name: Option.MAX_ZOOM
-      }, {
-        name: Option.MIN_ZOOM
-      }, {
-        name: Option.POSITION,
-        convertable: true,
-        required: true
-      }, {
-        name: Option.STROKE_WEIGHT
-      }, {
-        name: Option.STROKE_COLOR
-      }, {
-        name: Option.VISIBLE
-      }, {
-        name: Option.TEXT,
-        required: true
-      }, {
-        name: Option.Z_INDEX
-      } ]
-    };
-    Components[Type.MAP] = {
-      options: [ {
-        name: Option.BACKGROUND_COLOR
-      }, {
-        name: Option.CENTER,
-        convertable: true,
-        required: true
-      }, {
-        name: Option.CLICKABLE_ICONS
-      }, {
-        name: Option.DISABLE_DEFAULT_UI
-      }, {
-        name: Option.DISABLE_DOUBLE_CLICK_ZOOM
-      }, {
-        name: Option.DRAGGABLE
-      }, {
-        name: Option.DRAGGABLE_CURSOR
-      }, {
-        name: Option.DRAGGING_CURSOR
-      }, {
-        name: Option.FULLSCREEN_CONTROL
-      }, {
-        name: Option.FULLSCREEN_CONTROL_OPTIONS
-      }, {
-        name: Option.GESTURE_HANDLING
-      }, {
-        name: Option.HEADING
-      }, {
-        name: Option.KEYBOARD_SHORTCUTS
-      }, {
-        name: Option.MAP_TYPE_CONTROL
-      }, {
-        name: Option.MAP_TYPE_CONTROL_OPTIONS
-      }, {
-        name: Option.MAP_TYPE_ID
-      }, {
-        name: Option.MAX_ZOOM
-      }, {
-        name: Option.NO_CLEAR
-      }, {
-        name: Option.PAN_CONTROL
-      }, {
-        name: Option.PAN_CONTROL_OPTIONS
-      }, {
-        name: Option.ROTATE_CONTROL
-      }, {
-        name: Option.ROTATE_CONTROL_OPTIONS
-      }, {
-        name: Option.SCALE_CONTROL
-      }, {
-        name: Option.SCALE_CONTROL_OPTIONS
-      }, {
-        name: Option.SCROLL_WHEEL
-      }, {
-        name: Option.STREET_VIEW
-      }, {
-        name: Option.STREET_VIEW_CONTROL
-      }, {
-        name: Option.STREET_VIEW_CONTROL_OPTIONS
-      }, {
-        name: Option.STYLES
-      }, {
-        name: Option.TILT
-      }, {
-        name: Option.ZOOM,
-        required: true
-      }, {
-        name: Option.ZOOM_CONTROL
-      }, {
-        name: Option.ZOOM_CONTROL_OPTIONS
-      } ]
-    };
-    Components[Type.MARKER] = {
-      options: [ {
-        name: Option.ANCHOR_POINT
-      }, {
-        name: Option.ANIMATION
-      }, {
-        name: Option.CLICKABLE
-      }, {
-        name: Option.CROSS_ON_DRAG
-      }, {
-        name: Option.CURSOR
-      }, {
-        name: Option.DRAGGABLE
-      }, {
-        name: Option.ICON
-      }, {
-        name: Option.LABEL
-      }, {
-        name: Option.MAP
-      }, {
-        name: Option.OPACITY
-      }, {
-        name: Option.OPTIMIZED
-      }, {
-        name: Option.PLACE
-      }, {
-        name: Option.POSITION,
-        convertable: true,
-        required: true
-      }, {
-        name: Option.SHAPE
-      }, {
-        name: Option.TITLE
-      }, {
-        name: Option.VISIBLE
-      }, {
-        name: Option.Z_INDEX
-      } ]
-    };
-    Components[Type.POLYGON] = {
-      options: [ {
-        name: Option.CLICKABLE
-      }, {
-        name: Option.DRAGGABLE
-      }, {
-        name: Option.EDITABLE
-      }, {
-        name: Option.FILL_COLOR
-      }, {
-        name: Option.FILL_OPACITY
-      }, {
-        name: Option.GEODESIC
-      }, {
-        name: Option.MAP
-      }, {
-        name: Option.PATHS,
-        convertable: true,
-        required: true
-      }, {
-        name: Option.STROKE_COLOR
-      }, {
-        name: Option.STROKE_OPACITY
-      }, {
-        name: Option.STROKE_POSITION
-      }, {
-        name: Option.STROKE_WEIGHT
-      }, {
-        name: Option.VISIBLE
-      }, {
-        name: Option.Z_INDEX
-      } ]
-    };
-    Components[Type.POLYLINE] = {
-      options: [ {
-        name: Option.CLICKABLE
-      }, {
-        name: Option.DRAGGABLE
-      }, {
-        name: Option.EDITABLE
-      }, {
-        name: Option.GEODESIC
-      }, {
-        name: Option.ICONS
-      }, {
-        name: Option.MAP
-      }, {
-        name: Option.PATH,
-        convertable: true,
-        required: true
-      }, {
-        name: Option.STROKE_COLOR
-      }, {
-        name: Option.STROKE_OPACITY
-      }, {
-        name: Option.STROKE_WEIGHT
-      }, {
-        name: Option.VISIBLE
-      }, {
-        name: Option.Z_INDEX
-      } ]
-    };
-    Components[Type.RECTANGLE] = {
-      options: [ {
-        name: Option.BOUNDS,
-        convertable: true,
-        required: true
-      }, {
-        name: Option.CLICKABLE
-      }, {
-        name: Option.DRAGGABLE
-      }, {
-        name: Option.EDITABLE
-      }, {
-        name: Option.FILL_COLOR
-      }, {
-        name: Option.FILL_OPACITY
-      }, {
-        name: Option.MAP
-      }, {
-        name: Option.STROKE_COLOR
-      }, {
-        name: Option.STROKE_OPACITY
-      }, {
-        name: Option.STROKE_POSITION
-      }, {
-        name: Option.STROKE_WEIGHT
-      }, {
-        name: Option.VISIBLE
-      }, {
-        name: Option.Z_INDEX
-      } ]
-    };
-    Const.Components = Components;
-    Const.ComponentOption = Option;
-    Const.ComponentType = Type;
-    return Const;
-  }(Const || (Const = {}));
-  var Const = function(Const) {
-    "use strict";
-    Const.EventType = {
+    Const.EventTypes = {
       ANIMATION_CHANGED: "animation_changed",
       BOUNDS_CHANGED: "bounds_changed",
       CENTER_CHANGED: "center_changed",
@@ -662,7 +190,405 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       ZINDEX_CHANGED: "zindex_changed",
       ZOOM_CHANGED: "zoom_changed"
     };
-    Const.Setting = {
+    return Const;
+  }(Const || (Const = {}));
+  var Const = function(Const) {
+    "use strict";
+    Const.GoogleClasses = {
+      CIRCLE: "Circle",
+      INFO_WINDOW: "InfoWindow",
+      LAT_LNG: "LatLng",
+      LAT_LNG_BOUNDS: "LatLngBounds",
+      MAP: "Map",
+      MARKER: "Marker",
+      MVC_ARRAY: "MVCArray",
+      POLYLINE: "Polyline",
+      POLYGON: "Polygon",
+      RECTANGLE: "Rectangle"
+    };
+    return Const;
+  }(Const || (Const = {}));
+  var Const = function(Const) {
+    "use strict";
+    var Options = {
+      BACKGROUND_COLOR: "backgroundColor",
+      CENTER: "center",
+      CLICKABLE_ICONS: "clickableIcons",
+      DISABLE_DEFAULT_UI: "disableDefaultUI",
+      DISABLE_DOUBLE_CLICK_ZOOM: "disableDoubleClickZoom",
+      DRAGGABLE: "draggable",
+      DRAGGABLE_CURSOR: "draggableCursor",
+      DRAGGING_CURSOR: "draggingCursor",
+      FULLSCREEN_CONTROL: "fullscreenControl",
+      FULLSCREEN_CONTROL_OPTIONS: "fullscreenControlOptions",
+      GESTURE_HANDLING: "gestureHandling",
+      HEADING: "heading",
+      KEYBOARD_SHORTCUTS: "keyboardShortcuts",
+      MAP_TYPE_CONTROL: "mapTypeControl",
+      MAP_TYPE_CONTROL_OPTIONS: "mapTypeControlOptions",
+      MAP_TYPE_ID: "mapTypeId",
+      MAX_ZOOM: "maxZoom",
+      MIN_ZOOM: "minZoom",
+      NO_CLEAR: "noClear",
+      PAN_CONTROL: "panControl",
+      PAN_CONTROL_OPTIONS: "panControlOptions",
+      ROTATE_CONTROL: "rotateControl",
+      ROTATE_CONTROL_OPTIONS: "rotateControlOptions",
+      SCALE_CONTROL: "scaleControl",
+      SCALE_CONTROL_OPTIONS: "scaleControlOptions",
+      SCROLL_WHEEL: "scrollWheel",
+      STREET_VIEW: "streetView",
+      STREET_VIEW_CONTROL: "streetViewControl",
+      STREET_VIEW_CONTROL_OPTIONS: "streetViewControlOptions",
+      STYLES: "styles",
+      TILT: "tilt",
+      ZOOM: "zoom",
+      ZOOM_CONTROL: "zoomControl",
+      ZOOM_CONTROL_OPTIONS: "zoomControlOptions"
+    };
+    var Map = {
+      options: [ {
+        name: Options.BACKGROUND_COLOR
+      }, {
+        name: Options.CENTER,
+        convertable: true,
+        required: true
+      }, {
+        name: Options.CLICKABLE_ICONS
+      }, {
+        name: Options.DISABLE_DEFAULT_UI
+      }, {
+        name: Options.DISABLE_DOUBLE_CLICK_ZOOM
+      }, {
+        name: Options.DRAGGABLE
+      }, {
+        name: Options.DRAGGABLE_CURSOR
+      }, {
+        name: Options.DRAGGING_CURSOR
+      }, {
+        name: Options.FULLSCREEN_CONTROL
+      }, {
+        name: Options.FULLSCREEN_CONTROL_OPTIONS
+      }, {
+        name: Options.GESTURE_HANDLING
+      }, {
+        name: Options.HEADING
+      }, {
+        name: Options.KEYBOARD_SHORTCUTS
+      }, {
+        name: Options.MAP_TYPE_CONTROL
+      }, {
+        name: Options.MAP_TYPE_CONTROL_OPTIONS
+      }, {
+        name: Options.MAP_TYPE_ID
+      }, {
+        name: Options.MAX_ZOOM
+      }, {
+        name: Options.MIN_ZOOM
+      }, {
+        name: Options.NO_CLEAR
+      }, {
+        name: Options.PAN_CONTROL
+      }, {
+        name: Options.PAN_CONTROL_OPTIONS
+      }, {
+        name: Options.ROTATE_CONTROL
+      }, {
+        name: Options.ROTATE_CONTROL_OPTIONS
+      }, {
+        name: Options.SCALE_CONTROL
+      }, {
+        name: Options.SCALE_CONTROL_OPTIONS
+      }, {
+        name: Options.SCROLL_WHEEL
+      }, {
+        name: Options.STREET_VIEW
+      }, {
+        name: Options.STREET_VIEW_CONTROL
+      }, {
+        name: Options.STREET_VIEW_CONTROL_OPTIONS
+      }, {
+        name: Options.STYLES
+      }, {
+        name: Options.TILT
+      }, {
+        name: Options.ZOOM,
+        required: true
+      }, {
+        name: Options.ZOOM_CONTROL
+      }, {
+        name: Options.ZOOM_CONTROL_OPTIONS
+      } ]
+    };
+    Const.Map = Map;
+    Const.MapOptions = Options;
+    return Const;
+  }(Const || (Const = {}));
+  var Const = function(Const) {
+    "use strict";
+    var Options = {
+      ALIGN: "align",
+      ANCHOR_POINT: "anchorPoint",
+      ANIMATION: "animation",
+      BOUNDS: "bounds",
+      CENTER: "center",
+      CLICKABLE: "clickable",
+      CONTENT: "content",
+      CROSS_ON_DRAG: "crossOnDrag",
+      CURSOR: "cursor",
+      DISABLE_AUTO_PAN: "disableAutoPan",
+      DRAGGABLE: "draggable",
+      EDITABLE: "editable",
+      FILL_COLOR: "fillColor",
+      FILL_OPACITY: "fillOpacity",
+      FONT_COLOR: "fontColor",
+      FONT_FAMILY: "fontFamily",
+      FONT_SIZE: "fontSize",
+      GEODESIC: "geodesic",
+      ICON: "icon",
+      ICONS: "icons",
+      LABEL: "label",
+      MAP: "map",
+      MAX_WIDTH: "maxWidth",
+      MAX_ZOOM: "maxZoom",
+      MIN_ZOOM: "minZoom",
+      OPACITY: "opacity",
+      OPTIMIZED: "optimized",
+      PATH: "path",
+      PATHS: "paths",
+      PIXEL_OFFSET: "pixelOffset",
+      PLACE: "place",
+      POSITION: "position",
+      RADIUS: "radius",
+      SHAPE: "shape",
+      STROKE_COLOR: "strokeColor",
+      STROKE_OPACITY: "strokeOpacity",
+      STROKE_POSITION: "strokePosition",
+      STROKE_WEIGHT: "strokeWeight",
+      TITLE: "title",
+      TEXT: "text",
+      VISIBLE: "visible",
+      Z_INDEX: "zIndex"
+    };
+    var Types = {
+      CIRCLE: "Circle",
+      CIRCLE_ARRAY: "CircleArray",
+      LABEL: "Label",
+      LABEL_ARRAY: "LabelArray",
+      MARKER: "Marker",
+      MARKER_ARRAY: "MarkerArray",
+      POLYGON: "Polygon",
+      POLYGON_ARRAY: "PolygonArray",
+      POLYLINE: "Polyline",
+      POLYLINE_ARRAY: "PolylineArray",
+      RECTANGLE: "Rectangle",
+      RECTANGLE_ARRAY: "RectangleArray"
+    };
+    var Overlays = {};
+    Overlays[Types.CIRCLE] = {
+      options: [ {
+        name: Options.CENTER,
+        convertable: true,
+        required: true
+      }, {
+        name: Options.CLICKABLE
+      }, {
+        name: Options.DRAGGABLE
+      }, {
+        name: Options.EDITABLE
+      }, {
+        name: Options.FILL_COLOR
+      }, {
+        name: Options.FILL_OPACITY
+      }, {
+        name: Options.MAP
+      }, {
+        name: Options.RADIUS,
+        required: true
+      }, {
+        name: Options.STROKE_COLOR
+      }, {
+        name: Options.STROKE_OPACITY
+      }, {
+        name: Options.STROKE_POSITION
+      }, {
+        name: Options.STROKE_WEIGHT
+      }, {
+        name: Options.VISIBLE
+      }, {
+        name: Options.Z_INDEX
+      } ]
+    };
+    Overlays[Types.LABEL] = {
+      options: [ {
+        name: Options.ALIGN
+      }, {
+        name: Options.FONT_COLOR
+      }, {
+        name: Options.FONT_FAMILY
+      }, {
+        name: Options.FONT_SIZE
+      }, {
+        name: Options.MAX_ZOOM
+      }, {
+        name: Options.MIN_ZOOM
+      }, {
+        name: Options.POSITION,
+        convertable: true,
+        required: true
+      }, {
+        name: Options.STROKE_WEIGHT
+      }, {
+        name: Options.STROKE_COLOR
+      }, {
+        name: Options.VISIBLE
+      }, {
+        name: Options.TEXT,
+        required: true
+      }, {
+        name: Options.Z_INDEX
+      } ]
+    };
+    Overlays[Types.MARKER] = {
+      options: [ {
+        name: Options.ANCHOR_POINT
+      }, {
+        name: Options.ANIMATION
+      }, {
+        name: Options.CLICKABLE
+      }, {
+        name: Options.CROSS_ON_DRAG
+      }, {
+        name: Options.CURSOR
+      }, {
+        name: Options.DRAGGABLE
+      }, {
+        name: Options.ICON
+      }, {
+        name: Options.LABEL
+      }, {
+        name: Options.MAP
+      }, {
+        name: Options.OPACITY
+      }, {
+        name: Options.OPTIMIZED
+      }, {
+        name: Options.PLACE
+      }, {
+        name: Options.POSITION,
+        convertable: true,
+        required: true
+      }, {
+        name: Options.SHAPE
+      }, {
+        name: Options.TITLE
+      }, {
+        name: Options.VISIBLE
+      }, {
+        name: Options.Z_INDEX
+      } ]
+    };
+    Overlays[Types.POLYGON] = {
+      options: [ {
+        name: Options.CLICKABLE
+      }, {
+        name: Options.DRAGGABLE
+      }, {
+        name: Options.EDITABLE
+      }, {
+        name: Options.FILL_COLOR
+      }, {
+        name: Options.FILL_OPACITY
+      }, {
+        name: Options.GEODESIC
+      }, {
+        name: Options.MAP
+      }, {
+        name: Options.PATHS,
+        convertable: true,
+        required: true
+      }, {
+        name: Options.STROKE_COLOR
+      }, {
+        name: Options.STROKE_OPACITY
+      }, {
+        name: Options.STROKE_POSITION
+      }, {
+        name: Options.STROKE_WEIGHT
+      }, {
+        name: Options.VISIBLE
+      }, {
+        name: Options.Z_INDEX
+      } ]
+    };
+    Overlays[Types.POLYLINE] = {
+      options: [ {
+        name: Options.CLICKABLE
+      }, {
+        name: Options.DRAGGABLE
+      }, {
+        name: Options.EDITABLE
+      }, {
+        name: Options.GEODESIC
+      }, {
+        name: Options.ICONS
+      }, {
+        name: Options.MAP
+      }, {
+        name: Options.PATH,
+        convertable: true,
+        required: true
+      }, {
+        name: Options.STROKE_COLOR
+      }, {
+        name: Options.STROKE_OPACITY
+      }, {
+        name: Options.STROKE_WEIGHT
+      }, {
+        name: Options.VISIBLE
+      }, {
+        name: Options.Z_INDEX
+      } ]
+    };
+    Overlays[Types.RECTANGLE] = {
+      options: [ {
+        name: Options.BOUNDS,
+        convertable: true,
+        required: true
+      }, {
+        name: Options.CLICKABLE
+      }, {
+        name: Options.DRAGGABLE
+      }, {
+        name: Options.EDITABLE
+      }, {
+        name: Options.FILL_COLOR
+      }, {
+        name: Options.FILL_OPACITY
+      }, {
+        name: Options.MAP
+      }, {
+        name: Options.STROKE_COLOR
+      }, {
+        name: Options.STROKE_OPACITY
+      }, {
+        name: Options.STROKE_POSITION
+      }, {
+        name: Options.STROKE_WEIGHT
+      }, {
+        name: Options.VISIBLE
+      }, {
+        name: Options.Z_INDEX
+      } ]
+    };
+    Const.Overlays = Overlays;
+    Const.OverlayOptions = Options;
+    Const.OverlayTypes = Types;
+    return Const;
+  }(Const || (Const = {}));
+  var Const = function(Const) {
+    "use strict";
+    Const.Settings = {
       CIRCLE_OPTIONS: "circleOptions",
       DELIMITED_STRINGS: "delimitedStrings",
       DELIMITER: "delimiter",
@@ -678,672 +604,434 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     };
     return Const;
   }(Const || (Const = {}));
-  !function(Settings, CompOption, Type) {
+  !function(GlobalSettings, MapOpts, OvlOpts, Settings) {
     "use strict";
     var CircleOptions = {};
-    CircleOptions[CompOption.CLICKABLE] = true;
-    CircleOptions[CompOption.DRAGGABLE] = false;
-    CircleOptions[CompOption.EDITABLE] = false;
-    CircleOptions[CompOption.FILL_COLOR] = "#2196f3";
-    CircleOptions[CompOption.FILL_OPACITY] = .75;
-    CircleOptions[CompOption.STROKE_COLOR] = "#000";
-    CircleOptions[CompOption.STROKE_OPACITY] = .75;
-    CircleOptions[CompOption.STROKE_POSITION] = google.maps.StrokePosition.CENTER;
-    CircleOptions[CompOption.STROKE_WEIGHT] = 1;
-    CircleOptions[CompOption.VISIBLE] = true;
+    CircleOptions[OvlOpts.CLICKABLE] = true;
+    CircleOptions[OvlOpts.DRAGGABLE] = false;
+    CircleOptions[OvlOpts.EDITABLE] = false;
+    CircleOptions[OvlOpts.FILL_COLOR] = "#2196f3";
+    CircleOptions[OvlOpts.FILL_OPACITY] = .75;
+    CircleOptions[OvlOpts.STROKE_COLOR] = "#000";
+    CircleOptions[OvlOpts.STROKE_OPACITY] = .75;
+    CircleOptions[OvlOpts.STROKE_POSITION] = google.maps.StrokePosition.CENTER;
+    CircleOptions[OvlOpts.STROKE_WEIGHT] = 1;
+    CircleOptions[OvlOpts.VISIBLE] = true;
     var Delimiter = {
       latLng: "|",
       latLngArray: "~",
       latLngBounds: "|"
     };
     var LabelOptions = {};
-    LabelOptions[CompOption.ALIGN] = "center";
-    LabelOptions[CompOption.FONT_COLOR] = "#000";
-    LabelOptions[CompOption.FONT_SIZE] = 14;
-    LabelOptions[CompOption.STROKE_COLOR] = "#FFF";
-    LabelOptions[CompOption.STROKE_WEIGHT] = 1;
-    LabelOptions[CompOption.VISIBLE] = true;
+    LabelOptions[OvlOpts.ALIGN] = "center";
+    LabelOptions[OvlOpts.FONT_COLOR] = "#000";
+    LabelOptions[OvlOpts.FONT_SIZE] = 14;
+    LabelOptions[OvlOpts.STROKE_COLOR] = "#FFF";
+    LabelOptions[OvlOpts.STROKE_WEIGHT] = 1;
+    LabelOptions[OvlOpts.VISIBLE] = true;
     var MapOptions = {};
-    MapOptions[CompOption.CENTER] = {
+    MapOptions[MapOpts.CENTER] = {
       lat: 37.5,
       lng: -120
     };
-    MapOptions[CompOption.CLICKABLE_ICONS] = false;
-    MapOptions[CompOption.DISABLE_DOUBLE_CLICK_ZOOM] = false;
-    MapOptions[CompOption.GESTURE_HANDLING] = "auto";
-    MapOptions[CompOption.KEYBOARD_SHORTCUTS] = true;
-    MapOptions[CompOption.MAP_TYPE_CONTROL] = false;
-    MapOptions[CompOption.MAP_TYPE_ID] = google.maps.MapTypeId.ROADMAP;
-    MapOptions[CompOption.SCROLL_WHEEL] = true;
-    MapOptions[CompOption.STREET_VIEW_CONTROL] = false;
-    MapOptions[CompOption.ZOOM] = 6;
-    MapOptions[CompOption.ZOOM_CONTROL] = true;
+    MapOptions[MapOpts.CLICKABLE_ICONS] = false;
+    MapOptions[MapOpts.DISABLE_DOUBLE_CLICK_ZOOM] = false;
+    MapOptions[MapOpts.GESTURE_HANDLING] = "auto";
+    MapOptions[MapOpts.KEYBOARD_SHORTCUTS] = true;
+    MapOptions[MapOpts.MAP_TYPE_CONTROL] = false;
+    MapOptions[MapOpts.MAP_TYPE_ID] = google.maps.MapTypeId.ROADMAP;
+    MapOptions[MapOpts.SCROLL_WHEEL] = true;
+    MapOptions[MapOpts.STREET_VIEW_CONTROL] = false;
+    MapOptions[MapOpts.ZOOM] = 6;
+    MapOptions[MapOpts.ZOOM_CONTROL] = true;
     var MarkerOptions = {};
-    MarkerOptions[CompOption.CLICKABLE] = true;
-    MarkerOptions[CompOption.CROSS_ON_DRAG] = true;
-    MarkerOptions[CompOption.DRAGGABLE] = false;
-    MarkerOptions[CompOption.OPACITY] = 1;
-    MarkerOptions[CompOption.OPTIMIZED] = true;
-    MarkerOptions[CompOption.VISIBLE] = true;
+    MarkerOptions[OvlOpts.CLICKABLE] = true;
+    MarkerOptions[OvlOpts.CROSS_ON_DRAG] = true;
+    MarkerOptions[OvlOpts.DRAGGABLE] = false;
+    MarkerOptions[OvlOpts.OPACITY] = 1;
+    MarkerOptions[OvlOpts.OPTIMIZED] = true;
+    MarkerOptions[OvlOpts.VISIBLE] = true;
     var PolygonOptions = {};
-    PolygonOptions[CompOption.CLICKABLE] = true;
-    PolygonOptions[CompOption.DRAGGABLE] = false;
-    PolygonOptions[CompOption.EDITABLE] = false;
-    PolygonOptions[CompOption.FILL_COLOR] = "#2196f3";
-    PolygonOptions[CompOption.FILL_OPACITY] = .75;
-    PolygonOptions[CompOption.GEODESIC] = false;
-    PolygonOptions[CompOption.STROKE_COLOR] = "#000";
-    PolygonOptions[CompOption.STROKE_OPACITY] = .75;
-    PolygonOptions[CompOption.STROKE_WEIGHT] = 1;
-    PolygonOptions[CompOption.VISIBLE] = true;
+    PolygonOptions[OvlOpts.CLICKABLE] = true;
+    PolygonOptions[OvlOpts.DRAGGABLE] = false;
+    PolygonOptions[OvlOpts.EDITABLE] = false;
+    PolygonOptions[OvlOpts.FILL_COLOR] = "#2196f3";
+    PolygonOptions[OvlOpts.FILL_OPACITY] = .75;
+    PolygonOptions[OvlOpts.GEODESIC] = false;
+    PolygonOptions[OvlOpts.STROKE_COLOR] = "#000";
+    PolygonOptions[OvlOpts.STROKE_OPACITY] = .75;
+    PolygonOptions[OvlOpts.STROKE_WEIGHT] = 1;
+    PolygonOptions[OvlOpts.VISIBLE] = true;
     var PolylineOptions = {};
-    PolylineOptions[CompOption.CLICKABLE] = true;
-    PolylineOptions[CompOption.DRAGGABLE] = false;
-    PolylineOptions[CompOption.EDITABLE] = false;
-    PolylineOptions[CompOption.GEODESIC] = false;
-    PolylineOptions[CompOption.STROKE_COLOR] = "#000";
-    PolylineOptions[CompOption.STROKE_OPACITY] = .75;
-    PolylineOptions[CompOption.STROKE_WEIGHT] = 3;
-    PolylineOptions[CompOption.VISIBLE] = true;
+    PolylineOptions[OvlOpts.CLICKABLE] = true;
+    PolylineOptions[OvlOpts.DRAGGABLE] = false;
+    PolylineOptions[OvlOpts.EDITABLE] = false;
+    PolylineOptions[OvlOpts.GEODESIC] = false;
+    PolylineOptions[OvlOpts.STROKE_COLOR] = "#000";
+    PolylineOptions[OvlOpts.STROKE_OPACITY] = .75;
+    PolylineOptions[OvlOpts.STROKE_WEIGHT] = 3;
+    PolylineOptions[OvlOpts.VISIBLE] = true;
     var RectangleOptions = {};
-    RectangleOptions[CompOption.CLICKABLE] = true;
-    RectangleOptions[CompOption.DRAGGABLE] = false;
-    RectangleOptions[CompOption.EDITABLE] = false;
-    RectangleOptions[CompOption.FILL_COLOR] = "#2196f3";
-    RectangleOptions[CompOption.FILL_OPACITY] = .75;
-    RectangleOptions[CompOption.STROKE_COLOR] = "#000";
-    RectangleOptions[CompOption.STROKE_OPACITY] = .75;
-    RectangleOptions[CompOption.STROKE_POSITION] = google.maps.StrokePosition.CENTER;
-    RectangleOptions[CompOption.STROKE_WEIGHT] = 1;
-    RectangleOptions[CompOption.VISIBLE] = true;
-    Settings[Type.CIRCLE_OPTIONS] = CircleOptions;
-    Settings[Type.DELIMITED_STRINGS] = false;
-    Settings[Type.DELIMITER] = Delimiter;
-    Settings[Type.LABEL_OPTIONS] = LabelOptions;
-    Settings[Type.MAP_ID] = "gmap";
-    Settings[Type.MAP_OPTIONS] = MapOptions;
-    Settings[Type.MARKER_OPTIONS] = MarkerOptions;
-    Settings[Type.ON_LOAD] = function() {};
-    Settings[Type.POLYGON_OPTIONS] = PolygonOptions;
-    Settings[Type.POLYLINE_OPTIONS] = PolylineOptions;
-    Settings[Type.RECTANGLE_OPTIONS] = RectangleOptions;
-    Settings[Type.URL_PRECISION] = 5;
-    return Settings;
-  }(gmap.settings || (gmap.settings = {}), Const.ComponentOption, Const.Setting);
-  var Util = function(Util) {
+    RectangleOptions[OvlOpts.CLICKABLE] = true;
+    RectangleOptions[OvlOpts.DRAGGABLE] = false;
+    RectangleOptions[OvlOpts.EDITABLE] = false;
+    RectangleOptions[OvlOpts.FILL_COLOR] = "#2196f3";
+    RectangleOptions[OvlOpts.FILL_OPACITY] = .75;
+    RectangleOptions[OvlOpts.STROKE_COLOR] = "#000";
+    RectangleOptions[OvlOpts.STROKE_OPACITY] = .75;
+    RectangleOptions[OvlOpts.STROKE_POSITION] = google.maps.StrokePosition.CENTER;
+    RectangleOptions[OvlOpts.STROKE_WEIGHT] = 1;
+    RectangleOptions[OvlOpts.VISIBLE] = true;
+    GlobalSettings[Settings.CIRCLE_OPTIONS] = CircleOptions;
+    GlobalSettings[Settings.DELIMITED_STRINGS] = false;
+    GlobalSettings[Settings.DELIMITER] = Delimiter;
+    GlobalSettings[Settings.LABEL_OPTIONS] = LabelOptions;
+    GlobalSettings[Settings.MAP_ID] = "gmap";
+    GlobalSettings[Settings.MAP_OPTIONS] = MapOptions;
+    GlobalSettings[Settings.MARKER_OPTIONS] = MarkerOptions;
+    GlobalSettings[Settings.ON_LOAD] = function() {};
+    GlobalSettings[Settings.POLYGON_OPTIONS] = PolygonOptions;
+    GlobalSettings[Settings.POLYLINE_OPTIONS] = PolylineOptions;
+    GlobalSettings[Settings.RECTANGLE_OPTIONS] = RectangleOptions;
+    GlobalSettings[Settings.URL_PRECISION] = 5;
+    return GlobalSettings;
+  }(gmap.settings || (gmap.settings = {}), Const.MapOptions, Const.OverlayOptions, Const.Settings);
+  !function(OverlayTypes) {
     "use strict";
-    var Conversions = {
-      bounds: function bounds(options, map) {
-        if (options.bounds) {
-          options.bounds = Util.toLatLngBounds({
-            map: map,
-            val: options.bounds
-          });
-        }
+    gmap.prototype = {
+      addOverlay: function addOverlay(type, options) {
+        return Core.addOverlay({
+          map: this,
+          options: options,
+          type: type
+        });
       },
-      center: function center(options, map) {
-        if (options.center) {
-          options.center = Util.toLatLng({
-            map: map,
-            val: options.center
-          });
-        }
+      circles: function circles(ids) {
+        return Core.search({
+          ids: ids,
+          matching: true,
+          ovlArray: this.overlays[OverlayTypes.CIRCLE]
+        });
       },
-      path: function path(options, map) {
-        if (options.path) {
-          options.path = Util.toLatLngArray({
-            map: map,
-            val: options.path
-          });
-        }
+      fitBounds: function fitBounds(ovls) {
+        return Core.fitBounds({
+          map: this,
+          ovls: ovls
+        });
       },
-      paths: function paths(options, map) {
-        if (options.paths || options.path) {
-          options.paths = Util.toLatLngArray({
-            map: map,
-            val: options.paths || options.path
-          });
-          delete options.path;
-        }
+      geolocate: function geolocate(options) {
+        return Core.geolocate({
+          map: this,
+          options: options
+        });
       },
-      position: function position(options, map) {
-        if (options.position) {
-          options.position = Util.toLatLng({
-            map: map,
-            val: options.position
-          });
+      getBounds: function getBounds() {
+        return this.obj.getBounds();
+      },
+      getCenter: function getCenter() {
+        return this.obj.getCenter();
+      },
+      getCenterString: function getCenterString() {
+        return Convert.toString({
+          map: this,
+          val: this.getCenter()
+        });
+      },
+      getOptions: function getOptions(option) {
+        return Core.getMapOptions({
+          comp: this,
+          option: option
+        });
+      },
+      getDiv: function getDiv() {
+        return this.obj.getDiv();
+      },
+      getProjection: function getProjection() {
+        return this.obj.getProjection();
+      },
+      getZoom: function getZoom() {
+        return this.obj.getZoom();
+      },
+      labels: function labels(ids) {
+        return Core.search({
+          ids: ids,
+          matching: true,
+          ovlArray: this.overlays[OverlayTypes.LABEL]
+        });
+      },
+      markers: function markers(ids) {
+        return Core.search({
+          ids: ids,
+          matching: true,
+          ovlArray: this.overlays[OverlayTypes.MARKER]
+        });
+      },
+      off: function off(type) {
+        return Core.removeListener({
+          ovl: this,
+          type: type
+        });
+      },
+      on: function on(type, func) {
+        return Core.addListener({
+          ovl: this,
+          func: func,
+          type: type
+        });
+      },
+      polygons: function polygons(ids) {
+        return Core.search({
+          ids: ids,
+          matching: true,
+          ovlArray: this.overlays[OverlayTypes.POLYGON]
+        });
+      },
+      polylines: function polylines(ids) {
+        return Core.search({
+          ids: ids,
+          matching: true,
+          ovlArray: this.overlays[OverlayTypes.POLYLINE]
+        });
+      },
+      rectangles: function rectangles(ids) {
+        return Core.search({
+          ids: ids,
+          matching: true,
+          ovlArray: this.overlays[OverlayTypes.RECTANGLE]
+        });
+      },
+      reset: function reset() {
+        return Core.resetMap({
+          map: this
+        });
+      },
+      setCenter: function setCenter(center) {
+        if (center !== undefined) {
+          this.obj.setCenter(Convert.toLatLng({
+            map: this,
+            val: center
+          }));
         }
-      }
-    };
-    Util.cleanComponentOptions = function(parms) {
-      var compOptions = parms.compOptions;
-      var compType = parms.compType.replace("Array", "");
-      var compTypeOptions = _getComponentOptions(compType);
-      Object.keys(compOptions).forEach(function(key) {
-        if (compTypeOptions.indexOf(key) === -1) {
-          delete compOptions[key];
+        return this;
+      },
+      setOptions: function setOptions(option, value) {
+        return Core.setMapOptions({
+          map: this,
+          option: option,
+          value: value
+        });
+      },
+      setZoom: function setZoom(zoom) {
+        if (zoom !== undefined) {
+          this.obj.setZoom(zoom);
         }
-      });
-      return compOptions;
-    };
-    Util.convertComponentOptions = function(parms) {
-      var compOptions = parms.compOptions;
-      var compType = parms.compType.replace("Array", "");
-      var convertableOptions = _getConvertableOptions(compType);
-      var map = parms.map;
-      for (var i = 0, i_end = convertableOptions.length; i < i_end; i++) {
-        var option = convertableOptions[i];
-        Conversions[option.name](compOptions, map);
-      }
-      return compOptions;
-    };
-    Util.copy = function(parms) {
-      var compArray = parms.compArray;
-      var new_comp = Util.getNewComponentArray(compArray);
-      var proto = _getPrototypes(compArray);
-      var copy = $.extend(true, new_comp, compArray);
-      for (var i = 0, i_end = proto.length; i < i_end; i++) {
-        delete copy[proto[i]];
-      }
-      return copy;
-    };
-    Util.getNewComponentArray = function(compArray, map) {
-      if ($.type(compArray) === "string") {
-        return new Components[compArray + "Array"]({
-          map: map
+        return this;
+      },
+      trigger: function trigger(type) {
+        return Core.triggerListener({
+          ovl: this,
+          type: type
         });
       }
-      return new Components[compArray.type]({
-        map: compArray.map
-      });
     };
-    Util.renameComponentOptions = function(compOptions) {
-      Object.keys(compOptions).forEach(function(key) {
-        Util.renameProperty({
-          newName: Util.lookupComponentOption(key),
-          obj: compOptions,
-          oldName: key
-        });
-      });
-      return compOptions;
-    };
-    Util.validComponentOption = function(parms) {
-      var compOption = parms.compOption;
-      var compType = parms.compType;
-      return _getComponentOptions(compType).includes(compOption);
-    };
-    Util.validMapComponent = function(compType) {
-      return compType !== "Map" && Object.keys(Const.Components).includes(compType);
-    };
-    function _getConvertableOptions(compType) {
-      return Const.Components[compType].options.filter(function(option) {
-        return option.convertable === true;
-      });
-    }
-    function _getComponentOptions(compType) {
-      return Const.Components[compType].options.map(function(option) {
-        return option.name;
-      });
-    }
-    function _getPrototypes(compArray) {
-      var proto = Object.keys(Object.getPrototypeOf(compArray));
-      var base_proto = Object.keys(Object.getPrototypeOf(new Components.BaseComponentArray({})));
-      return proto.concat(base_proto);
-    }
-    return Util;
-  }(Util || (Util = {}));
-  var Util = function(Util, Setting) {
-    "use strict";
-    var Delimiter = {
-      latLng: function latLng(map) {
-        return map.settings[Setting.DELIMITER].latLng || "|";
-      },
-      latLngArray: function latLngArray(map) {
-        return map.settings[Setting.DELIMITER].latLngArray || "~";
-      },
-      latLngBounds: function latLngBounds(map) {
-        return map.settings[Setting.DELIMITER].latLngBounds || "|";
-      }
-    };
-    Util.toArray = function(val) {
-      if ($.isArray(val) === false) {
-        return [ val ];
-      }
-      return val;
-    };
-    Util.toLatLng = function(parms) {
-      var map = parms.map;
-      var val = parms.val;
-      if ($.type(val) === "string") {
-        return _useDelimitedStrings(map) ? _strToLatLng(val, map) : JSON.parse(val);
-      }
-      return val;
-    };
-    Util.toLatLngArray = function(parms) {
-      var map = parms.map;
-      var val = parms.val;
-      if ($.type(val) === "string") {
-        return _useDelimitedStrings(map) ? _strToLatLngArray(val, map) : JSON.parse(val);
-      }
-      return val;
-    };
-    Util.toLatLngBounds = function(parms) {
-      var map = parms.map;
-      var val = parms.val;
-      if ($.type(val) === "string") {
-        return _useDelimitedStrings(map) ? _strToLatLngBounds(val, map) : JSON.parse(val);
-      }
-      return val;
-    };
-    Util.toLowerCase = function(val) {
-      var regex = /\s+|\_+/g;
-      if ($.type(val) === "string") {
-        return val.toLowerCase().replace(regex, "");
-      }
-      return undefined;
-    };
-    Util.toString = function(parms) {
-      var map = parms.map;
-      var val = parms.val;
-      if (val instanceof google.maps.LatLng) {
-        return _useDelimitedStrings(map) ? val.toUrlValue(_getUrlPrecision(map)) : _stringify(val, map);
-      }
-      if (val instanceof google.maps.MVCArray) {
-        if (val.getAt(0) instanceof google.maps.MVCArray) {
-          return _useDelimitedStrings(map) ? _toMultiDelimitedString(val, map) : _toMultiJSONString(val, map);
-        } else {
-          return _useDelimitedStrings(map) ? _toDelimitedString(val, map) : _stringify(val.getArray(), map);
-        }
-      }
-      return undefined;
-    };
-    function _getUrlPrecision(map) {
-      return map.settings[Setting.URL_PRECISION] || 6;
-    }
-    function _stringify(val, map) {
-      return JSON.stringify(val, function(key, value) {
-        if (key === "lat" || key === "lng") {
-          return Number(value.toFixed(_getUrlPrecision(map)));
-        }
-        return value;
-      });
-    }
-    function _strToLatLng(str) {
-      var points = str.split(",");
-      return new google.maps.LatLng(parseFloat(points[0]), parseFloat(points[1]));
-    }
-    function _strToLatLngArray(str, map) {
-      var latLngArray = [];
-      var coordPairs = str.split(Delimiter.latLng(map));
-      for (var i = 0, i_end = coordPairs.length; i < i_end; i++) {
-        latLngArray.push(Util.toLatLng({
-          map: map,
-          val: coordPairs[i]
-        }));
-      }
-      return latLngArray;
-    }
-    function _strToLatLngBounds(str, map) {
-      var coordPairs = str.split(Delimiter.latLngBounds(map));
-      return {
-        north: Number(coordPairs[0]),
-        east: Number(coordPairs[1]),
-        south: Number(coordPairs[2]),
-        west: Number(coordPairs[3])
-      };
-    }
-    function _toDelimitedString(MVCArray, map) {
-      var str = "";
-      MVCArray.forEach(function(el, i) {
-        if (i > 0) {
-          str += Delimiter.latLng(map);
-        }
-        str += el.toUrlValue(_getUrlPrecision(map));
-      });
-      return str;
-    }
-    function _toMultiDelimitedString(MVCArray, map) {
-      var str = "";
-      MVCArray.forEach(function(el, i) {
-        if (i > 0) {
-          str += Delimiter.latLngArray(map);
-        }
-        str += _toDelimitedString(el, map);
-      });
-      return str;
-    }
-    function _toMultiJSONString(MVCArray, map) {
-      var arr = [];
-      MVCArray.forEach(function(el) {
-        arr.push(el.getArray());
-      });
-      return _stringify(arr, map);
-    }
-    function _useDelimitedStrings(map) {
-      return map.settings[Setting.DELIMITED_STRINGS];
-    }
-    return Util;
-  }(Util || (Util = {}), Const.Setting);
-  var Util = function(Util) {
-    "use strict";
-    Util.lookupComponentOption = function(value) {
-      value = Util.toLowerCase(value);
-      return _lookup(Const.ComponentOption, value) || value;
-    };
-    Util.lookupComponentType = function(value) {
-      value = Util.toLowerCase(value);
-      return _lookup(Const.ComponentType, value, true) || value;
-    };
-    Util.lookupEventType = function(value) {
-      value = Util.toLowerCase(value);
-      return _lookup(Const.EventType, value) || value;
-    };
-    Util.lookupSetting = function(value) {
-      value = Util.toLowerCase(value);
-      return _lookup(Const.Setting, value) || value;
-    };
-    function _lookup(constant, value, plural) {
-      var key = Object.keys(constant).find(function(key) {
-        key = Util.toLowerCase(key);
-        return key === value || plural && key + "s" === value;
-      });
-      return constant[key];
-    }
-    return Util;
-  }(Util || (Util = {}));
-  var Util = function(Util) {
-    "use strict";
-    Util.renameProperty = function(parms) {
-      var newName = parms.newName;
-      var obj = parms.obj;
-      var oldName = parms.oldName;
-      if (oldName === newName) {
-        return;
-      }
-      if (obj.hasOwnProperty(oldName)) {
-        obj[newName] = obj[oldName];
-        delete obj[oldName];
-      }
-    };
-    Util.throwError = function(parms) {
-      console.error(parms.method + ": " + parms.message, parms.obj || "");
-      return false;
-    };
-    return Util;
-  }(Util || (Util = {}));
-  var Util = function(Util, GlobalSettings) {
-    "use strict";
-    Util.renameSettings = function(userSettings) {
-      Object.keys(userSettings).forEach(function(key) {
-        Util.renameProperty({
-          newName: Util.lookupSetting(key),
-          obj: userSettings,
-          oldName: key
-        });
-      });
-      return userSettings;
-    };
-    Util.mergeWithGlobalSettings = function(userSettings) {
-      userSettings = $.extend(true, {}, GlobalSettings, userSettings);
-      return userSettings;
-    };
-    return Util;
-  }(Util || (Util = {}), gmap.settings);
+    return gmap;
+  }(Const.OverlayTypes);
   var Core = function(Core) {
     "use strict";
-    Core.addComponent = function(parms) {
-      var compOptions = parms.compOptions;
-      var map = parms.map;
-      var type = Util.lookupComponentType(parms.type);
-      if (Util.validMapComponent(type)) {
-        if ($.type(compOptions) === "array") {
-          return _multiAdd(map, type, compOptions);
-        }
-        if ($.type(compOptions) === "object") {
-          if (_validateOptions(map, type, compOptions)) {
-            var newCompArray = Util.getNewComponentArray(type, map);
-            newCompArray.push(_add(map, type, compOptions));
-            return newCompArray;
-          }
-        }
-      } else {
-        return Util.throwError({
-          method: "add",
-          message: type + " is not a valid map component",
-          obj: {
-            type: type
-          }
+    Core.addOverlay = function(_ref) {
+      var map = _ref.map, options = _ref.options, type = _ref.type;
+      var args = arguments[0];
+      type = Lookup.overlayType(type);
+      if (IsValid.overlayType(type) === false) {
+        return Error.throw({
+          method: "addOverlay",
+          msg: args.type + " is not a valid overlay type",
+          args: args
         });
       }
+      args.type = type;
+      return Is.Array(options) ? multiAdd(args) : add(args);
     };
-    function _add(map, type, compOptions) {
-      compOptions = Util.convertComponentOptions({
-        compType: type,
-        compOptions: compOptions,
-        map: map
-      });
-      if ($.type(compOptions.id) !== "string" && $.type(compOptions.id) !== "number") {
-        compOptions.id = _getAutoId(map, type);
-      }
-      var comp = new Components[type]({
-        id: compOptions.id.toString(),
-        options: _mergeDefaults(map, type, compOptions)
-      });
-      map.components[type].push(comp);
-      return comp;
-    }
-    function _multiAdd(map, type, compOptionsArray) {
-      var newCompArray = Util.getNewComponentArray(type, map);
-      for (var i = 0, i_end = compOptionsArray.length; i < i_end; i++) {
-        var compOptions = compOptionsArray[i];
-        if (_validateOptions(map, type, compOptions)) {
-          newCompArray.push(_add(map, type, compOptions));
-        }
-      }
-      return newCompArray;
-    }
-    function _getAutoId(map, type) {
-      var id = map.components[type].seed++;
-      return "__" + id + "__";
-    }
-    function _mergeDefaults(map, type, compOptions) {
-      var namespace = Util.lookupSetting(type + "Options");
-      var defaults = map.settings[namespace] || {};
-      var options = $.extend({}, defaults, compOptions);
-      options.map = map.obj;
-      delete options.id;
-      return options;
-    }
-    function _getRequiredOptions(compType) {
-      return Const.Components[compType].options.filter(function(option) {
-        return option.required === true;
-      });
-    }
-    function _requiredOptionIsEmpty(reqOption, compOptions) {
-      return compOptions[reqOption] === "" || compOptions[reqOption] === null || compOptions[reqOption] === undefined;
-    }
-    function _validateOptions(map, compType, compOptions) {
-      if (map.components[compType].includes(compOptions.id) === true) {
-        return Util.throwError({
-          method: "add",
-          message: "A " + compType + " with an id of " + compOptions.id + " already exists",
-          obj: compOptions
+    function add(_ref2) {
+      var map = _ref2.map, options = _ref2.options, type = _ref2.type;
+      var args = arguments[0];
+      args.convert = true;
+      options.id = Get.formattedId(args);
+      options = Get.mergedOptions(args);
+      if (IsValid.overlayOptions({
+        map: map,
+        options: options,
+        type: type
+      })) {
+        return new Overlays[type]({
+          map: map,
+          options: options
         });
       }
-      var requiredOptions = _getRequiredOptions(compType);
-      for (var i = 0, i_end = requiredOptions.length; i < i_end; i++) {
-        var reqOption = requiredOptions[i].name;
-        if (_requiredOptionIsEmpty(reqOption, compOptions)) {
-          return Util.throwError({
-            method: "add",
-            message: reqOption + " must have a value",
-            obj: compOptions
-          });
-        }
+    }
+    function multiAdd(_ref3) {
+      var map = _ref3.map, options = _ref3.options, type = _ref3.type;
+      var args = arguments[0];
+      var newOvlArray = Get.newOverlayArray(args);
+      for (var i = 0, i_end = options.length; i < i_end; i++) {
+        args.options = options[i];
+        var _ovl = add(args);
+        if (_ovl) newOvlArray.push(_ovl);
       }
-      return true;
+      return newOvlArray;
     }
     return Core;
   }(Core || (Core = {}));
-  var Core = function(Core) {
+  var Core = function(Core, GoogleClasses) {
     "use strict";
-    var BoundsFunction = {
-      Circle: function Circle(comp) {
-        return comp.obj.getBounds();
-      },
-      Label: function Label(comp) {
-        return _getBoundsByPosition(comp);
-      },
-      Marker: function Marker(comp) {
-        return _getBoundsByPosition(comp);
-      },
-      Polygon: function Polygon(comp) {
-        return _getBoundsByPaths(comp);
-      },
-      Polyline: function Polyline(comp) {
-        return _getBoundsByPath(comp);
-      },
-      Rectangle: function Rectangle(comp) {
-        return comp.obj.getBounds();
-      }
-    };
-    Core.fitBounds = function(parms) {
-      var comps = parms.comps;
-      var map = parms.map;
-      if (comps instanceof google.maps.LatLngBounds) {
-        map.obj.fitBounds(comps);
-      } else if ($.type(comps) === "object") {
-        var bounds = _getBoundsByComponents(map.components, comps);
-        map.obj.fitBounds(bounds);
-      } else if (comps === "init" || comps === "initial") {
+    Core.fitBounds = function(_ref4) {
+      var map = _ref4.map, ovls = _ref4.ovls;
+      if (Is.LatLngBounds(ovls)) {
+        map.obj.fitBounds(ovls);
+      } else if (Is.Object(ovls)) {
+        map.obj.fitBounds(Get.boundsByOverlayObject({
+          map: map,
+          ovls: ovls
+        }));
+      } else if (ovls === "init" || ovls === "initial") {
         map.obj.fitBounds(map.init.bounds);
         map.obj.setZoom(map.init.options.zoom);
       }
       return map;
     };
-    Core.getBounds = function(parms) {
-      var bounds = new google.maps.LatLngBounds();
-      var comp = parms.comp;
-      var compArray = parms.compArray;
-      var ids = Util.toArray(parms.ids);
-      if (comp) {
-        bounds.union(BoundsFunction[comp.type](comp));
-      } else {
-        for (var i = 0, i_end = ids.length; i < i_end; i++) {
-          comp = compArray.findById(ids[i]);
-          if (comp) {
-            bounds.union(BoundsFunction[compArray.getChildType()](comp));
-          }
-        }
-      }
-      return bounds;
+    Core.getBounds = function(_ref5) {
+      var ids = _ref5.ids, ovl = _ref5.ovl, ovlArray = _ref5.ovlArray;
+      var args = arguments[0];
+      args.bounds = new google.maps[GoogleClasses.LAT_LNG_BOUND]();
+      return ovlArray ? multiGetBounds(args) : getBounds(args);
     };
-    Core.getCenter = function(parms) {
-      var bounds = Core.getBounds({
-        comp: parms.comp,
-        compArray: parms.compArray,
-        ids: parms.ids
-      });
+    Core.getCenter = function(_ref6) {
+      var ovl = _ref6.ovl, ovlArray = _ref6.ovlArray;
+      var bounds = Core.getBounds(arguments[0]);
       return bounds.getCenter();
     };
-    function _getBoundsByComponents(mapComps, comps) {
-      var bounds = new google.maps.LatLngBounds();
-      var types = Object.keys(comps);
-      for (var i = 0, i_end = types.length; i < i_end; i++) {
-        var type = Util.lookupComponentType(types[i]);
-        var ids = _getIds(mapComps[type], comps[types[i]]);
-        bounds.union(Core.getBounds({
-          compArray: mapComps[type],
-          ids: ids
-        }));
+    var BoundsFunction = {
+      Circle: function Circle(ovl) {
+        return ovl.obj.getBounds();
+      },
+      Label: function Label(ovl) {
+        return Get.boundsByPosition({
+          bounds: bounds,
+          ovl: ovl
+        });
+      },
+      Marker: function Marker(ovl) {
+        return Get.boundsByPosition({
+          bounds: bounds,
+          ovl: ovl
+        });
+      },
+      Polygon: function Polygon(ovl) {
+        return Get.boundsByPaths({
+          bounds: bounds,
+          ovl: ovl
+        });
+      },
+      Polyline: function Polyline(ovl) {
+        return Get.boundsByPath({
+          bounds: bounds,
+          ovl: ovl
+        });
+      },
+      Rectangle: function Rectangle(ovl) {
+        return ovl.obj.getBounds();
       }
-      return bounds;
+    };
+    function getBounds(_ref7) {
+      var bounds = _ref7.bounds, ovl = _ref7.ovl;
+      return bounds.union(BoundsFunction[ovl.type](arguments[0]));
     }
-    function _getBoundsByPath(comp) {
-      var bounds = new google.maps.LatLngBounds();
-      var path = comp.obj.getPath();
-      for (var i = 0, i_end = path.length; i < i_end; i++) {
-        bounds.extend(path.getAt(i));
+    function multiGetBounds(_ref8) {
+      var bounds = _ref8.bounds, ids = _ref8.ids, ovlArray = _ref8.ovlArray;
+      var args = arguments[0];
+      ids = ids || ovlArray.getIds();
+      for (var i = 0, i_end = ids.length; i < i_end; i++) {
+        args.ovl = ovlArray.findById(ids[i]);
+        if (args.ovl) bounds.union(BoundsFunction[ovl.type](args));
       }
-      return bounds;
-    }
-    function _getBoundsByPaths(comp) {
-      var bounds = new google.maps.LatLngBounds();
-      var paths = comp.obj.getPaths();
-      for (var i = 0, i_end = paths.length; i < i_end; i++) {
-        var path = paths.getAt(i);
-        for (var j = 0, j_end = path.getLength(); j < j_end; j++) {
-          bounds.extend(path.getAt(j));
-        }
-      }
-      return bounds;
-    }
-    function _getBoundsByPosition(comp) {
-      var bounds = new google.maps.LatLngBounds();
-      bounds.extend(comp.obj.getPosition());
-      return bounds;
-    }
-    function _getIds(compArray, ids) {
-      return ids === null || ids === "all" ? compArray.getIds() : ids;
     }
     return Core;
-  }(Core || (Core = {}));
+  }(Core || (Core = {}), Const.GoogleClasses);
   var Core = function(Core) {
     "use strict";
-    var CoordinateFunctions = {
-      Label: function Label(obj) {
-        return obj.getPosition();
+    Core.getCoordinates = function(_ref9) {
+      var index = _ref9.index, ovl = _ref9.ovl, ovlArray = _ref9.ovlArray, stringify = _ref9.stringify;
+      var args = arguments[0];
+      return ovlArray ? multiGetCoords(args) : getCoords(args);
+    };
+    var Coordinates = {
+      Label: function Label(_ref10) {
+        var ovl = _ref10.ovl;
+        return ovl.obj.getPosition();
       },
-      Marker: function Marker(obj) {
-        return obj.getPosition();
+      Marker: function Marker(_ref11) {
+        var ovl = _ref11.ovl;
+        return ovl.obj.getPosition();
       },
-      Polygon: function Polygon(obj, index) {
-        return index != null ? obj.getPaths().getAt(index) : obj.getPaths();
+      Polygon: function Polygon(_ref12) {
+        var index = _ref12.index, ovl = _ref12.ovl;
+        return index >= 0 ? ovl.obj.getPaths().getAt(index) : ovl.obj.getPaths();
       },
-      Polyline: function Polyline(obj) {
-        return obj.getPath();
+      Polyline: function Polyline(_ref13) {
+        var ovl = _ref13.ovl;
+        return ovl.obj.getPath();
       }
     };
-    Core.getCoordinates = function(parms) {
-      var comp = parms.comp;
-      var coords = null;
-      var compArray = parms.compArray;
-      var ids = Util.toArray(parms.ids);
-      var index = parms.index;
-      var stringify = parms.stringify;
-      var retVal = {};
-      if (comp) {
-        coords = CoordinateFunctions[comp.type](comp.obj, index);
-        return _getCoords(coords, comp.map, stringify);
-      }
-      for (var i = 0, i_end = ids.length; i < i_end; i++) {
-        var id = ids[i];
-        comp = compArray.findById(id);
-        if (comp) {
-          coords = CoordinateFunctions[comp.type](comp.obj, index);
-          retVal[id] = _getCoords(coords, comp.map, stringify);
-        }
-      }
-      return _formatRetVal(retVal);
-    };
-    function _formatRetVal(retVal) {
+    function formatCoords(_ref14) {
+      var val = _ref14.val, map = _ref14.map, stringify = _ref14.stringify;
+      return stringify ? Convert.toString(arguments[0]) : val;
+    }
+    function formatRetVal(retVal) {
       var keys = Object.keys(retVal);
       return keys.length === 1 ? retVal[keys[0]] : retVal;
     }
-    function _getCoords(coords, map, stringify) {
-      var retVal = coords;
-      if (stringify) {
-        retVal = Util.toString({
-          map: map,
-          val: coords
-        });
+    function getCoords(_ref15) {
+      var index = _ref15.index, ovl = _ref15.ovl, stringify = _ref15.stringify;
+      var args = arguments[0];
+      args.val = Coordinates[ovl.type](args);
+      return formatCoords(args);
+    }
+    function multiGetCoords(_ref16) {
+      var index = _ref16.index, ovlArray = _ref16.ovlArray, stringify = _ref16.stringify;
+      var args = arguments[0];
+      var ids = ovlArray.getIds();
+      var retVal = {};
+      for (var i = 0, i_end = ids.length; i < i_end; i++) {
+        args.ovl = ovlArray.findById(ids[i]);
+        if (args.ovl) retVal[id] = getCoords(args);
       }
-      return retVal;
+      return formatRetVal(retVal);
     }
     return Core;
   }(Core || (Core = {}));
   var Core = function(Core) {
     "use strict";
+    Core.hide = function(_ref17) {
+      var ovl = _ref17.ovl, ovlArray = _ref17.ovlArray;
+      var args = arguments[0];
+      args.action = Action.HIDE;
+      return ovlArray ? multiDisplay(args) : display(args);
+    };
+    Core.show = function(_ref18) {
+      var ovl = _ref18.ovl, ovlArray = _ref18.ovlArray;
+      var args = arguments[0];
+      args.action = Action.SHOW;
+      return ovlArray ? multiDisplay(args) : display(args);
+    };
+    Core.toggle = function(_ref19) {
+      var condition = _ref19.condition, ovl = _ref19.ovl, ovlArray = _ref19.ovlArray;
+      var args = arguments[0];
+      args.action = Action.TOGGLE;
+      if (Is.Boolean(condition)) {
+        args.action = condition ? Action.SHOW : Action.HIDE;
+      }
+      return ovlArray ? multiDisplay(args) : display(args);
+    };
     var Action = {
       HIDE: "hide",
       SHOW: "show",
@@ -1356,51 +1044,50 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       show: function show() {
         return true;
       },
-      toggle: function toggle(comp) {
-        return !comp.obj.getVisible();
+      toggle: function toggle(ovl) {
+        return !ovl.obj.getVisible();
       }
     };
-    Core.hide = function(parms) {
-      return _display(parms.comp, parms.compArray, parms.ids, Action.HIDE);
-    };
-    Core.show = function(parms) {
-      return _display(parms.comp, parms.compArray, parms.ids, Action.SHOW);
-    };
-    Core.toggle = function(parms) {
-      var action = Action.TOGGLE;
-      if ($.type(parms.condition) === "boolean") {
-        action = parms.condition ? Action.SHOW : Action.HIDE;
-      }
-      return _display(parms.comp, parms.compArray, parms.ids, action);
-    };
-    function _display(comp, compArray, ids, action) {
-      if ($.isArray(ids)) {
-        return _multiDisplay(compArray, ids, action);
-      }
-      if (comp) {
-        return _setVisibility(comp, action);
-      }
-    }
-    function _multiDisplay(compArray, ids, action) {
-      var newCompArray = Util.getNewComponentArray(compArray);
-      for (var i = 0, i_end = ids.length; i < i_end; i++) {
-        var comp = compArray.findById(ids[i]);
-        if (comp) {
-          newCompArray.push(_setVisibility(comp, action));
-        }
-      }
-      return newCompArray;
-    }
-    function _setVisibility(comp, action) {
-      comp.obj.setOptions({
-        visible: Visibility[action](comp)
+    function display(_ref20) {
+      var action = _ref20.action, ovl = _ref20.ovl;
+      ovl.obj.setOptions({
+        visible: Visibility[action](ovl)
       });
-      return comp;
+      return ovl;
+    }
+    function multiDisplay(_ref21) {
+      var action = _ref21.action, ovlArray = _ref21.ovlArray;
+      var args = arguments[0];
+      var ids = ovlArray.getIds();
+      var newOvlArray = Get.newOverlayArray({
+        ovlArray: ovlArray
+      });
+      for (var i = 0, i_end = ids.length; i < i_end; i++) {
+        args.ovl = ovlArray.findById(ids[i]);
+        if (args.ovl) newOvlArray.push(display(args));
+      }
+      return newOvlArray;
     }
     return Core;
   }(Core || (Core = {}));
-  var Core = function(Core, ComponentType) {
+  var Core = function(Core, OverlayOptions) {
     "use strict";
+    Core.geolocate = function(_ref22) {
+      var map = _ref22.map, _ref22$options = _ref22.options, options = _ref22$options === undefined ? {} : _ref22$options;
+      if (!window.navigator.geolocation) return false;
+      options = Object.assign({}, DefaultOptions, options);
+      navigator.geolocation.getCurrentPosition(function(position) {
+        var center = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        };
+        addUpdateMarkers(map, center, options.showMarkers);
+        return map.setOptions({
+          center: center,
+          zoom: options.zoom
+        });
+      }, error, options);
+    };
     var DefaultOptions = {
       enableHighAccuracy: false,
       showMarkers: true,
@@ -1425,55 +1112,109 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       }
     };
     var MarkerIds = [ "geolocate_inner", "geolocate_outer" ];
-    Core.geolocate = function(parms) {
-      var map = parms.map;
-      var options = $.extend({}, DefaultOptions, parms.options || {});
-      if (window.navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-          var center = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-          };
-          _addUpdateMarkers(map, center, options.showMarkers);
-          return map.setOptions({
-            center: center,
-            zoom: options.zoom
-          });
-        }, _error, options);
-      } else {
-        return false;
-      }
-    };
-    function _addUpdateMarkers(map, position, showMarkers) {
-      if (showMarkers === true && _markerExists(map) === false) {
-        map.add(ComponentType.MARKER, [ _getMarkerOptions(MarkerIds[1], position), _getMarkerOptions(MarkerIds[0], position) ]);
+    function addUpdateMarkers(map, position, showMarkers) {
+      if (showMarkers === true && markerExists(map) === false) {
+        map.addOverlay(OverlayOptions.MARKER, [ getMarkerOptions(MarkerIds[1], position), getMarkerOptions(MarkerIds[0], position) ]);
       }
       map.markers(MarkerIds).setOptions({
         position: position,
         visible: showMarkers
       });
     }
-    function _error(error) {
-      return Util.throwError({
+    function error(error) {
+      return Error.throw({
         method: "geoLocate",
-        message: error.message
+        msg: error.message
       });
     }
-    function _getMarkerOptions(id, position) {
+    function getMarkerOptions(id, position) {
       return {
         id: id,
         position: position,
         icon: IconOptions[id]
       };
     }
-    function _markerExists(map) {
-      var markers = map.components[ComponentType.MARKER];
+    function markerExists(map) {
+      var markers = map.overlays[OverlayOptions.MARKER];
       return markers.includes(MarkerIds[0]) === true || markers.includes(MarkerIds[1]) === true;
     }
     return Core;
-  }(Core || (Core = {}), Const.ComponentType);
+  }(Core || (Core = {}), Const.OverlayOptions);
   var Core = function(Core) {
     "use strict";
+    Core.getMapOptions = function(_ref23) {
+      var map = _ref23.map, option = _ref23.option;
+      option = Lookup.mapOption(option);
+      return option !== undefined ? map.obj[option] : getAllObjectsOptions({
+        map: map
+      });
+    };
+    Core.getOptions = function(_ref24) {
+      var option = _ref24.option, ovl = _ref24.ovl, ovlArray = _ref24.ovlArray;
+      var args = arguments[0];
+      args.option = Lookup.overlayOption(option);
+      return ovlArray ? multiGetOptions(args) : getOptions(args);
+    };
+    function formatMultiReturn(retVal) {
+      var keys = Object.keys(retVal);
+      return keys.length === 1 ? retVal[keys[0]] : retVal;
+    }
+    function getAllObjectsOptions(_ref25) {
+      var map = _ref25.map, ovl = _ref25.ovl;
+      var obj = ovl !== undefined ? ovl.obj : map.obj;
+      var options = ovl !== undefined ? Const.Overlays[ovl.type].options.map(function(opt) {
+        return opt.name;
+      }) : Const.Map.options.map(function(opt) {
+        return opt.name;
+      });
+      var retVal = {};
+      for (var i = 0, i_end = options.length; i < i_end; i++) {
+        var key = options[i];
+        if (obj[key] !== undefined) {
+          retVal[key] = obj[key];
+        }
+      }
+      return retVal;
+    }
+    function getOptions(_ref26) {
+      var option = _ref26.option, ovl = _ref26.ovl;
+      return option !== undefined ? ovl.obj[option] : getAllObjectsOptions({
+        ovl: ovl
+      });
+    }
+    function multiGetOptions(_ref27) {
+      var option = _ref27.option, ovlArray = _ref27.ovlArray;
+      var args = arguments[0];
+      var ids = ovlArray.getIds();
+      var retVal = {};
+      for (var i = 0, i_end = ids.length; i < i_end; i++) {
+        args.ovl = ovlArray.findById(ids[i]);
+        if (args.ovl) retVal[ids[i]] = getOptions(args);
+      }
+      return formatMultiReturn(retVal);
+    }
+    return Core;
+  }(Core || (Core = {}));
+  var Core = function(Core) {
+    "use strict";
+    Core.addListener = function(_ref28) {
+      var func = _ref28.func, ovl = _ref28.ovl, ovlArray = _ref28.ovlArray, type = _ref28.type;
+      var args = arguments[0];
+      args.action = Action.ADD;
+      return listener(args);
+    };
+    Core.removeListener = function(_ref29) {
+      var func = _ref29.func, ovl = _ref29.ovl, ovlArray = _ref29.ovlArray, type = _ref29.type;
+      var args = arguments[0];
+      args.action = type !== "all" ? Action.REMOVE_TYPE : Action.REMOVE_ALL;
+      return listener(args);
+    };
+    Core.triggerListener = function(_ref30) {
+      var func = _ref30.func, ovl = _ref30.ovl, ovlArray = _ref30.ovlArray, type = _ref30.type;
+      var args = arguments[0];
+      args.action = Action.TRIGGER;
+      return listener(args);
+    };
     var Action = {
       ADD: "add",
       REMOVE_ALL: "remove_all",
@@ -1481,759 +1222,562 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       TRIGGER: "trigger"
     };
     var Execute = {
-      add: function add(comp, type, fn) {
-        google.maps.event.addListener(comp.obj, type, fn);
-        return comp;
+      add: function add(_ref31) {
+        var func = _ref31.func, ovl = _ref31.ovl, type = _ref31.type;
+        google.maps.event.addListener(ovl.obj, type, func);
+        return ovl;
       },
-      remove_all: function remove_all(comp) {
-        google.maps.event.clearInstanceListeners(comp.obj);
-        return comp;
+      remove_all: function remove_all(_ref32) {
+        var ovl = _ref32.ovl;
+        google.maps.event.clearInstanceListeners(ovl.obj);
+        return ovl;
       },
-      remove_type: function remove_type(comp, type) {
-        google.maps.event.clearListeners(comp.obj, type);
-        return comp;
+      remove_type: function remove_type(_ref33) {
+        var ovl = _ref33.ovl, type = _ref33.type;
+        google.maps.event.clearListeners(ovl.obj, type);
+        return ovl;
       },
-      trigger: function trigger(comp, type) {
-        google.maps.event.trigger(comp.obj, type, {});
-        return comp;
+      trigger: function trigger(_ref34) {
+        var ovl = _ref34.ovl, type = _ref34.type;
+        google.maps.event.trigger(ovl.obj, type, {});
+        return ovl;
       }
     };
-    Core.addListener = function(parms) {
-      var comp = parms.comp;
-      var compArray = parms.compArray;
-      var func = parms.func;
-      var ids = parms.ids;
-      var type = Util.lookupEventType(parms.type);
-      return _listener(comp, compArray, ids, type, func, Action.ADD);
-    };
-    Core.removeListener = function(parms) {
-      var comp = parms.comp;
-      var compArray = parms.compArray;
-      var ids = parms.ids;
-      var type = Util.lookupEventType(parms.type);
-      var action = type !== "all" ? Action.REMOVE_TYPE : Action.REMOVE_ALL;
-      return _listener(comp, compArray, ids, type, null, action);
-    };
-    Core.triggerListener = function(parms) {
-      var comp = parms.comp;
-      var compArray = parms.compArray;
-      var ids = parms.ids;
-      var type = Util.lookupEventType(parms.type);
-      return _listener(comp, compArray, ids, type, null, Action.TRIGGER);
-    };
-    function _listener(comp, compArray, ids, type, func, action) {
-      if ($.isArray(ids)) {
-        return _multiListener(compArray, ids, type, func, action);
-      }
-      if (comp) {
-        return Execute[action](comp, type, func);
-      }
+    function listener(_ref35) {
+      var action = _ref35.action, func = _ref35.func, ovl = _ref35.ovl, ovlArray = _ref35.ovlArray, type = _ref35.type;
+      var args = arguments[0];
+      args.type = Lookup.eventType(type);
+      return ovlArray ? multiListener(args) : Execute[action](args);
     }
-    function _multiListener(compArray, ids, type, func, action) {
-      var newCompArray = Util.getNewComponentArray(compArray);
+    function multiListener(_ref36) {
+      var action = _ref36.action, func = _ref36.func, ovlArray = _ref36.ovlArray, type = _ref36.type;
+      var args = arguments[0];
+      var ids = ovlArray.getIds();
+      var newOvlArray = Get.newOverlayArray({
+        ovlArray: ovlArray
+      });
       for (var i = 0, i_end = ids.length; i < i_end; i++) {
-        var comp = compArray.findById(ids[i]);
-        if (comp) {
-          newCompArray.push(Execute[action](comp, type, func));
-        }
+        args.ovl = ovlArray.findById(ids[i]);
+        if (args.ovl) newOvlArray.push(Execute[action](args));
       }
-      return newCompArray;
+      return newOvlArray;
     }
     return Core;
   }(Core || (Core = {}));
   var Core = function(Core) {
     "use strict";
-    Core.getOptions = function(parms) {
-      var comp = parms.comp;
-      var compArray = parms.compArray;
-      var compOption = parms.compOption || null;
-      var ids = parms.ids;
-      var retVal = {};
-      if (comp) {
-        retVal = _getComponentOptions(comp, compOption);
-      } else {
-        for (var i = 0, i_end = ids.length; i < i_end; i++) {
-          var id = ids[i];
-          comp = compArray.findById(id);
-          if (comp) {
-            retVal[id] = _getComponentOptions(comp, compOption);
-          }
-        }
-      }
-      return retVal ? _formatRetVal(retVal) : undefined;
+    Core.pop = function(_ref37) {
+      var count = _ref37.count, ovlArray = _ref37.ovlArray;
+      var args = arguments[0];
+      args.action = Action.POP;
+      return pop(args);
     };
-    Core.setOptions = function(parms) {
-      var comp = parms.comp;
-      var compArray = parms.compArray;
-      var compOptions = parms.compOptions;
-      var compType = parms.compType;
-      var ids = parms.ids;
-      var map = parms.map;
-      var value = parms.value;
-      compOptions = _formatComponentOptions(compOptions, compType, map, value);
-      if ($.isArray(ids)) {
-        return _multiSetOptions(compArray, ids, compOptions);
-      }
-      if (comp) {
-        return _setOptions(comp, compOptions);
-      }
+    Core.remove = function(_ref38) {
+      var ovl = _ref38.ovl, ovlArray = _ref38.ovlArray;
+      var args = arguments[0];
+      return ovlArray ? multiRemove(ovlArray) : remove(ovl);
     };
-    function _formatComponentOptions(compOptions, compType, map, value) {
-      if ($.type(compOptions) === "string") {
-        var optionName = Util.lookupComponentOption(compOptions);
-        compOptions = {};
-        compOptions[optionName] = value;
-      } else {
-        Util.renameComponentOptions(compOptions);
-      }
-      return compOptions = Util.convertComponentOptions({
-        compOptions: compOptions,
-        compType: compType,
-        map: map
-      });
-    }
-    function _formatRetVal(retVal) {
-      var keys = Object.keys(retVal);
-      return keys.length === 1 ? retVal[keys[0]] : retVal;
-    }
-    function _getComponentOptions(comp, compOptions) {
-      compOptions = Util.lookupComponentOption(compOptions);
-      var obj = $.extend({}, comp.obj);
-      if (compOptions) {
-        return obj[compOptions];
-      }
-      return Util.cleanComponentOptions({
-        compOptions: obj,
-        compType: comp.type
-      });
-    }
-    function _setOptions(comp, options) {
-      comp.obj.setOptions(options);
-      return comp;
-    }
-    function _multiSetOptions(compArray, ids, options) {
-      var newCompArray = Util.getNewComponentArray(compArray);
-      for (var i = 0, i_end = ids.length; i < i_end; i++) {
-        var comp = compArray.findById(ids[i]);
-        if (comp) {
-          newCompArray.push(_setOptions(comp, options));
-        }
-      }
-      return newCompArray;
-    }
-    return Core;
-  }(Core || (Core = {}));
-  var Core = function(Core) {
-    "use strict";
+    Core.shift = function(_ref39) {
+      var count = _ref39.count, ovlArray = _ref39.ovlArray;
+      var args = arguments[0];
+      args.action = Action.SHIFT;
+      return pop(args);
+    };
     var Action = {
       POP: "pop",
       SHIFT: "shift"
     };
     var RemoveFunction = {
-      pop: function pop(compArray) {
-        var comp = compArray.data.pop();
-        comp.obj.setMap(null);
-        return comp;
+      pop: function pop(ovlArray) {
+        var ovl = ovlArray.data.pop();
+        ovl.obj.setMap(null);
+        return ovl;
       },
-      shift: function shift(compArray) {
-        var comp = compArray.data.shift();
-        comp.obj.setMap(null);
-        return comp;
+      shift: function shift(ovlArray) {
+        var ovl = ovlArray.data.shift();
+        ovl.obj.setMap(null);
+        return ovl;
       }
     };
-    Core.pop = function(parms) {
-      var count = parms.count || 1;
-      var map = parms.map;
-      var type = Util.lookupComponentType(parms.type);
-      return _pop(map.components[type], count, Action.POP);
-    };
-    Core.remove = function(parms) {
-      var ids = parms.ids;
-      var map = parms.map;
-      var type = Util.lookupComponentType(parms.type);
-      if (Util.validMapComponent(type)) {
-        var compArray = map.components[type];
-        ids = ids || compArray.getIds();
-        if ($.isArray(ids)) {
-          return _multiRemove(compArray, ids);
-        }
-        var comp = compArray.findById(ids);
-        if (comp) {
-          return _remove(comp);
-        }
-      } else {
-        return Util.throwError({
-          method: "remove",
-          message: type + " is not a valid map component",
-          obj: {
-            type: type
-          }
-        });
-      }
-    };
-    Core.shift = function(parms) {
-      var count = parms.count || 1;
-      var map = parms.map;
-      var type = Util.lookupComponentType(parms.type);
-      return _pop(map.components[type], count, Action.SHIFT);
-    };
-    function _remove(comp) {
-      var compArray = comp.map.components[comp.type];
-      var index = compArray.data.indexOf(comp);
-      comp.obj.setMap(null);
-      return compArray.data.splice(index, 1)[0];
+    function remove(ovl) {
+      var ovlArray = ovl.map.overlays[ovl.type];
+      var index = ovlArray.data.indexOf(ovl);
+      ovl.obj.setMap(null);
+      return ovlArray.data.splice(index, 1)[0];
     }
-    function _multiRemove(compArray, ids) {
-      var newCompArray = Util.getNewComponentArray(compArray);
+    function multiRemove(ovlArray) {
+      var args = arguments[0];
+      var ids = ovlArray.getIds();
+      var newOvlArray = Get.newOverlayArray({
+        ovlArray: ovlArray
+      });
       for (var i = 0, i_end = ids.length; i < i_end; i++) {
-        var comp = compArray.findById(ids[i]);
-        if (comp) {
-          newCompArray.push(_remove(comp));
-        }
+        var _ovl2 = ovlArray.findById(ids[i]);
+        if (_ovl2) newOvlArray.push(remove(_ovl2));
       }
-      return newCompArray;
+      return newOvlArray;
     }
-    function _pop(compArray, count, action) {
-      var newCompArray = Util.getNewComponentArray(compArray);
-      while (count > 0 && compArray.data.length > 0) {
-        newCompArray.push(RemoveFunction[action](compArray));
+    function pop(_ref40) {
+      var action = _ref40.action, _ref40$count = _ref40.count, count = _ref40$count === undefined ? 1 : _ref40$count, ovlArray = _ref40.ovlArray;
+      var newOvlArray = Get.newOverlayArray({
+        ovlArray: ovlArray
+      });
+      while (count > 0 && ovlArray.data.length > 0) {
+        newOvlArray.push(RemoveFunction[action](ovlArray));
         count--;
       }
-      return newCompArray;
+      return newOvlArray;
     }
     return Core;
   }(Core || (Core = {}));
-  var Core = function(Core, ComponentType) {
-    "use strict";
-    Core.reset = function(parms) {
-      var comp = parms.comp;
-      var compArray = parms.compArray;
-      var ids = parms.ids;
-      if ($.isArray(ids)) {
-        return _multiReset(compArray, ids);
-      }
-      if (comp) {
-        if (comp.type === ComponentType.MAP) {
-          comp.obj.fitBounds(comp.init.bounds);
-        }
-        return _reset(comp);
-      }
-    };
-    function _reset(comp) {
-      comp.obj.setOptions(comp.init.options);
-      return comp;
-    }
-    function _multiReset(compArray, ids) {
-      var newCompArray = Util.getNewComponentArray(compArray);
-      for (var i = 0, i_end = ids.length; i < i_end; i++) {
-        var comp = compArray.findById(ids[i]);
-        if (comp) {
-          newCompArray.push(_reset(comp));
-        }
-      }
-      return newCompArray;
-    }
-    return Core;
-  }(Core || (Core = {}), Const.ComponentType);
   var Core = function(Core) {
     "use strict";
-    Core.search = function(parms) {
-      var ids = parms.ids;
-      var map = parms.map;
-      var matching = parms.matching;
-      var type = parms.type;
-      var compArray = map.components[type];
-      var newCompArray = Util.getNewComponentArray(compArray);
-      newCompArray.data = ids !== undefined ? _getDataByIds(compArray, _formatIds(ids), matching) : compArray.data.slice(0);
-      return newCompArray;
+    Core.reset = function(_ref41) {
+      var ovl = _ref41.ovl, ovlArray = _ref41.ovlArray;
+      var args = arguments[0];
+      return ovlArray ? multiReset(ovlArray) : reset(ovl);
     };
-    function _formatIds(ids) {
-      return Util.toArray(ids).map(function(id) {
+    Core.resetMap = function(_ref42) {
+      var map = _ref42.map;
+      map.obj.fitBounds(map.init.bounds);
+      map.obj.setOptions(map.init.options);
+      return map;
+    };
+    function reset(ovl) {
+      ovl.obj.setOptions(ovl.init.options);
+      return ovl;
+    }
+    function multiReset(ovlArray) {
+      var args = arguments[0];
+      var ids = ovlArray.getIds();
+      var newOvlArray = Get.newOverlayArray({
+        ovlArray: ovlArray
+      });
+      for (var i = 0, i_end = ids.length; i < i_end; i++) {
+        var _ovl3 = ovlArray.findById(ids[i]);
+        if (_ovl3) newOvlArray.push(reset(_ovl3));
+      }
+      return newOvlArray;
+    }
+    return Core;
+  }(Core || (Core = {}));
+  var Core = function(Core) {
+    "use strict";
+    Core.search = function(_ref43) {
+      var ids = _ref43.ids, matching = _ref43.matching, ovlArray = _ref43.ovlArray;
+      var args = arguments[0];
+      var map = ovlArray.map;
+      var newOvlArray = Get.newOverlayArray({
+        ovlArray: ovlArray
+      });
+      newOvlArray.data = ids === undefined ? ovlArray.data.slice(0) : getDataByIds(args);
+      return newOvlArray;
+    };
+    function formatIds(ids) {
+      return Convert.toArray(ids).map(function(id) {
         return id.toString();
       });
     }
-    function _getDataByIds(compArray, ids, matching) {
-      return compArray.data.filter(function(comp) {
-        return matching === true ? ids.indexOf(comp.id) !== -1 : ids.indexOf(comp.id) === -1;
+    function getDataByIds(_ref44) {
+      var ids = _ref44.ids, matching = _ref44.matching, ovlArray = _ref44.ovlArray;
+      ids = formatIds(ids);
+      return ovlArray.data.filter(function(ovl) {
+        return matching === true ? ids.indexOf(ovl.id) !== -1 : ids.indexOf(ovl.id) === -1;
       });
     }
     return Core;
   }(Core || (Core = {}));
-  !function(ComponentType) {
+  var Core = function(Core) {
     "use strict";
-    gmap.prototype = {
-      add: function add(type, compOptions) {
-        return Core.addComponent({
-          compOptions: compOptions,
-          map: this,
-          type: type
-        });
-      },
-      circles: function circles(ids) {
-        return Core.search({
-          ids: ids,
-          map: this,
-          matching: true,
-          type: ComponentType.CIRCLE
-        });
-      },
-      fitBounds: function fitBounds(comps) {
-        return Core.fitBounds({
-          map: this,
-          comps: comps
-        });
-      },
-      geolocate: function geolocate(options) {
-        return Core.geolocate({
-          map: this,
-          options: options
-        });
-      },
-      getBounds: function getBounds() {
-        return this.obj.getBounds();
-      },
-      getCenter: function getCenter() {
-        return this.obj.getCenter();
-      },
-      getCenterString: function getCenterString() {
-        return Util.toString({
-          map: this,
-          val: this.getCenter()
-        });
-      },
-      getOptions: function getOptions(compOption) {
-        return Core.getOptions({
-          comp: this,
-          compOption: compOption
-        });
-      },
-      getDiv: function getDiv() {
-        return this.obj.getDiv();
-      },
-      getProjection: function getProjection() {
-        return this.obj.getProjection();
-      },
-      getZoom: function getZoom() {
-        return this.obj.getZoom();
-      },
-      labels: function labels(ids) {
-        return Core.search({
-          ids: ids,
-          map: this,
-          matching: true,
-          type: ComponentType.LABEL
-        });
-      },
-      markers: function markers(ids) {
-        return Core.search({
-          ids: ids,
-          map: this,
-          matching: true,
-          type: ComponentType.MARKER
-        });
-      },
-      off: function off(type) {
-        return Core.removeListener({
-          comp: this,
-          type: type
-        });
-      },
-      on: function on(type, func) {
-        return Core.addListener({
-          comp: this,
-          func: func,
-          type: type
-        });
-      },
-      polygons: function polygons(ids) {
-        return Core.search({
-          ids: ids,
-          map: this,
-          matching: true,
-          type: ComponentType.POLYGON
-        });
-      },
-      polylines: function polylines(ids) {
-        return Core.search({
-          ids: ids,
-          map: this,
-          matching: true,
-          type: ComponentType.POLYLINE
-        });
-      },
-      rectangles: function rectangles(ids) {
-        return Core.search({
-          ids: ids,
-          map: this,
-          matching: true,
-          type: ComponentType.RECTANGLE
-        });
-      },
-      remove: function remove(type, ids) {
-        return Core.remove({
-          ids: ids,
-          map: this,
-          type: type
-        });
-      },
-      reset: function reset() {
-        return Core.reset({
-          comp: this
-        });
-      },
-      setCenter: function setCenter(center) {
-        if (center !== undefined) {
-          this.obj.setCenter(Util.toLatLng({
-            map: this,
-            val: center
-          }));
+    Core.setOptions = function(_ref45) {
+      var option = _ref45.option, ovl = _ref45.ovl, ovlArray = _ref45.ovlArray, value = _ref45.value;
+      var args = arguments[0];
+      args.option = formatOverlayOptions(args);
+      return ovlArray ? multSetOptions(args) : setOptions(args);
+    };
+    Core.setMapOptions = function(_ref46) {
+      var map = _ref46.map, option = _ref46.option, value = _ref46.value;
+      return setOptions({
+        option: formatMapOptions(arguments[0]),
+        ovl: map
+      });
+    };
+    function formatMapOptions(_ref47) {
+      var map = _ref47.map, option = _ref47.option, value = _ref47.value;
+      var Format = {
+        object: function object(_ref48) {
+          var option = _ref48.option;
+          return Get.renamedMapOptions({
+            options: option
+          });
+        },
+        string: function string(_ref49) {
+          var _ref50;
+          var option = _ref49.option, value = _ref49.value;
+          return _ref50 = {}, _ref50[option] = value, _ref50;
         }
-        return this;
-      },
-      setOptions: function setOptions(compOptions, value) {
-        return Core.setOptions({
-          comp: this,
-          compOptions: compOptions,
-          compType: this.type,
-          map: this,
-          value: value
-        });
-      },
-      setZoom: function setZoom(zoom) {
-        if (zoom !== undefined) {
-          this.obj.setZoom(zoom);
+      };
+      return Get.convertedMapOptions({
+        map: map,
+        options: Format[Get.type(option)](arguments[0])
+      });
+    }
+    function formatOverlayOptions(_ref51) {
+      var option = _ref51.option, ovl = _ref51.ovl, ovlArray = _ref51.ovlArray, value = _ref51.value;
+      var Format = {
+        object: function object(_ref52) {
+          var option = _ref52.option;
+          return Get.renamedOptions({
+            options: option
+          });
+        },
+        string: function string(_ref53) {
+          var _ref54;
+          var option = _ref53.option, value = _ref53.value;
+          return _ref54 = {}, _ref54[option] = value, _ref54;
         }
-        return this;
-      },
-      trigger: function trigger(type) {
-        return Core.triggerListener({
-          comp: this,
-          type: type
-        });
+      };
+      return Get.convertedOptions({
+        map: ovlArray ? ovlArray.map : ovl.map,
+        options: Format[Get.type(option)](arguments[0]),
+        type: ovlArray ? ovlArray.type : ovl.type
+      });
+    }
+    function multiSetOptions(_ref55) {
+      var option = _ref55.option, ovlArray = _ref55.ovlArray;
+      var args = arguments[0];
+      var ids = ovlArray.getIds();
+      var newOvlArray = Get.newOverlayArray({
+        ovlArray: ovlArray
+      });
+      for (var i = 0, i_end = ids.length; i < i_end; i++) {
+        args.ovl = ovlArray.findById(ids[i]);
+        if (args.ovl) newOvlArray.push(setOptions(args));
       }
-    };
-    return gmap;
-  }(Const.ComponentType);
-  !function(gmap) {
+      return newOvlArray;
+    }
+    function setOptions(_ref56) {
+      var option = _ref56.option, ovl = _ref56.ovl;
+      ovl.obj.setOptions(option);
+      return ovl;
+    }
+    return Core;
+  }(Core || (Core = {}));
+  var Overlays = function(Overlays) {
     "use strict";
-    var Shape = [ "decagon", "hexagon", "pentagon", "rectangle", "square", "triangle" ];
-    var ShapeDegrees = {
-      decagon: [ 36, 72, 108, 144, 180, 216, 252, 288, 324, 360 ],
-      hexagon: [ 30, 90, 150, 210, 270, 330 ],
-      pentagon: [ 72, 144, 216, 288, 360 ],
-      rectangle: [ 60, 120, 240, 300 ],
-      square: [ 45, 135, 225, 315 ],
-      triangle: [ 120, 240, 360 ]
-    };
-    gmap.prototype.shape = function(type, parms) {
-      if (_validShapeType(type)) {
-        return _getShapePath(this, parms, type);
-      } else {
-        return Util.throwError({
-          method: "shape",
-          message: type + " is not a valid shape",
-          obj: {
-            type: type
-          }
-        });
-      }
-    };
-    function _getShapePath(map, parms, type) {
-      parms = $.isPlainObject(parms) ? parms : {};
-      parms.center = parms.center || map.getCenter();
-      parms.size = parms.size || Util.getSizeFromZoom(map.getZoom());
-      if ($.type(parms.center) === "string") {
-        parms.center = Util.toLatLng(parms.center);
-      }
-      var path = [];
-      for (var i = 0, i_end = ShapeDegrees[type].length; i < i_end; i++) {
-        path.push(Util.getDestinationPoint({
-          bearing: ShapeDegrees[type][i],
-          distance: parms.size,
-          latLng: parms.center
-        }));
-      }
-      return path;
-    }
-    function _validShapeType(type) {
-      type = Util.toLowerCase(type);
-      return Shape.includes(type);
-    }
-    return gmap;
-  }(gmap);
-  var Util = function(Util) {
-    "use strict";
-    Util.getDestinationPoint = function(parms) {
-      var bearing = _toRad(parms.bearing);
-      var distance = parms.distance / 6371;
-      var latLng = parms.latLng;
-      var src_lat = _toRad(latLng.lat());
-      var src_lng = _toRad(latLng.lng());
-      var dest_lat = Math.asin(Math.sin(src_lat) * Math.cos(distance) + Math.cos(src_lat) * Math.sin(distance) * Math.cos(bearing));
-      var dest_lng = src_lng + Math.atan2(Math.sin(bearing) * Math.sin(distance) * Math.cos(src_lat), Math.cos(distance) - Math.sin(src_lat) * Math.sin(dest_lat));
-      if (isNaN(src_lng) || isNaN(dest_lng)) {
-        return null;
-      }
-      return new google.maps.LatLng(_toDeg(dest_lat), _toDeg(dest_lng));
-    };
-    Util.getSizeFromZoom = function(zoom) {
-      var minZoom = 5;
-      var size = 500;
-      return zoom <= minZoom ? size : size / Math.pow(2, zoom - minZoom);
-    };
-    function _toRad(val) {
-      return val * Math.PI / 180;
-    }
-    function _toDeg(val) {
-      return val * 180 / Math.PI;
-    }
-    return Util;
-  }(Util || (Util = {}));
-  var Components = function(Components) {
-    "use strict";
-    var BaseComponent = function() {
-      function BaseComponent(parms) {
-        _classCallCheck(this, BaseComponent);
-        var id = parms.id;
-        var map = parms.options.map.gmaps.parent;
-        var obj = parms.obj;
-        var options = parms.options;
-        var type = parms.type;
-        this.id = id;
+    var BaseOverlay = function() {
+      function BaseOverlay(_ref57) {
+        var map = _ref57.map, obj = _ref57.obj, options = _ref57.options, type = _ref57.type;
+        _classCallCheck(this, BaseOverlay);
+        this.id = options.id;
         this.init = {
           options: options
         };
         this.map = map;
         this.obj = obj;
         this.obj["gmaps"] = {
-          id: id,
+          id: this.id,
           map: map,
           parent: this,
           version: gmap.version
         };
+        this.parent = map.overlays[type];
         this.type = type;
+        this.map.overlays[type].push(this);
       }
-      BaseComponent.prototype.getBounds = function getBounds() {
+      BaseOverlay.prototype.getBounds = function getBounds() {
         return Core.getBounds({
-          comp: this
+          ovl: this
         });
       };
-      BaseComponent.prototype.getCenter = function getCenter() {
+      BaseOverlay.prototype.getCenter = function getCenter() {
         return Core.getCenter({
-          comp: this
+          ovl: this
         });
       };
-      BaseComponent.prototype.getCenterString = function getCenterString() {
-        return Util.toString({
+      BaseOverlay.prototype.getCenterString = function getCenterString() {
+        return Convert.toString({
           map: this.map,
           val: this.getCenter()
         });
       };
-      BaseComponent.prototype.getOptions = function getOptions(compOption) {
+      BaseOverlay.prototype.getOptions = function getOptions(option) {
         return Core.getOptions({
-          comp: this,
-          compOption: compOption
+          option: option,
+          ovl: this
         });
       };
-      BaseComponent.prototype.hide = function hide() {
+      BaseOverlay.prototype.hide = function hide() {
         return Core.hide({
-          comp: this
+          ovl: this
         });
       };
-      BaseComponent.prototype.others = function others() {
+      BaseOverlay.prototype.others = function others() {
         return Core.search({
           ids: [ this.id ],
-          map: this.map,
           matching: false,
-          type: this.type
+          ovlArray: this.parent
         });
       };
-      BaseComponent.prototype.reset = function reset() {
+      BaseOverlay.prototype.remove = function remove() {
+        return Core.remove({
+          ovl: this
+        });
+      };
+      BaseOverlay.prototype.reset = function reset() {
         return Core.reset({
-          comp: this
+          ovl: this
         });
       };
-      BaseComponent.prototype.setOptions = function setOptions(compOptions, value) {
+      BaseOverlay.prototype.setOptions = function setOptions(option, value) {
         return Core.setOptions({
-          comp: this,
-          compOptions: compOptions,
-          compType: this.type,
-          map: this.map,
+          option: option,
+          ovl: this,
           value: value
         });
       };
-      BaseComponent.prototype.show = function show() {
+      BaseOverlay.prototype.show = function show() {
         return Core.show({
-          comp: this
+          ovl: this
         });
       };
-      BaseComponent.prototype.toggle = function toggle(condition) {
+      BaseOverlay.prototype.toggle = function toggle(condition) {
         return Core.toggle({
-          comp: this,
-          condition: condition
+          condition: condition,
+          ovl: this
         });
       };
-      BaseComponent.prototype.zoom = function zoom() {
-        var comps = {};
-        comps[this.type] = this.id;
+      BaseOverlay.prototype.zoom = function zoom() {
+        var ovls = {};
+        ovls[this.type] = this.id;
         Core.fitBounds({
           map: this.map,
-          comps: comps
+          ovls: ovls
         });
         return this;
       };
-      return BaseComponent;
+      return BaseOverlay;
     }();
-    Components.BaseComponent = BaseComponent;
-    return Components;
-  }(Components || (Components = {}));
-  var Components = function(Components) {
+    Overlays.BaseOverlay = BaseOverlay;
+    return Overlays;
+  }(Overlays || (Overlays = {}));
+  var Overlays = function(Overlays) {
     "use strict";
-    var BaseComponentArray = function() {
-      function BaseComponentArray(parms) {
-        _classCallCheck(this, BaseComponentArray);
+    var BaseOverlayArray = function() {
+      function BaseOverlayArray(_ref58) {
+        var map = _ref58.map, type = _ref58.type;
+        _classCallCheck(this, BaseOverlayArray);
         this.data = [];
-        this.map = parms.map;
+        this.map = map;
         this.seed = 0;
-        this.type = parms.type;
+        this.type = type;
       }
-      BaseComponentArray.prototype.copy = function copy() {
-        return Util.copy({
-          compArray: this
-        });
-      };
-      BaseComponentArray.prototype.filter = function filter(fn) {
+      BaseOverlayArray.prototype.filter = function filter(fn) {
         return this.data.filter(fn);
       };
-      BaseComponentArray.prototype.find = function find(fn) {
+      BaseOverlayArray.prototype.find = function find(fn) {
         return this.data.find(fn);
       };
-      BaseComponentArray.prototype.findById = function findById(id) {
-        return this.data.find(function(comp) {
-          return id != null ? comp.id === id.toString() : false;
+      BaseOverlayArray.prototype.findById = function findById(id) {
+        return this.data.find(function(ovl) {
+          return id != null ? ovl.id === id.toString() : false;
         });
       };
-      BaseComponentArray.prototype.forEach = function forEach(fn) {
+      BaseOverlayArray.prototype.forEach = function forEach(fn) {
         this.data.forEach(fn);
         return this;
       };
-      BaseComponentArray.prototype.getBounds = function getBounds() {
+      BaseOverlayArray.prototype.getBounds = function getBounds() {
         return Core.getBounds({
-          compArray: this,
-          ids: this.getIds()
+          ids: this.getIds(),
+          ovlArray: this
         });
       };
-      BaseComponentArray.prototype.getCenter = function getCenter() {
+      BaseOverlayArray.prototype.getCenter = function getCenter() {
         return Core.getCenter({
-          compArray: this,
-          ids: this.getIds()
+          ids: this.getIds(),
+          ovlArray: this
         });
       };
-      BaseComponentArray.prototype.getCenterString = function getCenterString() {
-        return Util.toString({
+      BaseOverlayArray.prototype.getCenterString = function getCenterString() {
+        return Convert.toString({
           map: this.map,
           val: this.getCenter()
         });
       };
-      BaseComponentArray.prototype.getChildType = function getChildType() {
+      BaseOverlayArray.prototype.getChildType = function getChildType() {
         return this.type.replace("Array", "");
       };
-      BaseComponentArray.prototype.getGoogleObjects = function getGoogleObjects() {
-        return this.data.map(function(comp) {
-          return comp.obj;
+      BaseOverlayArray.prototype.getGoogleObjects = function getGoogleObjects() {
+        return this.data.map(function(ovl) {
+          return ovl.obj;
         });
       };
-      BaseComponentArray.prototype.getIds = function getIds() {
-        return this.data.map(function(comp) {
-          return comp.id;
+      BaseOverlayArray.prototype.getIds = function getIds() {
+        return this.data.map(function(ovl) {
+          return ovl.id;
         });
       };
-      BaseComponentArray.prototype.getOptions = function getOptions(compOption) {
+      BaseOverlayArray.prototype.getOptions = function getOptions(option) {
         return Core.getOptions({
-          compArray: this,
-          compOption: compOption,
-          compType: this.getChildType(),
-          ids: this.getIds()
+          option: option,
+          ovlArray: this
         });
       };
-      BaseComponentArray.prototype.hide = function hide() {
+      BaseOverlayArray.prototype.hide = function hide() {
         return Core.hide({
-          compArray: this,
-          ids: this.getIds()
+          ids: this.getIds(),
+          ovlArray: this
         });
       };
-      BaseComponentArray.prototype.includes = function includes(id) {
+      BaseOverlayArray.prototype.includes = function includes(id) {
         return this.findById(id) !== undefined;
       };
-      BaseComponentArray.prototype.others = function others() {
+      BaseOverlayArray.prototype.others = function others() {
         return Core.search({
           ids: this.getIds(),
-          map: this.map,
           matching: false,
-          type: this.getChildType()
+          ovlArray: this
         });
       };
-      BaseComponentArray.prototype.pop = function pop(count) {
+      BaseOverlayArray.prototype.pop = function pop(count) {
         return Core.pop({
           count: count,
-          map: this.map,
-          type: this.getChildType()
+          ovlArray: this.map
         });
       };
-      BaseComponentArray.prototype.push = function push(comp) {
-        return this.data.push(comp);
+      BaseOverlayArray.prototype.push = function push(ovl) {
+        return this.data.push(ovl);
       };
-      BaseComponentArray.prototype.reset = function reset() {
+      BaseOverlayArray.prototype.remove = function remove() {
+        return Core.remove({
+          ovlArray: this
+        });
+      };
+      BaseOverlayArray.prototype.reset = function reset() {
         return Core.reset({
-          compArray: this,
-          ids: this.getIds()
+          ids: this.getIds(),
+          ovlArray: this
         });
       };
-      BaseComponentArray.prototype.shift = function shift(count) {
+      BaseOverlayArray.prototype.shift = function shift(count) {
         return Core.shift({
           count: count,
-          map: this.map,
-          type: this.getChildType()
+          ovlArray: this.map
         });
       };
-      BaseComponentArray.prototype.show = function show() {
+      BaseOverlayArray.prototype.show = function show() {
         return Core.show({
-          compArray: this,
-          ids: this.getIds()
+          ids: this.getIds(),
+          ovlArray: this
         });
       };
-      BaseComponentArray.prototype.setOptions = function setOptions(compOptions, value) {
+      BaseOverlayArray.prototype.setOptions = function setOptions(option, value) {
         return Core.setOptions({
-          compArray: this,
-          compOptions: compOptions,
-          compType: this.getChildType(),
-          ids: this.getIds(),
-          map: this.map,
+          option: option,
+          ovlArray: this,
           value: value
         });
       };
-      BaseComponentArray.prototype.toggle = function toggle(condition) {
+      BaseOverlayArray.prototype.toggle = function toggle(condition) {
         return Core.toggle({
-          compArray: this,
           condition: condition,
-          ids: this.getIds()
+          ids: this.getIds(),
+          ovlArray: this
         });
       };
-      BaseComponentArray.prototype.zoom = function zoom() {
-        var comps = {};
-        comps[this.getChildType()] = this.getIds();
+      BaseOverlayArray.prototype.zoom = function zoom() {
+        var ovls = {};
+        ovls[this.getChildType()] = this.getIds();
         Core.fitBounds({
           map: this.map,
-          comps: comps
+          ovls: ovls
         });
         return this;
       };
-      return BaseComponentArray;
+      return BaseOverlayArray;
     }();
-    Components.BaseComponentArray = BaseComponentArray;
-    return Components;
-  }(Components || (Components = {}));
-  var Components = function(Components) {
+    Overlays.BaseOverlayArray = BaseOverlayArray;
+    return Overlays;
+  }(Overlays || (Overlays = {}));
+  var Overlays = function(Overlays, OverlayTypes, GoogleClasses) {
+    "use strict";
+    var Circle = function(_Overlays$BaseOverlay) {
+      _inherits(Circle, _Overlays$BaseOverlay);
+      function Circle(_ref59) {
+        var map = _ref59.map, options = _ref59.options;
+        _classCallCheck(this, Circle);
+        return _possibleConstructorReturn(this, _Overlays$BaseOverlay.call(this, {
+          map: map,
+          obj: new google.maps[GoogleClasses.CIRCLE](options),
+          options: options,
+          type: OverlayTypes.CIRCLE
+        }));
+      }
+      Circle.prototype.off = function off(type) {
+        return Core.removeListener({
+          ovl: this,
+          type: type
+        });
+      };
+      Circle.prototype.on = function on(type, func) {
+        return Core.addListener({
+          ovl: this,
+          func: func,
+          type: type
+        });
+      };
+      Circle.prototype.trigger = function trigger(type) {
+        return Core.triggerListener({
+          ovl: this,
+          type: type
+        });
+      };
+      return Circle;
+    }(Overlays.BaseOverlay);
+    Overlays.Circle = Circle;
+    return Overlays;
+  }(Overlays || (Overlays = {}), Const.OverlayTypes, Const.GoogleClasses);
+  var Overlays = function(Overlays, OverlayTypes) {
+    "use strict";
+    var CircleArray = function(_Overlays$BaseOverlay2) {
+      _inherits(CircleArray, _Overlays$BaseOverlay2);
+      function CircleArray(_ref60) {
+        var map = _ref60.map;
+        _classCallCheck(this, CircleArray);
+        return _possibleConstructorReturn(this, _Overlays$BaseOverlay2.call(this, {
+          map: map,
+          type: OverlayTypes.CIRCLE_ARRAY
+        }));
+      }
+      CircleArray.prototype.off = function off(type) {
+        return Core.removeListener({
+          ids: this.getIds(),
+          ovlArray: this,
+          type: type
+        });
+      };
+      CircleArray.prototype.on = function on(type, func) {
+        return Core.addListener({
+          func: func,
+          ids: this.getIds(),
+          ovlArray: this,
+          type: type
+        });
+      };
+      CircleArray.prototype.trigger = function trigger(type) {
+        return Core.triggerListener({
+          ids: this.getIds(),
+          ovlArray: this,
+          type: type
+        });
+      };
+      return CircleArray;
+    }(Overlays.BaseOverlayArray);
+    Overlays.CircleArray = CircleArray;
+    return Overlays;
+  }(Overlays || (Overlays = {}), Const.OverlayTypes);
+  var Overlays = function(Overlays) {
     "use strict";
     var Property = {
       ALIGN: "align",
@@ -2260,9 +1804,9 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       Z_INDEX: 1e3
     };
     var googleLabel = function googleLabel(options) {
-      var _this2 = this;
+      var _this4 = this;
       Object.keys(Default).forEach(function(key) {
-        _this2.set(Property[key], Default[key]);
+        _this4.set(Property[key], Default[key]);
       });
       this.setValues(options);
     };
@@ -2393,506 +1937,1009 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
         }
       }
     };
-    Components.GoogleLabel = googleLabel;
-    return Components;
-  }(Components || (Components = {}));
-  var Components = function(Components, ComponentType) {
+    Overlays.GoogleLabel = googleLabel;
+    return Overlays;
+  }(Overlays || (Overlays = {}));
+  var Overlays = function(Overlays, OverlayTypes) {
     "use strict";
-    var Circle = function(_Components$BaseCompo) {
-      _inherits(Circle, _Components$BaseCompo);
-      function Circle(parms) {
-        _classCallCheck(this, Circle);
-        return _possibleConstructorReturn(this, _Components$BaseCompo.call(this, {
-          id: parms.id,
-          obj: new google.maps.Circle(parms.options),
-          options: parms.options,
-          type: ComponentType.CIRCLE
-        }));
-      }
-      Circle.prototype.off = function off(type) {
-        return Core.removeListener({
-          comp: this,
-          type: type
-        });
-      };
-      Circle.prototype.on = function on(type, func) {
-        return Core.addListener({
-          comp: this,
-          func: func,
-          type: type
-        });
-      };
-      Circle.prototype.trigger = function trigger(type) {
-        return Core.triggerListener({
-          comp: this,
-          type: type
-        });
-      };
-      return Circle;
-    }(Components.BaseComponent);
-    Components.Circle = Circle;
-    return Components;
-  }(Components || (Components = {}), Const.ComponentType);
-  var Components = function(Components, ComponentType) {
-    "use strict";
-    var CircleArray = function(_Components$BaseCompo2) {
-      _inherits(CircleArray, _Components$BaseCompo2);
-      function CircleArray(parms) {
-        _classCallCheck(this, CircleArray);
-        return _possibleConstructorReturn(this, _Components$BaseCompo2.call(this, {
-          map: parms.map,
-          type: ComponentType.CIRCLE_ARRAY
-        }));
-      }
-      CircleArray.prototype.off = function off(type) {
-        return Core.removeListener({
-          compArray: this,
-          ids: this.getIds(),
-          type: type
-        });
-      };
-      CircleArray.prototype.on = function on(type, func) {
-        return Core.addListener({
-          compArray: this,
-          func: func,
-          ids: this.getIds(),
-          type: type
-        });
-      };
-      CircleArray.prototype.trigger = function trigger(type) {
-        return Core.triggerListener({
-          compArray: this,
-          ids: this.getIds(),
-          type: type
-        });
-      };
-      return CircleArray;
-    }(Components.BaseComponentArray);
-    Components.CircleArray = CircleArray;
-    return Components;
-  }(Components || (Components = {}), Const.ComponentType);
-  var Components = function(Components, ComponentType) {
-    "use strict";
-    var Label = function(_Components$BaseCompo3) {
-      _inherits(Label, _Components$BaseCompo3);
-      function Label(parms) {
+    var Label = function(_Overlays$BaseOverlay3) {
+      _inherits(Label, _Overlays$BaseOverlay3);
+      function Label(_ref61) {
+        var map = _ref61.map, options = _ref61.options;
         _classCallCheck(this, Label);
-        return _possibleConstructorReturn(this, _Components$BaseCompo3.call(this, {
-          id: parms.id,
-          obj: new Components.GoogleLabel(parms.options),
-          options: parms.options,
-          type: ComponentType.LABEL
+        return _possibleConstructorReturn(this, _Overlays$BaseOverlay3.call(this, {
+          map: map,
+          obj: new Overlays.GoogleLabel(options),
+          options: options,
+          type: OverlayTypes.LABEL
         }));
       }
       return Label;
-    }(Components.BaseComponent);
-    Components.Label = Label;
-    return Components;
-  }(Components || (Components = {}), Const.ComponentType);
-  var Components = function(Components, ComponentType) {
+    }(Overlays.BaseOverlay);
+    Overlays.Label = Label;
+    return Overlays;
+  }(Overlays || (Overlays = {}), Const.OverlayTypes);
+  var Overlays = function(Overlays, OverlayTypes) {
     "use strict";
-    var LabelArray = function(_Components$BaseCompo4) {
-      _inherits(LabelArray, _Components$BaseCompo4);
-      function LabelArray(parms) {
+    var LabelArray = function(_Overlays$BaseOverlay4) {
+      _inherits(LabelArray, _Overlays$BaseOverlay4);
+      function LabelArray(_ref62) {
+        var map = _ref62.map;
         _classCallCheck(this, LabelArray);
-        return _possibleConstructorReturn(this, _Components$BaseCompo4.call(this, {
-          map: parms.map,
-          type: ComponentType.LABEL_ARRAY
+        return _possibleConstructorReturn(this, _Overlays$BaseOverlay4.call(this, {
+          map: map,
+          type: OverlayTypes.LABEL_ARRAY
         }));
       }
       LabelArray.prototype.getPosition = function getPosition() {
         return Core.getCoordinates({
-          compArray: this,
-          ids: this.getIds()
+          ovlArray: this
         });
       };
       LabelArray.prototype.getPositionString = function getPositionString() {
         return Core.getCoordinates({
-          compArray: this,
-          stringify: true,
-          ids: this.getIds()
+          ovlArray: this,
+          stringify: true
         });
       };
       return LabelArray;
-    }(Components.BaseComponentArray);
-    Components.LabelArray = LabelArray;
-    return Components;
-  }(Components || (Components = {}), Const.ComponentType);
-  var Components = function(Components, ComponentType) {
+    }(Overlays.BaseOverlayArray);
+    Overlays.LabelArray = LabelArray;
+    return Overlays;
+  }(Overlays || (Overlays = {}), Const.OverlayTypes);
+  var Overlays = function(Overlays, OverlayTypes, GoogleClasses) {
     "use strict";
-    var Marker = function(_Components$BaseCompo5) {
-      _inherits(Marker, _Components$BaseCompo5);
-      function Marker(parms) {
+    var Marker = function(_Overlays$BaseOverlay5) {
+      _inherits(Marker, _Overlays$BaseOverlay5);
+      function Marker(_ref63) {
+        var map = _ref63.map, options = _ref63.options;
         _classCallCheck(this, Marker);
-        return _possibleConstructorReturn(this, _Components$BaseCompo5.call(this, {
-          id: parms.id,
-          obj: new google.maps.Marker(parms.options),
-          options: parms.options,
-          type: ComponentType.MARKER
+        return _possibleConstructorReturn(this, _Overlays$BaseOverlay5.call(this, {
+          map: map,
+          obj: new google.maps[GoogleClasses.MARKER](options),
+          options: options,
+          type: OverlayTypes.MARKER
         }));
       }
       Marker.prototype.getPosition = function getPosition() {
         return Core.getCoordinates({
-          comp: this
+          ovl: this
         });
       };
       Marker.prototype.getPositionString = function getPositionString() {
         return Core.getCoordinates({
-          comp: this,
+          ovl: this,
           stringify: true
         });
       };
       Marker.prototype.off = function off(type) {
         return Core.removeListener({
-          comp: this,
+          ovl: this,
           type: type
         });
       };
       Marker.prototype.on = function on(type, func) {
         return Core.addListener({
-          comp: this,
           func: func,
+          ovl: this,
           type: type
         });
       };
       Marker.prototype.trigger = function trigger(type) {
         return Core.triggerListener({
-          comp: this,
+          ovl: this,
           type: type
         });
       };
       return Marker;
-    }(Components.BaseComponent);
-    Components.Marker = Marker;
-    return Components;
-  }(Components || (Components = {}), Const.ComponentType);
-  var Components = function(Components, ComponentType) {
+    }(Overlays.BaseOverlay);
+    Overlays.Marker = Marker;
+    return Overlays;
+  }(Overlays || (Overlays = {}), Const.OverlayTypes, Const.GoogleClasses);
+  var Overlays = function(Overlays, OverlayTypes) {
     "use strict";
-    var MarkerArray = function(_Components$BaseCompo6) {
-      _inherits(MarkerArray, _Components$BaseCompo6);
-      function MarkerArray(parms) {
+    var MarkerArray = function(_Overlays$BaseOverlay6) {
+      _inherits(MarkerArray, _Overlays$BaseOverlay6);
+      function MarkerArray(_ref64) {
+        var map = _ref64.map;
         _classCallCheck(this, MarkerArray);
-        return _possibleConstructorReturn(this, _Components$BaseCompo6.call(this, {
-          map: parms.map,
-          type: ComponentType.MARKER_ARRAY
+        return _possibleConstructorReturn(this, _Overlays$BaseOverlay6.call(this, {
+          map: map,
+          type: OverlayTypes.MARKER_ARRAY
         }));
       }
       MarkerArray.prototype.getPosition = function getPosition() {
         return Core.getCoordinates({
-          compArray: this,
-          ids: this.getIds()
+          ovlArray: this
         });
       };
       MarkerArray.prototype.getPositionString = function getPositionString() {
         return Core.getCoordinates({
-          compArray: this,
-          stringify: true,
-          ids: this.getIds()
+          ovlArray: this,
+          stringify: true
         });
       };
       MarkerArray.prototype.off = function off(type) {
         return Core.removeListener({
-          compArray: this,
           ids: this.getIds(),
+          ovlArray: this,
           type: type
         });
       };
       MarkerArray.prototype.on = function on(type, func) {
         return Core.addListener({
-          compArray: this,
           func: func,
           ids: this.getIds(),
+          ovlArray: this,
           type: type
         });
       };
       MarkerArray.prototype.trigger = function trigger(type) {
         return Core.triggerListener({
-          compArray: this,
           ids: this.getIds(),
+          ovlArray: this,
           type: type
         });
       };
       return MarkerArray;
-    }(Components.BaseComponentArray);
-    Components.MarkerArray = MarkerArray;
-    return Components;
-  }(Components || (Components = {}), Const.ComponentType);
-  var Components = function(Components, ComponentType) {
+    }(Overlays.BaseOverlayArray);
+    Overlays.MarkerArray = MarkerArray;
+    return Overlays;
+  }(Overlays || (Overlays = {}), Const.OverlayTypes);
+  var Overlays = function(Overlays, OverlayTypes, GoogleClasses) {
     "use strict";
-    var Polygon = function(_Components$BaseCompo7) {
-      _inherits(Polygon, _Components$BaseCompo7);
-      function Polygon(parms) {
+    var Polygon = function(_Overlays$BaseOverlay7) {
+      _inherits(Polygon, _Overlays$BaseOverlay7);
+      function Polygon(_ref65) {
+        var map = _ref65.map, options = _ref65.options;
         _classCallCheck(this, Polygon);
-        return _possibleConstructorReturn(this, _Components$BaseCompo7.call(this, {
-          id: parms.id,
-          obj: new google.maps.Polygon(parms.options),
-          options: parms.options,
-          type: ComponentType.POLYGON
+        return _possibleConstructorReturn(this, _Overlays$BaseOverlay7.call(this, {
+          map: map,
+          obj: new google.maps[GoogleClasses.POLYGON](options),
+          options: options,
+          type: OverlayTypes.POLYGON
         }));
       }
       Polygon.prototype.getPath = function getPath(index) {
         return Core.getCoordinates({
-          comp: this,
-          index: index
+          index: index,
+          ovl: this
         });
       };
       Polygon.prototype.getPathString = function getPathString(index) {
         return Core.getCoordinates({
-          comp: this,
           index: index,
+          ovl: this,
           stringify: true
         });
       };
       Polygon.prototype.off = function off(type) {
         return Core.removeListener({
-          comp: this,
+          ovl: this,
           type: type
         });
       };
       Polygon.prototype.on = function on(type, func) {
         return Core.addListener({
-          comp: this,
           func: func,
+          ovl: this,
           type: type
         });
       };
       Polygon.prototype.trigger = function trigger(type) {
         return Core.triggerListener({
-          comp: this,
+          ovl: this,
           type: type
         });
       };
       return Polygon;
-    }(Components.BaseComponent);
-    Components.Polygon = Polygon;
-    return Components;
-  }(Components || (Components = {}), Const.ComponentType);
-  var Components = function(Components, ComponentType) {
+    }(Overlays.BaseOverlay);
+    Overlays.Polygon = Polygon;
+    return Overlays;
+  }(Overlays || (Overlays = {}), Const.OverlayTypes, Const.GoogleClasses);
+  var Overlays = function(Overlays, OverlayTypes) {
     "use strict";
-    var PolygonArray = function(_Components$BaseCompo8) {
-      _inherits(PolygonArray, _Components$BaseCompo8);
-      function PolygonArray(parms) {
+    var PolygonArray = function(_Overlays$BaseOverlay8) {
+      _inherits(PolygonArray, _Overlays$BaseOverlay8);
+      function PolygonArray(_ref66) {
+        var map = _ref66.map;
         _classCallCheck(this, PolygonArray);
-        return _possibleConstructorReturn(this, _Components$BaseCompo8.call(this, {
-          map: parms.map,
-          type: ComponentType.POLYGON_ARRAY
+        return _possibleConstructorReturn(this, _Overlays$BaseOverlay8.call(this, {
+          map: map,
+          type: OverlayTypes.POLYGON_ARRAY
         }));
       }
       PolygonArray.prototype.getPath = function getPath(index) {
         return Core.getCoordinates({
-          compArray: this,
-          ids: this.getIds(),
-          index: index
+          index: index,
+          ovlArray: this
         });
       };
       PolygonArray.prototype.getPathString = function getPathString(index) {
         return Core.getCoordinates({
-          compArray: this,
-          stringify: true,
-          ids: this.getIds(),
-          index: index
+          index: index,
+          ovlArray: this,
+          stringify: true
         });
       };
       PolygonArray.prototype.off = function off(type) {
         return Core.removeListener({
-          compArray: this,
           ids: this.getIds(),
+          ovlArray: this,
           type: type
         });
       };
       PolygonArray.prototype.on = function on(type, func) {
         return Core.addListener({
-          compArray: this,
           func: func,
           ids: this.getIds(),
+          ovlArray: this,
           type: type
         });
       };
       PolygonArray.prototype.trigger = function trigger(type) {
         return Core.triggerListener({
-          compArray: this,
           ids: this.getIds(),
+          ovlArray: this,
           type: type
         });
       };
       return PolygonArray;
-    }(Components.BaseComponentArray);
-    Components.PolygonArray = PolygonArray;
-    return Components;
-  }(Components || (Components = {}), Const.ComponentType);
-  var Components = function(Components, ComponentType) {
+    }(Overlays.BaseOverlayArray);
+    Overlays.PolygonArray = PolygonArray;
+    return Overlays;
+  }(Overlays || (Overlays = {}), Const.OverlayTypes);
+  var Overlays = function(Overlays, OverlayTypes, GoogleClasses) {
     "use strict";
-    var Polyline = function(_Components$BaseCompo9) {
-      _inherits(Polyline, _Components$BaseCompo9);
-      function Polyline(parms) {
+    var Polyline = function(_Overlays$BaseOverlay9) {
+      _inherits(Polyline, _Overlays$BaseOverlay9);
+      function Polyline(_ref67) {
+        var map = _ref67.map, options = _ref67.options;
         _classCallCheck(this, Polyline);
-        return _possibleConstructorReturn(this, _Components$BaseCompo9.call(this, {
-          id: parms.id,
-          obj: new google.maps.Polyline(parms.options),
-          options: parms.options,
-          type: ComponentType.POLYLINE
+        return _possibleConstructorReturn(this, _Overlays$BaseOverlay9.call(this, {
+          map: map,
+          obj: new google.maps[GoogleClasses.POLYLINE](options),
+          options: options,
+          type: OverlayTypes.POLYLINE
         }));
       }
       Polyline.prototype.getPath = function getPath() {
         return Core.getCoordinates({
-          comp: this
+          ovl: this
         });
       };
       Polyline.prototype.getPathString = function getPathString() {
         return Core.getCoordinates({
-          comp: this,
+          ovl: this,
           stringify: true
         });
       };
       Polyline.prototype.off = function off(type) {
         return Core.removeListener({
-          comp: this,
+          ovl: this,
           type: type
         });
       };
       Polyline.prototype.on = function on(type, func) {
         return Core.addListener({
-          comp: this,
           func: func,
+          ovl: this,
           type: type
         });
       };
       Polyline.prototype.trigger = function trigger(type) {
         return Core.triggerListener({
-          comp: this,
+          ovl: this,
           type: type
         });
       };
       return Polyline;
-    }(Components.BaseComponent);
-    Components.Polyline = Polyline;
-    return Components;
-  }(Components || (Components = {}), Const.ComponentType);
-  var Components = function(Components, ComponentType) {
+    }(Overlays.BaseOverlay);
+    Overlays.Polyline = Polyline;
+    return Overlays;
+  }(Overlays || (Overlays = {}), Const.OverlayTypes, Const.GoogleClasses);
+  var Overlays = function(Overlays, OverlayTypes) {
     "use strict";
-    var PolylineArray = function(_Components$BaseCompo10) {
-      _inherits(PolylineArray, _Components$BaseCompo10);
-      function PolylineArray(parms) {
+    var PolylineArray = function(_Overlays$BaseOverlay10) {
+      _inherits(PolylineArray, _Overlays$BaseOverlay10);
+      function PolylineArray(_ref68) {
+        var map = _ref68.map;
         _classCallCheck(this, PolylineArray);
-        return _possibleConstructorReturn(this, _Components$BaseCompo10.call(this, {
-          map: parms.map,
-          type: ComponentType.POLYLINE_ARRAY
+        return _possibleConstructorReturn(this, _Overlays$BaseOverlay10.call(this, {
+          map: map,
+          type: OverlayTypes.POLYLINE_ARRAY
         }));
       }
       PolylineArray.prototype.getPath = function getPath() {
         return Core.getCoordinates({
-          compArray: this,
-          ids: this.getIds()
+          ovlArray: this
         });
       };
       PolylineArray.prototype.getPathString = function getPathString() {
         return Core.getCoordinates({
-          compArray: this,
-          stringify: true,
-          ids: this.getIds()
+          ovlArray: this,
+          stringify: true
         });
       };
       PolylineArray.prototype.off = function off(type) {
         return Core.removeListener({
-          compArray: this,
           ids: this.getIds(),
+          ovlArray: this,
           type: type
         });
       };
       PolylineArray.prototype.on = function on(type, func) {
         return Core.addListener({
-          compArray: this,
           func: func,
           ids: this.getIds(),
+          ovlArray: this,
           type: type
         });
       };
       PolylineArray.prototype.trigger = function trigger(type) {
         return Core.triggerListener({
-          compArray: this,
           ids: this.getIds(),
+          ovlArray: this,
           type: type
         });
       };
       return PolylineArray;
-    }(Components.BaseComponentArray);
-    Components.PolylineArray = PolylineArray;
-    return Components;
-  }(Components || (Components = {}), Const.ComponentType);
-  var Components = function(Components, ComponentType) {
+    }(Overlays.BaseOverlayArray);
+    Overlays.PolylineArray = PolylineArray;
+    return Overlays;
+  }(Overlays || (Overlays = {}), Const.OverlayTypes);
+  var Overlays = function(Overlays, OverlayTypes, GoogleClasses) {
     "use strict";
-    var Rectangle = function(_Components$BaseCompo11) {
-      _inherits(Rectangle, _Components$BaseCompo11);
-      function Rectangle(parms) {
+    var Rectangle = function(_Overlays$BaseOverlay11) {
+      _inherits(Rectangle, _Overlays$BaseOverlay11);
+      function Rectangle(_ref69) {
+        var map = _ref69.map, options = _ref69.options;
         _classCallCheck(this, Rectangle);
-        return _possibleConstructorReturn(this, _Components$BaseCompo11.call(this, {
-          id: parms.id,
-          obj: new google.maps.Rectangle(parms.options),
-          options: parms.options,
-          type: ComponentType.RECTANGLE
+        return _possibleConstructorReturn(this, _Overlays$BaseOverlay11.call(this, {
+          map: map,
+          obj: new google.maps[GoogleClasses.RECTANGLE](options),
+          options: options,
+          type: OverlayTypes.RECTANGLE
         }));
       }
       Rectangle.prototype.off = function off(type) {
         return Core.removeListener({
-          comp: this,
+          ovl: this,
           type: type
         });
       };
       Rectangle.prototype.on = function on(type, func) {
         return Core.addListener({
-          comp: this,
           func: func,
+          ovl: this,
           type: type
         });
       };
       Rectangle.prototype.trigger = function trigger(type) {
         return Core.triggerListener({
-          comp: this,
+          ovl: this,
           type: type
         });
       };
       return Rectangle;
-    }(Components.BaseComponent);
-    Components.Rectangle = Rectangle;
-    return Components;
-  }(Components || (Components = {}), Const.ComponentType);
-  var Components = function(Components, ComponentType) {
+    }(Overlays.BaseOverlay);
+    Overlays.Rectangle = Rectangle;
+    return Overlays;
+  }(Overlays || (Overlays = {}), Const.OverlayTypes, Const.GoogleClasses);
+  var Overlays = function(Overlays, OverlayTypes) {
     "use strict";
-    var RectangleArray = function(_Components$BaseCompo12) {
-      _inherits(RectangleArray, _Components$BaseCompo12);
-      function RectangleArray(parms) {
+    var RectangleArray = function(_Overlays$BaseOverlay12) {
+      _inherits(RectangleArray, _Overlays$BaseOverlay12);
+      function RectangleArray(_ref70) {
+        var map = _ref70.map;
         _classCallCheck(this, RectangleArray);
-        return _possibleConstructorReturn(this, _Components$BaseCompo12.call(this, {
-          map: parms.map,
-          type: ComponentType.RECTANGLE_ARRAY
+        return _possibleConstructorReturn(this, _Overlays$BaseOverlay12.call(this, {
+          map: map,
+          type: OverlayTypes.RECTANGLE_ARRAY
         }));
       }
       RectangleArray.prototype.off = function off(type) {
         return Core.removeListener({
-          compArray: this,
           ids: this.getIds(),
+          ovlArray: this,
           type: type
         });
       };
       RectangleArray.prototype.on = function on(type, func) {
         return Core.addListener({
-          compArray: this,
           func: func,
           ids: this.getIds(),
+          ovlArray: this,
           type: type
         });
       };
       RectangleArray.prototype.trigger = function trigger(type) {
         return Core.triggerListener({
-          compArray: this,
           ids: this.getIds(),
+          ovlArray: this,
           type: type
         });
       };
       return RectangleArray;
-    }(Components.BaseComponentArray);
-    Components.RectangleArray = RectangleArray;
-    return Components;
-  }(Components || (Components = {}), Const.ComponentType);
+    }(Overlays.BaseOverlayArray);
+    Overlays.RectangleArray = RectangleArray;
+    return Overlays;
+  }(Overlays || (Overlays = {}), Const.OverlayTypes);
+  !function(gmap) {
+    "use strict";
+    gmap.prototype.shape = function(type, parms) {
+      if (_validShapeType(type)) {
+        return _getShapePath(this, parms, type);
+      } else {
+        return Util.throwError({
+          method: "shape",
+          message: type + " is not a valid shape",
+          obj: {
+            type: type
+          }
+        });
+      }
+    };
+    var Shape = [ "decagon", "hexagon", "pentagon", "rectangle", "square", "triangle" ];
+    var ShapeDegrees = {
+      decagon: [ 36, 72, 108, 144, 180, 216, 252, 288, 324, 360 ],
+      hexagon: [ 30, 90, 150, 210, 270, 330 ],
+      pentagon: [ 72, 144, 216, 288, 360 ],
+      rectangle: [ 60, 120, 240, 300 ],
+      square: [ 45, 135, 225, 315 ],
+      triangle: [ 120, 240, 360 ]
+    };
+    function _getShapePath(map, parms, type) {
+      parms = $.isPlainObject(parms) ? parms : {};
+      parms.center = parms.center || map.getCenter();
+      parms.size = parms.size || Util.getSizeFromZoom(map.getZoom());
+      if ($.type(parms.center) === "string") {
+        parms.center = Util.toLatLng(parms.center);
+      }
+      var path = [];
+      for (var i = 0, i_end = ShapeDegrees[type].length; i < i_end; i++) {
+        path.push(Util.getDestinationPoint({
+          bearing: ShapeDegrees[type][i],
+          distance: parms.size,
+          latLng: parms.center
+        }));
+      }
+      return path;
+    }
+    function _validShapeType(type) {
+      type = Util.toLowerCase(type);
+      return Shape.includes(type);
+    }
+    return gmap;
+  }(gmap);
+  var Util = function(Util) {
+    "use strict";
+    Util.getDestinationPoint = function(parms) {
+      var bearing = _toRad(parms.bearing);
+      var distance = parms.distance / 6371;
+      var latLng = parms.latLng;
+      var src_lat = _toRad(latLng.lat());
+      var src_lng = _toRad(latLng.lng());
+      var dest_lat = Math.asin(Math.sin(src_lat) * Math.cos(distance) + Math.cos(src_lat) * Math.sin(distance) * Math.cos(bearing));
+      var dest_lng = src_lng + Math.atan2(Math.sin(bearing) * Math.sin(distance) * Math.cos(src_lat), Math.cos(distance) - Math.sin(src_lat) * Math.sin(dest_lat));
+      if (isNaN(src_lng) || isNaN(dest_lng)) {
+        return null;
+      }
+      return new google.maps.LatLng(_toDeg(dest_lat), _toDeg(dest_lng));
+    };
+    Util.getSizeFromZoom = function(zoom) {
+      var minZoom = 5;
+      var size = 500;
+      return zoom <= minZoom ? size : size / Math.pow(2, zoom - minZoom);
+    };
+    function _toRad(val) {
+      return val * Math.PI / 180;
+    }
+    function _toDeg(val) {
+      return val * 180 / Math.PI;
+    }
+    return Util;
+  }(Util || (Util = {}));
+  var Convert = function(Convert) {
+    "use strict";
+    Convert.toArray = function(val) {
+      return Is.Array(val) ? val : [ val ];
+    };
+    Convert.toLowerCase = function(val) {
+      var regex = /\s+|_+/g;
+      return Is.String(val) ? val.toLowerCase().replace(regex, "") : undefined;
+    };
+    return Convert;
+  }(Convert || (Convert = {}));
+  var Convert = function(Convert, Settings) {
+    "use strict";
+    Convert.toLatLng = function(_ref71) {
+      var map = _ref71.map, val = _ref71.val;
+      if (Is.LatLng(val) || Is.Object(val)) return val;
+      if (Is.String(val)) {
+        return map.settings[Settings.DELIMITED_STRINGS] ? strToLatLng(val) : JSON.parse(val);
+      }
+    };
+    Convert.toLatLngArray = function(_ref72) {
+      var map = _ref72.map, val = _ref72.val;
+      if (Is.MVCArray(val) || Is.Array(val)) return val;
+      if (Is.String(val)) {
+        return map.settings[Settings.DELIMITED_STRINGS] ? strToLatLngArray(arguments[0]) : JSON.parse(val);
+      }
+    };
+    Convert.toLatLngBounds = function(_ref73) {
+      var map = _ref73.map, val = _ref73.val;
+      if (Is.LatLngBounds(val) || Is.Object(val)) return val;
+      if (Is.String(val)) {
+        return map.settings[Settings.DELIMITED_STRINGS] ? strToLatLngBounds(arguments[0]) : JSON.parse(val);
+      }
+    };
+    function strToLatLng(str) {
+      var points = str.split(",");
+      return new google.maps.LatLng(parseFloat(points[0]), parseFloat(points[1]));
+    }
+    function strToLatLngArray(_ref74) {
+      var map = _ref74.map, val = _ref74.val;
+      var delimiter = map.settings[Settings.DELIMITER].latLng;
+      var latLngs = val.split(delimiter);
+      var latLngArray = [];
+      for (var i = 0, i_end = latLngs.length; i < i_end; i++) {
+        latLngArray.push(strToLatLng(latLngs[i]));
+      }
+      return latLngArray;
+    }
+    function strToLatLngBounds(_ref75) {
+      var map = _ref75.map, val = _ref75.val;
+      var delimiter = map.settings[Settings.DELIMITER].latLngBounds;
+      var latLngs = val.split(delimiter);
+      return {
+        north: Number(latLngs[0]),
+        east: Number(latLngs[1]),
+        south: Number(latLngs[2]),
+        west: Number(latLngs[3])
+      };
+    }
+    return Convert;
+  }(Convert || (Convert = {}), Const.Settings);
+  var Convert = function(Convert, Settings) {
+    "use strict";
+    Convert.toString = function(_ref76) {
+      var map = _ref76.map, val = _ref76.val;
+      var args = arguments[0];
+      args.delimited = map.settings[Settings.DELIMITED_STRINGS];
+      args.precision = map.settings[Settings.URL_PRECISION];
+      return Conversions[Get.googleClass(val)](args);
+    };
+    var Conversions = {
+      LatLng: function LatLng(_ref77) {
+        var map = _ref77.map, val = _ref77.val, delimited = _ref77.delimited;
+        var args = arguments[0];
+        return delimited ? toDelimited(args) : toJSON(args);
+      },
+      MVCArray: function MVCArray(_ref78) {
+        var map = _ref78.map, val = _ref78.val, delimited = _ref78.delimited;
+        var args = arguments[0];
+        if (Is.MVCArray(val.getAt(0))) {
+          return Conversions.NestedMVCArray(args);
+        }
+        return delimited ? toDelimited(args) : toJSON(args);
+      },
+      NestedMVCArray: function NestedMVCArray(_ref79) {
+        var map = _ref79.map, val = _ref79.val, delimited = _ref79.delimited;
+        var args = arguments[0];
+        return delimited ? toMultiDelimited(args) : toMultiJSON(args);
+      }
+    };
+    function toDelimited(_ref80) {
+      var map = _ref80.map, val = _ref80.val, precision = _ref80.precision;
+      var str = "";
+      val.forEach(function(el, i) {
+        if (i > 0) str += map.settings[Settings.DELIMITER].latLng;
+        str += el.toUrlValue(precision);
+      });
+      return str;
+    }
+    function toJSON(_ref81) {
+      var map = _ref81.map, val = _ref81.val, precision = _ref81.precision;
+      val = val.getArray();
+      return JSON.stringify(val, function(key, value) {
+        return key === "lat" || key === "lng" ? Number(value.toFixed(precision)) : value;
+      });
+    }
+    function toMultiDelimited(_ref82) {
+      var map = _ref82.map, val = _ref82.val, precision = _ref82.precision;
+      var args = arguments[0];
+      var str = "";
+      val.forEach(function(el, i) {
+        if (i > 0) str += map.settings[Settings.DELIMITER].latLngArray;
+        args.val = el;
+        str += toDelimited(args);
+      });
+      return str;
+    }
+    function toMultiJSON(_ref83) {
+      var map = _ref83.map, val = _ref83.val, precision = _ref83.precision;
+      var args = arguments[0];
+      var arr = [];
+      val.forEach(function(el) {
+        arr.push(el.getArray());
+      });
+      args.val = arr;
+      return toJSON(args);
+    }
+    return Convert;
+  }(Convert || (Convert = {}), Const.Settings);
+  var Error = function(Error) {
+    "use strict";
+    Error.throw = function(_ref84) {
+      var method = _ref84.method, msg = _ref84.msg, args = _ref84.args;
+      console.error(method + ": " + msg, args);
+      return false;
+    };
+    return Error;
+  }(Error || (Error = {}));
+  var Get = function(Get, GoogleClasses) {
+    "use strict";
+    Get.boundsByOverlayObject = function(_ref85) {
+      var map = _ref85.map, ovls = _ref85.ovls;
+      var bounds = new google.maps[GoogleClasses.LAT_LNG_BOUND]();
+      var types = Object.keys(ovls);
+      for (var i = 0, i_end = types.length; i < i_end; i++) {
+        var type = Lookup.overlayType(types[i]);
+        var ids = getIds(map.overlays[type], ovls[types[i]]);
+        bounds.union(Core.getBounds({
+          ids: ids,
+          ovlArray: map.overlays[type]
+        }));
+      }
+      return bounds;
+    };
+    Get.boundsByPath = function(_ref86) {
+      var bounds = _ref86.bounds, ovl = _ref86.ovl;
+      var path = ovl.obj.getPath();
+      for (var i = 0, i_end = path.length; i < i_end; i++) {
+        bounds.extend(path.getAt(i));
+      }
+      return bounds;
+    };
+    Get.boundsByPaths = function(_ref87) {
+      var bounds = _ref87.bounds, ovl = _ref87.ovl;
+      var paths = ovl.obj.getPaths();
+      for (var i = 0, i_end = paths.length; i < i_end; i++) {
+        var path = paths.getAt(i);
+        for (var j = 0, j_end = path.getLength(); j < j_end; j++) {
+          bounds.extend(path.getAt(j));
+        }
+      }
+      return bounds;
+    };
+    Get.boundsByPosition = function(_ref88) {
+      var bounds = _ref88.bounds, ovl = _ref88.ovl;
+      bounds.extend(ovl.obj.getPosition());
+      return bounds;
+    };
+    function getIds(ovlArray, ids) {
+      return ids === null || ids === "all" ? ovlArray.getIds() : ids;
+    }
+    return Get;
+  }(Get || (Get = {}), Const.GoogleClasses);
+  var Get = function(Get) {
+    "use strict";
+    Get.convertedMapOptions = function(_ref89) {
+      var map = _ref89.map, options = _ref89.options;
+      var mapOptions = Const.Map.options;
+      var convertableOpts = mapOptions.filter(function(opt) {
+        return opt["convertable"] === true;
+      });
+      return convertOptions({
+        convertableOpts: convertableOpts,
+        map: map,
+        options: options
+      });
+    };
+    Get.convertedOptions = function(_ref90) {
+      var map = _ref90.map, options = _ref90.options, type = _ref90.type;
+      var convertableOpts = Get.filteredOptions({
+        filter: "convertable",
+        type: type
+      });
+      return convertOptions({
+        convertableOpts: convertableOpts,
+        map: map,
+        options: options
+      });
+    };
+    Get.renamedMapOptions = function(_ref91) {
+      var options = _ref91.options;
+      Object.keys(options).forEach(function(key) {
+        Util.renameProperty({
+          newName: Lookup.mapOption(key),
+          obj: options,
+          oldName: key
+        });
+      });
+      return options;
+    };
+    Get.renamedOptions = function(_ref92) {
+      var options = _ref92.options;
+      Object.keys(options).forEach(function(key) {
+        Util.renameProperty({
+          newName: Lookup.overlayOption(key),
+          obj: options,
+          oldName: key
+        });
+      });
+      return options;
+    };
+    var Conversions = {
+      bounds: function bounds(_ref93) {
+        var options = _ref93.options, map = _ref93.map;
+        if (options.bounds) {
+          options.bounds = Convert.toLatLngBounds({
+            map: map,
+            val: options.bounds
+          });
+        }
+      },
+      center: function center(_ref94) {
+        var options = _ref94.options, map = _ref94.map;
+        if (options.center) {
+          options.center = Convert.toLatLng({
+            map: map,
+            val: options.center
+          });
+        }
+      },
+      path: function path(_ref95) {
+        var options = _ref95.options, map = _ref95.map;
+        if (options.path) {
+          options.path = Convert.toLatLngArray({
+            map: map,
+            val: options.path
+          });
+        }
+      },
+      paths: function paths(_ref96) {
+        var options = _ref96.options, map = _ref96.map;
+        if (options.paths || options.path) {
+          options.paths = Convert.toLatLngArray({
+            map: map,
+            val: options.paths || options.path
+          });
+          delete options.path;
+        }
+      },
+      position: function position(_ref97) {
+        var options = _ref97.options, map = _ref97.map;
+        if (options.position) {
+          options.position = Convert.toLatLng({
+            map: map,
+            val: options.position
+          });
+        }
+      }
+    };
+    function convertOptions(_ref98) {
+      var convertableOpts = _ref98.convertableOpts, map = _ref98.map, options = _ref98.options;
+      for (var i = 0, i_end = convertableOpts.length; i < i_end; i++) {
+        var opt = convertableOpts[i];
+        Conversions[opt.name]({
+          map: map,
+          options: options
+        });
+      }
+      return options;
+    }
+    return Get;
+  }(Get || (Get = {}));
+  var Get = function(Get, GlobalSettings) {
+    "use strict";
+    Get.mergedSettings = function(_ref99) {
+      var convert = _ref99.convert, settings = _ref99.settings;
+      settings = Object.assign({}, GlobalSettings, settings);
+      if (convert) {
+        var map = {
+          settings: settings
+        };
+        var options = settings[Const.Settings.MAP_OPTIONS];
+        settings[Const.Settings.MAP_OPTIONS] = Get.convertedMapOptions({
+          map: map,
+          options: options
+        });
+      }
+      return settings;
+    };
+    Get.renamedSettings = function(_ref100) {
+      var settings = _ref100.settings;
+      Object.keys(settings).forEach(function(key) {
+        Util.renameProperty({
+          newName: Lookup.setting(key),
+          obj: settings,
+          oldName: key
+        });
+      });
+      return settings;
+    };
+    return Get;
+  }(Get || (Get = {}), gmap.settings);
+  var Get = function(Get) {
+    "use strict";
+    Get.googleClass = function(obj) {
+      return Object.keys(Const.GoogleClasses).find(function(className) {
+        return obj instanceof google.maps[className];
+      });
+    };
+    Get.newOverlayArray = function(_ref101) {
+      var map = _ref101.map, ovlArray = _ref101.ovlArray, type = _ref101.type;
+      type = type + "Array";
+      if (ovlArray !== undefined) {
+        map = ovlArray.map;
+        type = ovlArray.type;
+      }
+      return new Overlays[type]({
+        map: map
+      });
+    };
+    Get.type = function(val) {
+      return Object.prototype.toString.call(val).replace(/^\[object (.+)\]$/, "$1").toLowerCase();
+    };
+    return Get;
+  }(Get || (Get = {}));
+  var Get = function(Get) {
+    "use strict";
+    Get.filteredOptions = function(_ref102) {
+      var type = _ref102.type, filter = _ref102.filter;
+      var options = Const.Overlays[type].options;
+      var filterType = {
+        string: function string(opt) {
+          return opt[filter] === true;
+        },
+        function: filter
+      };
+      return options.filter(filterType[$.type(filter)]);
+    };
+    Get.formattedId = function(_ref103) {
+      var map = _ref103.map, options = _ref103.options, type = _ref103.type;
+      var id = options.id;
+      return FormatID[$.type(id)](id) || FormatID["auto"](arguments[0]);
+    };
+    Get.mergedOptions = function(_ref104) {
+      var map = _ref104.map, options = _ref104.options, type = _ref104.type, convert = _ref104.convert;
+      var args = arguments[0];
+      var namespace = Lookup.setting(type + "Options");
+      var defaults = map.settings[namespace] || {};
+      args.options = $.extend({}, defaults, options);
+      args.options.map = map.obj;
+      return convert ? Get.convertedOptions(args) : args.options;
+    };
+    var FormatID = {
+      auto: function auto(_ref105) {
+        var map = _ref105.map, type = _ref105.type;
+        return "__" + map.overlays[type].seed++ + "__";
+      },
+      number: function number(id) {
+        return id.toString();
+      },
+      string: function string(id) {
+        return id;
+      }
+    };
+    return Get;
+  }(Get || (Get = {}));
+  var Is = function(Is, Google) {
+    "use strict";
+    Is.LatLng = function(val) {
+      return val instanceof google.maps[Google.LAT_LNG];
+    };
+    Is.LatLngBounds = function(val) {
+      return val instanceof google.maps[Google.LAT_LNG_BOUNDS];
+    };
+    Is.MVCArray = function(val) {
+      return val instanceof google.maps[Google.MVC_ARRAY];
+    };
+    return Is;
+  }(Is || (Is = {}), Const.GoogleClasses);
+  var Is = function(Is) {
+    "use strict";
+    Is.Array = function(val) {
+      return Get.type(val) === "array";
+    };
+    Is.Boolean = function(val) {
+      return Get.type(val) === "boolean";
+    };
+    Is.Function = function(val) {
+      return Get.type(val) === "function";
+    };
+    Is.Number = function(val) {
+      return Get.type(val) === "number";
+    };
+    Is.Object = function(val) {
+      return Get.type(val) === "object";
+    };
+    Is.String = function(val) {
+      return Get.type(val) === "string";
+    };
+    return Is;
+  }(Is || (Is = {}));
+  var IsValid = function(IsValid) {
+    "use strict";
+    IsValid.overlayOptions = function(_ref106) {
+      var map = _ref106.map, options = _ref106.options, type = _ref106.type;
+      var args = arguments[0];
+      args.id = options.id;
+      if (isExistingId(args)) {
+        return Error.throw({
+          method: "addOverlay",
+          msg: "A " + type + " with an id of " + args.id + " already exists",
+          args: args
+        });
+      }
+      var reqOptions = Get.filteredOptions({
+        filter: "requried",
+        type: type
+      });
+      for (var i = 0, i_end = reqOptions.length; i < i_end; i++) {
+        var opt = reqOptions[i].name;
+        if (isEmpty(options[opt])) {
+          return Error.throw({
+            method: "addOverlay",
+            msg: opt + " must have a value",
+            args: args
+          });
+        }
+      }
+      return true;
+    };
+    IsValid.overlayType = function(type) {
+      return Object.keys(Const.Overlays).includes(type);
+    };
+    function isEmpty(val) {
+      return val === "" || val === null || val === undefined;
+    }
+    function isExistingId(_ref107) {
+      var map = _ref107.map, type = _ref107.type, id = _ref107.id;
+      return map.overlays[type].includes(id);
+    }
+    return IsValid;
+  }(IsValid || (IsValid = {}));
+  var Util = function(Util) {
+    "use strict";
+    Util.renameProperty = function(_ref108) {
+      var obj = _ref108.obj, oldName = _ref108.oldName, newName = _ref108.newName;
+      if (oldName === newName) return;
+      if (obj.hasOwnProperty(oldName)) {
+        obj[newName] = obj[oldName];
+        delete obj[oldName];
+      }
+    };
+    return Util;
+  }(Util || (Util = {}));
+  var Lookup = function(Lookup) {
+    "use strict";
+    Lookup.eventType = function(value) {
+      return lookup(Const.EventTypes, value) || value;
+    };
+    Lookup.mapOption = function(value) {
+      return lookup(Const.MapOptions, value) || value;
+    };
+    Lookup.overlayOption = function(value) {
+      return lookup(Const.OverlayOptions, value) || value;
+    };
+    Lookup.overlayType = function(value) {
+      return lookup(Const.OverlayTypes, value, true) || value;
+    };
+    Lookup.setting = function(value) {
+      return lookup(Const.Settings, value) || value;
+    };
+    function lookup(constant, value, plural) {
+      value = Convert.toLowerCase(value);
+      var key = Object.keys(constant).find(function(k) {
+        k = Convert.toLowerCase(k);
+        return k === value || plural && k + "s" === value;
+      });
+      return constant[key];
+    }
+    return Lookup;
+  }(Lookup || (Lookup = {}));
   gmap.version = "1.0.0-alpha.9";
 }();

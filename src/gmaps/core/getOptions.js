@@ -8,12 +8,11 @@ var Core = ((Core) => {
   // ----------------------------------------------------------------------
 
   Core.getMapOptions = function({map, option}) {
-    const obj = Util.extend({}, map.obj)
-    option    = Lookup.mapOption(option)
+    option = Lookup.mapOption(option)
 
     return option !== undefined
-      ? obj[option]
-      : getAllObjectsOptions({obj, map})
+      ? map.obj[option]
+      : getAllObjectsOptions({map})
   }
 
   Core.getOptions = function({option, ovl, ovlArray}) {
@@ -37,24 +36,30 @@ var Core = ((Core) => {
       : retVal
   }
 
-  function getAllObjectsOptions({obj, map, ovl}) {
+  function getAllObjectsOptions({map, ovl}) {
+    const obj = ovl !== undefined
+      ? ovl.obj
+      : map.obj
+
     const options = ovl !== undefined
       ? Const.Overlays[ovl.type].options.map(opt => opt.name)
       : Const.Map.options.map(opt => opt.name)
 
-    Object.keys(obj).forEach((key) => {
-      if (options.indexOf(key) === -1) delete obj[key]
-    })
+    const retVal = {}
+    for (var i = 0, i_end = options.length; i < i_end; i++) {
+      const key = options[i]
+      if (obj[key] !== undefined) {
+        retVal[key] = obj[key]
+      }
+    }
 
-    return obj
+    return retVal
   }
 
   function getOptions({option, ovl}) {
-    const obj = Util.extend({}, ovl.obj)
-
     return option !== undefined
-      ? obj[option]
-      : getAllObjectsOptions({obj, ovl})
+      ? ovl.obj[option]
+      : getAllObjectsOptions({ovl})
   }
 
   function multiGetOptions({option, ovlArray}) {
@@ -64,7 +69,7 @@ var Core = ((Core) => {
 
     for (var i = 0, i_end = ids.length; i < i_end; i++) {
       args.ovl = ovlArray.findById(ids[i])
-      if (args.ovl) retVal[id] = getOptions(args)
+      if (args.ovl) retVal[ids[i]] = getOptions(args)
     }
 
     return formatMultiReturn(retVal)

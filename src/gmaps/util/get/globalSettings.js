@@ -8,7 +8,7 @@ var Get = ((Get, GlobalSettings) => {
   // ----------------------------------------------------------------------
 
   Get.mergedSettings = function({convert, settings}) {
-    settings = Util.extend({}, GlobalSettings, settings)
+    settings = Object.assign({}, GlobalSettings, settings)
 
     if (convert) {
       const map     = {settings}

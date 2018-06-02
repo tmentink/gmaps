@@ -7,10 +7,10 @@ var Core = ((Core, OverlayOptions) => {
   // Public
   // ----------------------------------------------------------------------
 
-  Core.geolocate = function({map, options}) {
+  Core.geolocate = function({map, options={}}) {
     if (!window.navigator.geolocation) return false
 
-    options = Util.extend({}, DefaultOptions, options || {})
+    options = Object.assign({}, DefaultOptions, options)
 
     navigator.geolocation.getCurrentPosition((position) => {
       const center = {
