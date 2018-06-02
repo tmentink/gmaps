@@ -24,7 +24,7 @@ var Core = ((Core, GoogleClasses) => {
 
   Core.getBounds = function({ids, ovl, ovlArray}) {
     const args  = arguments[0]
-    args.bounds = new google.maps[GoogleClasses.LAT_LNG_BOUND]()
+    args.bounds = new google.maps[GoogleClasses.LAT_LNG_BOUNDS]()
 
     return ovlArray
       ? multiGetBounds(args)
@@ -42,22 +42,22 @@ var Core = ((Core, GoogleClasses) => {
   // ----------------------------------------------------------------------
 
   const BoundsFunction = {
-    Circle(ovl) {
+    Circle({ovl}) {
       return ovl.obj.getBounds()
     },
-    Label(ovl) {
+    Label({bounds, ovl}) {
       return Get.boundsByPosition({bounds, ovl})
     },
-    Marker(ovl) {
+    Marker({bounds, ovl}) {
       return Get.boundsByPosition({bounds, ovl})
     },
-    Polygon(ovl) {
+    Polygon({bounds, ovl}) {
       return Get.boundsByPaths({bounds, ovl})
     },
-    Polyline(ovl) {
+    Polyline({bounds, ovl}) {
       return Get.boundsByPath({bounds, ovl})
     },
-    Rectangle(ovl) {
+    Rectangle({ovl}) {
       return ovl.obj.getBounds()
     }
   }
@@ -72,8 +72,10 @@ var Core = ((Core, GoogleClasses) => {
 
     for (var i = 0, i_end = ids.length; i < i_end; i++) {
       args.ovl = ovlArray.findById(ids[i])
-      if (args.ovl) bounds.union(BoundsFunction[ovl.type](args))
+      if (args.ovl) bounds.union(BoundsFunction[args.ovl.type](args))
     }
+
+    return bounds
   }
 
 
