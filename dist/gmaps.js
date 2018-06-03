@@ -1083,7 +1083,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     Core.geolocate = function(_ref28) {
       var map = _ref28.map, _ref28$options = _ref28.options, options = _ref28$options === undefined ? {} : _ref28$options;
       if (!window.navigator.geolocation) return false;
-      options = Object.assign({}, DefaultOptions, options);
+      options = Util.extend({}, DefaultOptions, options);
       navigator.geolocation.getCurrentPosition(function(position) {
         var center = {
           lat: position.coords.latitude,
@@ -2748,7 +2748,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     "use strict";
     Get.mergedSettings = function(_ref105) {
       var convert = _ref105.convert, settings = _ref105.settings;
-      settings = Object.assign({}, GlobalSettings, settings);
+      settings = Util.extend({}, GlobalSettings, settings);
       if (convert) {
         var map = {
           settings: settings
@@ -2814,14 +2814,14 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     Get.formattedId = function(_ref109) {
       var map = _ref109.map, options = _ref109.options, type = _ref109.type;
       var id = options.id;
-      return FormatID[$.type(id)](id) || FormatID["auto"](arguments[0]);
+      return FormatID[Get.type(id)](id) || FormatID["auto"](arguments[0]);
     };
     Get.mergedOptions = function(_ref110) {
       var map = _ref110.map, options = _ref110.options, type = _ref110.type, convert = _ref110.convert;
       var args = arguments[0];
       var namespace = Lookup.setting(type + "Options");
       var defaults = map.settings[namespace] || {};
-      args.options = $.extend({}, defaults, options);
+      args.options = Util.extend({}, defaults, options);
       args.options.map = map.obj;
       return convert ? Get.convertedOptions(args) : args.options;
     };
@@ -2917,6 +2917,34 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
   }(IsValid || (IsValid = {}));
   var Util = function(Util) {
     "use strict";
+    Util.extend = function() {
+      var copyIsArray = void 0, clone = void 0;
+      var target = arguments[0];
+      if (target == null || !Is.Object(target) && !Is.Function(target)) {
+        target = {};
+      }
+      for (var i = 1, i_end = arguments.length; i < i_end; i++) {
+        var options = arguments[i];
+        if (options == null) continue;
+        for (var name in options) {
+          var src = target[name];
+          var copy = options[name];
+          if (target === copy) continue;
+          if (copy && (isPlainObject(copy) || (copyIsArray = Is.Array(copy)))) {
+            if (copyIsArray) {
+              copyIsArray = false;
+              clone = src && Is.Array(src) ? src : [];
+            } else {
+              clone = src && isPlainObject(src) ? src : {};
+            }
+            target[name] = Util.extend(clone, copy);
+          } else if (copy !== undefined) {
+            target[name] = copy;
+          }
+        }
+      }
+      return target;
+    };
     Util.renameProperty = function(_ref114) {
       var obj = _ref114.obj, oldName = _ref114.oldName, newName = _ref114.newName;
       if (oldName === newName) return;
@@ -2925,6 +2953,17 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
         delete obj[oldName];
       }
     };
+    function isPlainObject(obj) {
+      var key = void 0;
+      var hasOwn = Object.prototype.hasOwnProperty;
+      var toStr = Object.prototype.toString;
+      if (!obj || toStr.call(obj) !== "[object Object]") return false;
+      var hasOwnConstructor = hasOwn.call(obj, "constructor");
+      var hasIsPrototypeOf = obj.constructor && obj.constructor.prototype && hasOwn.call(obj.constructor.prototype, "isPrototypeOf");
+      if (obj.constructor && !hasOwnConstructor && !hasIsPrototypeOf) return false;
+      for (key in obj) {}
+      return typeof key === "undefined" || hasOwn.call(obj, key);
+    }
     return Util;
   }(Util || (Util = {}));
   var Lookup = function(Lookup) {

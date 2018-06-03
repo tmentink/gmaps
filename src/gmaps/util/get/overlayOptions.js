@@ -19,14 +19,14 @@ var Get = ((Get) => {
 
   Get.formattedId = function({map, options, type}) {
     const id = options.id
-    return FormatID[$.type(id)](id) || FormatID["auto"](arguments[0])
+    return FormatID[Get.type(id)](id) || FormatID["auto"](arguments[0])
   }
 
   Get.mergedOptions = function({map, options, type, convert}) {
     const args       = arguments[0]
     const namespace  = Lookup.setting(`${type}Options`)
     const defaults   = map.settings[namespace] || {}
-    args.options     = $.extend({}, defaults, options)
+    args.options     = Util.extend({}, defaults, options)
     args.options.map = map.obj
 
     return convert
