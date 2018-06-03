@@ -11,6 +11,7 @@
     "linebreak-style"       : ["warn", "unix"],
     "max-len"               : ["error", 90],
     "no-console"            : ["warn"],
+    "no-debugger"           : ["warn"],
     "no-trailing-spaces"    : ["error"],
     "no-undef"              : ["off"],
     "no-unused-vars"        : ["off"],
