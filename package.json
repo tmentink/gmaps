@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "The way maps were meant to be made",
   "main": "dist/gmaps.js",
-  "scripts": {
-    "test-all": "mocha test/unit --recursive"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/tmentink/gmaps.git"

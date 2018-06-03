@@ -1,0 +1,52 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>GMaps Tests</title>
+        <meta name="description" content="">
+        <meta name="author" content="Trent Mentink">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="css/reset.css" />
+        <link rel="stylesheet" href="css/mocha.css" />
+        <link rel="stylesheet" href="css/main.css" />
+
+        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA0SLOL7qb7Ch3gVhP0yBCVYCp1_lVwF60"></script>
+    </head>
+    <body>
+
+        <div id="header">
+          <h1>Gmaps Tests</h1>
+        </div>
+
+        <div id="panels">
+          <div id="pnlMap" class="panel">
+            <div id="gmap"></div>
+          </div>
+
+          <div id="pnlMocha" class="panel">
+            <div id="mocha"></div>
+          </div>
+        </div>
+
+
+        <!-- SCRIPTS
+        ===========================================-->
+
+        <!-- Gmaps -->
+        <script src="../dist/gmaps.js"></script>
+        <script src="js/data.js"></script>
+
+        <!-- Mocha -->
+        <script src="../node_modules/chai/chai.js"></script>
+        <script src="../node_modules/mocha/mocha.js"></script>
+        <script>mocha.setup("bdd")</script>
+
+        <!-- Tests -->
+        <script src="unit/mocha/setup.js"></script>
+        <script src="unit/map/constructor.js"></script>
+
+        <script>mocha.run()</script>
+    </body>
+</html>

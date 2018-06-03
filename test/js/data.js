@@ -1,11 +1,3 @@
-// ------------------------------------------------------------------------
-// gmaps: test/visual/js/data.js
-// ------------------------------------------------------------------------
-
-
-// ------------------------------------------------------------------------
-// Constants
-// ------------------------------------------------------------------------
 
 var data = [
   {
@@ -531,36 +523,3 @@ var data = [
     population      : 164
   }
 ]
-
-
-// ------------------------------------------------------------------------
-// Component Options
-// ------------------------------------------------------------------------
-
-function labels(autoId) {
-  return data.map(function(c) {
-    return {
-      id       : autoId === null ? null : c.id,
-      position : gmap.settings.delimitedStrings ? c.delimitedCenter : c.jsonCenter,
-      text     : c.id
-    }
-  })
-}
-
-function markers(autoId) {
-  return data.map(function(c) {
-    return {
-      id       : autoId === null ? null : c.id,
-      position : gmap.settings.delimitedStrings ? c.delimitedCenter : c.jsonCenter
-    }
-  })
-}
-
-function polygons(autoId) {
-  return data.map(function(c) {
-    return {
-      id    : autoId === null ? null : c.id,
-      paths : gmap.settings.delimitedStrings ? c.delimitedCoords : c.jsonCoords
-    }
-  })
-}
