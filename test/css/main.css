@@ -22,6 +22,11 @@ h1 {
   border-radius: 4px 4px 0 0;
 }
 
+#gmap {
+  height: 100%;
+  width: 100%;
+}
+
 
 /*
  * Panels
@@ -43,29 +48,11 @@ h1 {
   overflow-x: hidden;
   overflow-y: auto;
   background: #f9f9f9;
+  flex: 1 1 auto;
 }
-
-
-/*
- * Map panel
- */
-
-#pnlMap {
-  flex: 1 1 66%;
-  border-right: 1px solid rgba(0,0,0,.15);
-}
-
-#gmap {
-  height: 100%;
-  width: 100%;
-}
-
-
-/*
- * Mocha panel
- */
 
 #pnlMocha {
   padding: .5rem;
-  flex: 1 1 33%;
+  border-left: 1px solid rgba(0,0,0,.15);
+  max-width: 400px;
 }
