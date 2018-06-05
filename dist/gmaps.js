@@ -2809,7 +2809,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
         },
         function: filter
       };
-      return options.filter(filterType[$.type(filter)]);
+      return options.filter(filterType[Get.type(filter)]);
     };
     Get.formattedId = function(_ref109) {
       var map = _ref109.map, options = _ref109.options, type = _ref109.type;
@@ -2888,7 +2888,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
         });
       }
       var reqOptions = Get.filteredOptions({
-        filter: "requried",
+        filter: "required",
         type: type
       });
       for (var i = 0, i_end = reqOptions.length; i < i_end; i++) {

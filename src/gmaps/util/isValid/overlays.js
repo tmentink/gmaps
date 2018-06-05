@@ -19,7 +19,7 @@ var IsValid = ((IsValid) => {
       })
     }
 
-    const reqOptions = Get.filteredOptions({filter: "requried", type: type})
+    const reqOptions = Get.filteredOptions({filter: "required", type: type})
     for (var i = 0, i_end = reqOptions.length; i < i_end; i++) {
       const opt = reqOptions[i].name
 
