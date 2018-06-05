@@ -14,7 +14,7 @@ var Get = ((Get) => {
       function : filter,
     }
 
-    return options.filter(filterType[$.type(filter)])
+    return options.filter(filterType[Get.type(filter)])
   }
 
   Get.formattedId = function({map, options, type}) {
