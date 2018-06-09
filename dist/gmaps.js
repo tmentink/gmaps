@@ -2921,7 +2921,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     Util.extend = function() {
       var copyIsArray = void 0, clone = void 0;
       var target = arguments[0];
-      if (target == null || !Is.Object(target) && !Is.Function(target)) {
+      if (!Is.Object(target) && !Is.Array(target) && !Is.Function(target)) {
         target = {};
       }
       for (var i = 1, i_end = arguments.length; i < i_end; i++) {

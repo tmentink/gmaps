@@ -12,7 +12,7 @@ var Util = ((Util) => {
     let target = arguments[0]
 
     // eslint-disable-next-line eqeqeq
-    if (target == null || (!Is.Object(target) && !Is.Function(target))) {
+    if (!Is.Object(target) && !Is.Array(target) && !Is.Function(target)) {
       target = {}
     }
 
