@@ -18,8 +18,7 @@ var Get = ((Get) => {
   }
 
   Get.formattedId = function({map, options, type}) {
-    const id = options.id
-    return FormatID[Get.type(id)](id) || FormatID["auto"](arguments[0])
+    return FormatID[Get.type(options.id)](arguments[0])
   }
 
   Get.mergedOptions = function({map, options, type, convert}) {
@@ -40,14 +39,14 @@ var Get = ((Get) => {
   // ----------------------------------------------------------------------
 
   const FormatID = {
-    auto({map, type}) {
+    number({options}) {
+      return options.id.toString()
+    },
+    string({options}) {
+      return options.id
+    },
+    undefined({map, type}) {
       return `__${map.overlays[type].seed++}__`
-    },
-    number(id) {
-      return id.toString()
-    },
-    string(id) {
-      return id
     }
   }
 

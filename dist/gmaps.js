@@ -2813,8 +2813,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     };
     Get.formattedId = function(_ref109) {
       var map = _ref109.map, options = _ref109.options, type = _ref109.type;
-      var id = options.id;
-      return FormatID[Get.type(id)](id) || FormatID["auto"](arguments[0]);
+      return FormatID[Get.type(options.id)](arguments[0]);
     };
     Get.mergedOptions = function(_ref110) {
       var map = _ref110.map, options = _ref110.options, type = _ref110.type, convert = _ref110.convert;
@@ -2826,15 +2825,17 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       return convert ? Get.convertedOptions(args) : args.options;
     };
     var FormatID = {
-      auto: function auto(_ref111) {
-        var map = _ref111.map, type = _ref111.type;
+      number: function number(_ref111) {
+        var options = _ref111.options;
+        return options.id.toString();
+      },
+      string: function string(_ref112) {
+        var options = _ref112.options;
+        return options.id;
+      },
+      undefined: function undefined(_ref113) {
+        var map = _ref113.map, type = _ref113.type;
         return "__" + map.overlays[type].seed++ + "__";
-      },
-      number: function number(id) {
-        return id.toString();
-      },
-      string: function string(id) {
-        return id;
       }
     };
     return Get;
@@ -2876,8 +2877,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
   }(Is || (Is = {}));
   var IsValid = function(IsValid) {
     "use strict";
-    IsValid.overlayOptions = function(_ref112) {
-      var map = _ref112.map, options = _ref112.options, type = _ref112.type;
+    IsValid.overlayOptions = function(_ref114) {
+      var map = _ref114.map, options = _ref114.options, type = _ref114.type;
       var args = arguments[0];
       args.id = options.id;
       if (isExistingId(args)) {
@@ -2909,8 +2910,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     function isEmpty(val) {
       return val === "" || val === null || val === undefined;
     }
-    function isExistingId(_ref113) {
-      var map = _ref113.map, type = _ref113.type, id = _ref113.id;
+    function isExistingId(_ref115) {
+      var map = _ref115.map, type = _ref115.type, id = _ref115.id;
       return map.overlays[type].includes(id);
     }
     return IsValid;
@@ -2945,8 +2946,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       }
       return target;
     };
-    Util.renameProperty = function(_ref114) {
-      var obj = _ref114.obj, oldName = _ref114.oldName, newName = _ref114.newName;
+    Util.renameProperty = function(_ref116) {
+      var obj = _ref116.obj, oldName = _ref116.oldName, newName = _ref116.newName;
       if (oldName === newName) return;
       if (obj.hasOwnProperty(oldName)) {
         obj[newName] = obj[oldName];
