@@ -1524,7 +1524,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
         return Core.search({
           ids: [ this.id ],
           matching: false,
-          ovlArray: this.parent
+          ovlArray: this.map.overlays[this.type]
         });
       };
       BaseOverlay.prototype.remove = function remove() {
@@ -1645,7 +1645,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
         return Core.search({
           ids: this.getIds(),
           matching: false,
-          ovlArray: this
+          ovlArray: this.map.overlays[this.getChildType()]
         });
       };
       BaseOverlayArray.prototype.pop = function pop(count) {

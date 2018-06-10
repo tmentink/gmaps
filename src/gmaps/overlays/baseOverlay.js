@@ -66,7 +66,7 @@ var Overlays = ((Overlays) => {
       return Core.search({
         ids      : [this.id],
         matching : false,
-        ovlArray : this.parent
+        ovlArray : this.map.overlays[this.type]
       })
     }
 
