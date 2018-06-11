@@ -1,5 +1,5 @@
 
-describe("Search - Circle", () => {
+describe("Map - Search Circles", () => {
   var m = new gmap()
   var oa
   

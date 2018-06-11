@@ -1,5 +1,5 @@
 
-describe("Search - Polygon", () => {
+describe("Map - Search Polygons", () => {
   var m = new gmap()
   var oa
   

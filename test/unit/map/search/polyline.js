@@ -1,5 +1,5 @@
 
-describe("Search - Polyline", () => {
+describe("Map - Search Polylines", () => {
   var m = new gmap({
     delimitedStrings: true
   })

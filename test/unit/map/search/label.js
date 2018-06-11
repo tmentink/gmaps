@@ -1,5 +1,5 @@
 
-describe("Search - Label", () => {
+describe("Map - Search Labels", () => {
   var m = new gmap()
   var oa
   
