@@ -89,6 +89,19 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
   }();
   !function() {
     "use strict";
+    if (!Object.values) {
+      Object.values = function(obj) {
+        if (obj == null) return;
+        var values = [];
+        for (var key in obj) {
+          values.push(obj[key]);
+        }
+        return values;
+      };
+    }
+  }();
+  !function() {
+    "use strict";
     var gmap = function gmap(settings) {
       var _this = this;
       if (Is.Object(settings)) {
@@ -886,10 +899,10 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     "use strict";
     Core.fitBounds = function(_ref4) {
       var map = _ref4.map, ovls = _ref4.ovls;
-      if (Is.LatLngBounds(ovls)) {
+      if (Is.LatLngBounds(ovls) || Is.LatLngBoundsLiteral(ovls)) {
         map.obj.fitBounds(ovls);
-      } else if (Is.Object(ovls)) {
-        map.obj.fitBounds(Get.boundsByOverlayObject({
+      } else if (Is.BoundsInterface(ovls)) {
+        map.obj.fitBounds(Get.boundsByInterface({
           map: map,
           ovls: ovls
         }));
@@ -2592,7 +2605,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
   }(Error || (Error = {}));
   var Get = function(Get, GoogleClasses) {
     "use strict";
-    Get.boundsByOverlayObject = function(_ref91) {
+    Get.boundsByInterface = function(_ref91) {
       var map = _ref91.map, ovls = _ref91.ovls;
       var bounds = new google.maps[GoogleClasses.LAT_LNG_BOUNDS]();
       var types = Object.keys(ovls);
@@ -2848,11 +2861,25 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     Is.LatLngBounds = function(val) {
       return val instanceof google.maps[Google.LAT_LNG_BOUNDS];
     };
+    Is.LatLngBoundsLiteral = function(val) {
+      return Object.keys(val).length === 4 && val.hasOwnProperty("north") && val.hasOwnProperty("south") && val.hasOwnProperty("east") && val.hasOwnProperty("west");
+    };
     Is.MVCArray = function(val) {
       return val instanceof google.maps[Google.MVC_ARRAY];
     };
     return Is;
   }(Is || (Is = {}), Const.GoogleClasses);
+  var Is = function(Is, OverlayTypes) {
+    "use strict";
+    Is.BoundsInterface = function(val) {
+      var keys = Object.keys(val);
+      var types = Object.values(OverlayTypes);
+      return keys.every(function(k) {
+        return types.includes(Lookup.overlayType(k));
+      });
+    };
+    return Is;
+  }(Is || (Is = {}), Const.OverlayTypes);
   var Is = function(Is) {
     "use strict";
     Is.Array = function(val) {

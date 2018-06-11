@@ -8,11 +8,11 @@ var Core = ((Core, GoogleClasses) => {
   // ----------------------------------------------------------------------
 
   Core.fitBounds = function({map, ovls}) {
-    if (Is.LatLngBounds(ovls)) {
+    if (Is.LatLngBounds(ovls) || Is.LatLngBoundsLiteral(ovls)) {
       map.obj.fitBounds(ovls)
     }
-    else if (Is.Object(ovls)) {
-      map.obj.fitBounds(Get.boundsByOverlayObject({map, ovls}))
+    else if (Is.BoundsInterface(ovls)) {
+      map.obj.fitBounds(Get.boundsByInterface({map, ovls}))
     }
     else if (ovls === "init" || ovls === "initial") {
       map.obj.fitBounds(map.init.bounds)

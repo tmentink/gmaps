@@ -7,7 +7,7 @@ var Get = ((Get, GoogleClasses) => {
   // Public
   // ----------------------------------------------------------------------
 
-  Get.boundsByOverlayObject = function({map, ovls}) {
+  Get.boundsByInterface = function({map, ovls}) {
     const bounds = new google.maps[GoogleClasses.LAT_LNG_BOUNDS]()
     const types  = Object.keys(ovls)
 
