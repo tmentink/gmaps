@@ -2862,7 +2862,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       return val instanceof google.maps[Google.LAT_LNG_BOUNDS];
     };
     Is.LatLngBoundsLiteral = function(val) {
-      return Object.keys(val).length === 4 && val.hasOwnProperty("north") && val.hasOwnProperty("south") && val.hasOwnProperty("east") && val.hasOwnProperty("west");
+      return val != null && Object.keys(val).length === 4 && val.hasOwnProperty("north") && val.hasOwnProperty("south") && val.hasOwnProperty("east") && val.hasOwnProperty("west");
     };
     Is.MVCArray = function(val) {
       return val instanceof google.maps[Google.MVC_ARRAY];
@@ -2872,6 +2872,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
   var Is = function(Is, OverlayTypes) {
     "use strict";
     Is.BoundsInterface = function(val) {
+      if (val == null) return false;
       var keys = Object.keys(val);
       var types = Object.values(OverlayTypes);
       return keys.every(function(k) {

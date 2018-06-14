@@ -16,7 +16,9 @@ var Is = ((Is, Google) => {
   }
 
   Is.LatLngBoundsLiteral = function(val) {
-    return Object.keys(val).length === 4 &&
+    // eslint-disable-next-line eqeqeq
+    return val != null &&
+           Object.keys(val).length === 4 &&
            val.hasOwnProperty("north") &&
            val.hasOwnProperty("south") &&
            val.hasOwnProperty("east") &&

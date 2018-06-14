@@ -8,6 +8,9 @@ var Is = ((Is, OverlayTypes) => {
   // ----------------------------------------------------------------------
 
   Is.BoundsInterface = function(val) {
+    // eslint-disable-next-line eqeqeq
+    if (val == null) return false
+
     const keys  = Object.keys(val)
     const types = Object.values(OverlayTypes)
     return keys.every((k) => {
