@@ -1,10 +1,18 @@
 
 describe("Map - Add Label", () => {
-  let m = new gmap()
+  let m
   const position = {
     lat: 39.59190,
     lng: -122.40150
   }
+
+  before((done) => {
+    m = new gmap({
+      onLoad() {
+        done()
+      }
+    })
+  })
 
   it("should create a label with default settings", () => {
     const defaults = gmap.settings.labelOptions

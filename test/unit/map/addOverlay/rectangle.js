@@ -1,12 +1,20 @@
 
 describe("Map - Add Rectangle", () => {
-  let m = new gmap()
+  let m
   const bounds = {
     north: 33.685,
     south: 33.671,
     east: -116.234,
     west: -116.251
   }
+
+  before((done) => {
+    m = new gmap({
+      onLoad() {
+        done()
+      }
+    })
+  })
 
   it("should create a rectangle with default settings", () => {
     const defaults = gmap.settings.rectangleOptions

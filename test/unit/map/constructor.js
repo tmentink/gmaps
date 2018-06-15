@@ -1,6 +1,6 @@
 
 describe("Map - Constructor", () => {
-  var m = {}
+  let m
 
   it("should create a map with default settings", () => {
     m = new gmap()   
