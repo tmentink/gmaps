@@ -105,7 +105,7 @@ var Overlays = ((Overlays) => {
     pop(count) {
       return Core.pop({
         count    : count,
-        ovlArray : this.map
+        ovlArray : this
       })
     }
 
@@ -129,7 +129,7 @@ var Overlays = ((Overlays) => {
     shift(count) {
       return Core.shift({
         count    : count,
-        ovlArray : this.map
+        ovlArray : this
       })
     }
 

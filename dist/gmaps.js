@@ -1311,13 +1311,11 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     var RemoveFunction = {
       pop: function pop(ovlArray) {
         var ovl = ovlArray.data.pop();
-        ovl.obj.setMap(null);
-        return ovl;
+        return remove(ovl);
       },
       shift: function shift(ovlArray) {
         var ovl = ovlArray.data.shift();
-        ovl.obj.setMap(null);
-        return ovl;
+        return remove(ovl);
       }
     };
     function remove(ovl) {
@@ -1664,7 +1662,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       BaseOverlayArray.prototype.pop = function pop(count) {
         return Core.pop({
           count: count,
-          ovlArray: this.map
+          ovlArray: this
         });
       };
       BaseOverlayArray.prototype.push = function push(ovl) {
@@ -1684,7 +1682,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       BaseOverlayArray.prototype.shift = function shift(count) {
         return Core.shift({
           count: count,
-          ovlArray: this.map
+          ovlArray: this
         });
       };
       BaseOverlayArray.prototype.show = function show() {

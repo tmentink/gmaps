@@ -42,13 +42,11 @@ var Core = ((Core) => {
   const RemoveFunction = {
     pop(ovlArray) {
       const ovl = ovlArray.data.pop()
-      ovl.obj.setMap(null)
-      return ovl
+      return remove(ovl)
     },
     shift(ovlArray) {
       const ovl = ovlArray.data.shift()
-      ovl.obj.setMap(null)
-      return ovl
+      return remove(ovl)
     }
   }
 
