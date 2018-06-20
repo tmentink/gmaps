@@ -27,6 +27,10 @@ var Lookup = ((Lookup) => {
     return lookup(Const.Settings, value) || value
   }
 
+  Lookup.shapeType = function(value) {
+    return lookup(Const.Shapes, value) || value
+  }
+
 
   // ----------------------------------------------------------------------
   // Private

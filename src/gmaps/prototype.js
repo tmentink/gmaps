@@ -159,6 +159,14 @@
       return this
     },
 
+    shape(type, options) {
+      return Core.shape({
+        map     : this,
+        type    : type,
+        options : options || {}
+      })
+    },
+
     trigger(type) {
       return Core.triggerListener({
         ovl  : this,
