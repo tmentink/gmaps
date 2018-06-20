@@ -34,9 +34,7 @@ var Convert = ((Convert, GoogleClasses, Settings) => {
       val = JSON.parse(val)
     }
 
-    if (Is.Array(val)) {
-      return new google.maps[GoogleClasses.MVC_ARRAY](val)
-    }
+    if (Is.Array(val)) return val
   }
 
   Convert.toLatLngBounds = function({map, val}) {

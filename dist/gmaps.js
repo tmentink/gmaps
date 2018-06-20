@@ -2516,9 +2516,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
         }
         val = JSON.parse(val);
       }
-      if (Is.Array(val)) {
-        return new google.maps[GoogleClasses.MVC_ARRAY](val);
-      }
+      if (Is.Array(val)) return val;
     };
     Convert.toLatLngBounds = function(_ref82) {
       var map = _ref82.map, val = _ref82.val;
