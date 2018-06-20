@@ -1,5 +1,5 @@
 
-var Convert = ((Convert, Settings) => {
+var Convert = ((Convert, GoogleClasses, Settings) => {
   "use strict"
 
 
@@ -44,7 +44,10 @@ var Convert = ((Convert, Settings) => {
 
   function strToLatLng(str) {
     const points = str.split(",")
-    return new google.maps.LatLng(parseFloat(points[0]), parseFloat(points[1]))
+    const lat    = parseFloat(points[0])
+    const lng    = parseFloat(points[1])
+
+    return new google.maps[GoogleClasses.LAT_LNG](lat, lng)
   }
 
   function strToLatLngArray({map, val}) {
@@ -73,4 +76,4 @@ var Convert = ((Convert, Settings) => {
 
 
   return Convert
-})(Convert || (Convert = {}), Const.Settings)
+})(Convert || (Convert = {}), Const.GoogleClasses, Const.Settings)
