@@ -2496,25 +2496,54 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     "use strict";
     Convert.toLatLng = function(_ref80) {
       var map = _ref80.map, val = _ref80.val;
-      if (Is.LatLng(val) || Is.Object(val)) return val;
+      if (Is.LatLng(val)) return val;
       if (Is.String(val)) {
-        return map.settings[Settings.DELIMITED_STRINGS] ? strToLatLng(val) : JSON.parse(val);
+        if (map.settings[Settings.DELIMITED_STRINGS]) {
+          return strToLatLng(val);
+        }
+        val = JSON.parse(val);
+      }
+      if (Is.LatLngLiteral(val)) {
+        return new google.maps[GoogleClasses.LAT_LNG](val.lat, val.lng);
       }
     };
     Convert.toLatLngArray = function(_ref81) {
       var map = _ref81.map, val = _ref81.val;
-      if (Is.MVCArray(val) || Is.Array(val)) return val;
+      if (Is.MVCArray(val)) return val;
       if (Is.String(val)) {
-        return map.settings[Settings.DELIMITED_STRINGS] ? strToLatLngArray(arguments[0]) : JSON.parse(val);
+        if (map.settings[Settings.DELIMITED_STRINGS]) {
+          return strToLatLngArray(arguments[0]);
+        }
+        val = JSON.parse(val);
+      }
+      if (Is.Array(val)) {
+        return new google.maps[GoogleClasses.MVC_ARRAY](val);
       }
     };
     Convert.toLatLngBounds = function(_ref82) {
       var map = _ref82.map, val = _ref82.val;
-      if (Is.LatLngBounds(val) || Is.Object(val)) return val;
+      if (Is.LatLngBounds(val)) return val;
       if (Is.String(val)) {
-        return map.settings[Settings.DELIMITED_STRINGS] ? strToLatLngBounds(arguments[0]) : JSON.parse(val);
+        if (map.settings[Settings.DELIMITED_STRINGS]) {
+          return strToLatLngBounds(arguments[0]);
+        }
+        val = JSON.parse(val);
+      }
+      if (Is.LatLngBoundsLiteral(val)) {
+        return objToLatLngBounds(val);
       }
     };
+    function objToLatLngBounds(obj) {
+      var ne = {
+        lat: obj.north,
+        lng: obj.east
+      };
+      var sw = {
+        lat: obj.south,
+        lng: obj.west
+      };
+      return new google.maps[GoogleClasses.LAT_LNG_BOUNDS](sw, ne);
+    }
     function strToLatLng(str) {
       var points = str.split(",");
       var lat = parseFloat(points[0]);
@@ -2529,18 +2558,18 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       for (var i = 0, i_end = latLngs.length; i < i_end; i++) {
         latLngArray.push(strToLatLng(latLngs[i]));
       }
-      return latLngArray;
+      return new google.maps[GoogleClasses.MVC_ARRAY](latLngArray);
     }
     function strToLatLngBounds(_ref84) {
       var map = _ref84.map, val = _ref84.val;
       var delimiter = map.settings[Settings.DELIMITER].latLngBounds;
       var latLngs = val.split(delimiter);
-      return {
+      return objToLatLngBounds({
         north: Number(latLngs[0]),
         east: Number(latLngs[1]),
         south: Number(latLngs[2]),
         west: Number(latLngs[3])
-      };
+      });
     }
     return Convert;
   }(Convert || (Convert = {}), Const.GoogleClasses, Const.Settings);
@@ -2885,6 +2914,9 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     };
     Is.LatLngBoundsLiteral = function(val) {
       return val != null && Object.keys(val).length === 4 && val.hasOwnProperty("north") && val.hasOwnProperty("south") && val.hasOwnProperty("east") && val.hasOwnProperty("west");
+    };
+    Is.LatLngLiteral = function(val) {
+      return val != null && Object.keys(val).length === 2 && val.hasOwnProperty("lat") && val.hasOwnProperty("lng");
     };
     Is.MVCArray = function(val) {
       return val instanceof google.maps[Google.MVC_ARRAY];
