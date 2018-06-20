@@ -9,17 +9,16 @@ var Core = ((Core) => {
 
   Core.addOverlay = function({map, options, type}) {
     const args = arguments[0]
-    type       = Lookup.overlayType(type)
+    args.type  = Lookup.overlayType(type)
 
-    if (IsValid.overlayType(type) === false) {
+    if (IsValid.overlayType(args.type) === false) {
       return Error.throw({
         method  : "addOverlay",
-        msg     : `${args.type} is not a valid overlay type`,
-        args    : args
+        msg     : `${type} is not a valid overlay type`,
+        args    : {map, options, type}
       })
     }
 
-    args.type = type
     return Is.Array(options)
       ? multiAdd(args)
       : add(args)
