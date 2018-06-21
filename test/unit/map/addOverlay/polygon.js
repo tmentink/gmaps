@@ -17,30 +17,30 @@ describe("Map - Add Polygon", () => {
 
   it("should create a polygon with default settings", () => {
     const defaults = gmap.settings.polygonOptions
-    const o = m.addOverlay("polygon", {
+    const oa = m.addOverlay("polygon", {
       path: path
     })
 
-    chai.expect(o.init.options.clickable).to.equal(defaults.clickable)
+    chai.expect(oa.data[0].init.options.clickable).to.equal(defaults.clickable)
   })
 
   it("should create a polygon with custom settings", () => {
-    const o = m.addOverlay("polygon", {
+    const oa = m.addOverlay("polygon", {
       clickable: false,
       id: 1,
       path: path
     })
 
-    chai.expect(o.init.options.clickable).to.equal(false)
+    chai.expect(oa.data[0].init.options.clickable).to.equal(false)
   })
 
   it("should not create a polygon with the same id", () => {
-    const o = m.addOverlay("polygon", {
+    const oa = m.addOverlay("polygon", {
       id: 1,
       path: path
     })
 
-    chai.expect(o).to.be.undefined
+    chai.expect(oa.data).to.have.lengthOf(0)
   })
 
   it("should create multiple polygons with json strings", () => {

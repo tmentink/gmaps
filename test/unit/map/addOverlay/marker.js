@@ -16,30 +16,30 @@ describe("Map - Add Marker", () => {
 
   it("should create a marker with default settings", () => {
     const defaults = gmap.settings.markerOptions
-    const o = m.addOverlay("marker", {
+    const oa = m.addOverlay("marker", {
       position: position
     })
 
-    chai.expect(o.init.options.clickable).to.equal(defaults.clickable)
+    chai.expect(oa.data[0].init.options.clickable).to.equal(defaults.clickable)
   })
 
   it("should create a marker with custom settings", () => {
-    const o = m.addOverlay("marker", {
+    const oa = m.addOverlay("marker", {
       clickable: false,
       id: 1,
       position: position
     })
 
-    chai.expect(o.init.options.clickable).to.equal(false)
+    chai.expect(oa.data[0].init.options.clickable).to.equal(false)
   })
 
   it("should not create a marker with the same id", () => {
-    const o = m.addOverlay("marker", {
+    const oa = m.addOverlay("marker", {
       id: 1,
       position: position
     })
 
-    chai.expect(o).to.be.undefined
+    chai.expect(oa.data).to.have.lengthOf(0)
   })
 
   it("should create multiple markers with json strings", () => {

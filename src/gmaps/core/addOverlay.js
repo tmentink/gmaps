@@ -19,9 +19,11 @@ var Core = ((Core) => {
       })
     }
 
-    return Is.Array(options)
-      ? multiAdd(args)
-      : add(args)
+    if (Is.Array(options) === false) {
+      args.options = [options]
+    }
+
+    return multiAdd(args)
   }
 
 

@@ -17,30 +17,30 @@ describe("Map - Add Polyline", () => {
 
   it("should create a polyline with default settings", () => {
     const defaults = gmap.settings.polylineOptions
-    const o = m.addOverlay("polyline", {
+    const oa = m.addOverlay("polyline", {
       path: path
     })
 
-    chai.expect(o.init.options.clickable).to.equal(defaults.clickable)
+    chai.expect(oa.data[0].init.options.clickable).to.equal(defaults.clickable)
   })
 
   it("should create a polyline with custom settings", () => {
-    const o = m.addOverlay("polyline", {
+    const oa = m.addOverlay("polyline", {
       clickable: false,
       id: 1,
       path: path
     })
 
-    chai.expect(o.init.options.clickable).to.equal(false)
+    chai.expect(oa.data[0].init.options.clickable).to.equal(false)
   })
 
   it("should not create a polyline with the same id", () => {
-    const o = m.addOverlay("polyline", {
+    const oa = m.addOverlay("polyline", {
       id: 1,
       path: path
     })
 
-    chai.expect(o).to.be.undefined
+    chai.expect(oa.data).to.have.lengthOf(0)
   })
 
   it("should create multiple polylines with json strings", () => {

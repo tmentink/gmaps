@@ -18,30 +18,30 @@ describe("Map - Add Rectangle", () => {
 
   it("should create a rectangle with default settings", () => {
     const defaults = gmap.settings.rectangleOptions
-    const o = m.addOverlay("rectangle", {
+    const oa = m.addOverlay("rectangle", {
       bounds: bounds
     })
 
-    chai.expect(o.init.options.clickable).to.equal(defaults.clickable)
+    chai.expect(oa.data[0].init.options.clickable).to.equal(defaults.clickable)
   })
 
   it("should create a rectangle with custom settings", () => {
-    const o = m.addOverlay("rectangle", {
+    const oa = m.addOverlay("rectangle", {
       bounds: bounds,
       clickable: false,
       id: 1
     })
 
-    chai.expect(o.init.options.clickable).to.equal(false)
+    chai.expect(oa.data[0].init.options.clickable).to.equal(false)
   })
 
   it("should not create a rectangle with the same id", () => {
-    const o = m.addOverlay("rectangle", {
+    const oa = m.addOverlay("rectangle", {
       bounds: bounds,
       id: 1
     })
 
-    chai.expect(o).to.be.undefined
+    chai.expect(oa.data).to.have.lengthOf(0)
   })
 
   it("should create multiple rectangles with json strings", () => {

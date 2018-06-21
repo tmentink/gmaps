@@ -16,33 +16,33 @@ describe("Map - Add Label", () => {
 
   it("should create a label with default settings", () => {
     const defaults = gmap.settings.labelOptions
-    const o = m.addOverlay("label", {
+    const oa = m.addOverlay("label", {
       position: position,
       text: "test"
     })
 
-    chai.expect(o.init.options.align).to.equal(defaults.align)
+    chai.expect(oa.data[0].init.options.align).to.equal(defaults.align)
   })
 
   it("should create a label with custom settings", () => {
-    const o = m.addOverlay("label", {
+    const oa = m.addOverlay("label", {
       align: "left",
       id: 1,
       position: position,
       text: "test"
     })
 
-    chai.expect(o.init.options.align).to.equal("left")
+    chai.expect(oa.data[0].init.options.align).to.equal("left")
   })
 
   it("should not create a label with the same id", () => {
-    const o = m.addOverlay("label", {
+    const oa = m.addOverlay("label", {
       id: 1,
       position: position,
       text: "test"
     })
 
-    chai.expect(o).to.be.undefined
+    chai.expect(oa.data).to.have.lengthOf(0)
   })
 
   it("should create multiple labels with json strings", () => {

@@ -16,33 +16,33 @@ describe("Map - Add Circle", () => {
 
   it("should create a circle with default settings", () => {
     const defaults = gmap.settings.circleOptions
-    const o = m.addOverlay("circle", {
+    const oa = m.addOverlay("circle", {
       center: center,
       radius: 5
     })
 
-    chai.expect(o.init.options.clickable).to.equal(defaults.clickable)
+    chai.expect(oa.data[0].init.options.clickable).to.equal(defaults.clickable)
   })
 
   it("should create a circle with custom settings", () => {
-    const o = m.addOverlay("circle", {
+    const oa = m.addOverlay("circle", {
       center: center,
       clickable: false,
       id: 1,
       radius: 5
     })
 
-    chai.expect(o.init.options.clickable).to.be.false
+    chai.expect(oa.data[0].init.options.clickable).to.be.false
   })
 
   it("should not create a circle with the same id", () => {
-    const o = m.addOverlay("circle", {
+    const oa = m.addOverlay("circle", {
       center: center,
       id: 1,
       radius: 5
     })
 
-    chai.expect(o).to.be.undefined
+    chai.expect(oa.data).to.have.lengthOf(0)
   })
 
   it("should create multiple circles with json strings", () => {

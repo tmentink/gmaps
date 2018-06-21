@@ -894,7 +894,10 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
           }
         });
       }
-      return Is.Array(options) ? multiAdd(args) : add(args);
+      if (Is.Array(options) === false) {
+        args.options = [ options ];
+      }
+      return multiAdd(args);
     };
     function add(_ref2) {
       var map = _ref2.map, options = _ref2.options, type = _ref2.type;
