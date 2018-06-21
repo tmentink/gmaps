@@ -2509,14 +2509,14 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     };
     Convert.toLatLngArray = function(_ref81) {
       var map = _ref81.map, val = _ref81.val;
-      if (Is.MVCArray(val)) return val;
-      if (Is.String(val)) {
-        if (map.settings[Settings.DELIMITED_STRINGS]) {
-          return strToLatLngArray(arguments[0]);
-        }
-        val = JSON.parse(val);
-      }
       if (Is.Array(val)) return val;
+      if (Is.String(val)) {
+        return map.settings[Settings.DELIMITED_STRINGS] ? strToLatLngArray(arguments[0]) : JSON.parse(val);
+      }
+      if (Is.MVCArray(val)) {
+        var val0 = val.getAt(0);
+        return Is.MVCArray(val0) ? val0.getArray() : val0;
+      }
     };
     Convert.toLatLngBounds = function(_ref82) {
       var map = _ref82.map, val = _ref82.val;
@@ -2556,7 +2556,7 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       for (var i = 0, i_end = latLngs.length; i < i_end; i++) {
         latLngArray.push(strToLatLng(latLngs[i]));
       }
-      return new google.maps[GoogleClasses.MVC_ARRAY](latLngArray);
+      return latLngArray;
     }
     function strToLatLngBounds(_ref84) {
       var map = _ref84.map, val = _ref84.val;

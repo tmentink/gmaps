@@ -24,17 +24,20 @@ var Convert = ((Convert, GoogleClasses, Settings) => {
   }
 
   Convert.toLatLngArray = function({map, val}) {
-    if (Is.MVCArray(val)) return val
+    if (Is.Array(val)) return val
 
     if (Is.String(val)) {
-      if (map.settings[Settings.DELIMITED_STRINGS]) {
-        return strToLatLngArray(arguments[0])
-      }
-
-      val = JSON.parse(val)
+      return map.settings[Settings.DELIMITED_STRINGS]
+        ? strToLatLngArray(arguments[0])
+        : JSON.parse(val)
     }
 
-    if (Is.Array(val)) return val
+    if (Is.MVCArray(val)) {
+      const val0 = val.getAt(0)
+      return Is.MVCArray(val0)
+        ? val0.getArray()
+        : val0
+    }
   }
 
   Convert.toLatLngBounds = function({map, val}) {
@@ -88,7 +91,7 @@ var Convert = ((Convert, GoogleClasses, Settings) => {
       latLngArray.push(strToLatLng(latLngs[i]))
     }
 
-    return new google.maps[GoogleClasses.MVC_ARRAY](latLngArray)
+    return latLngArray
   }
 
   function strToLatLngBounds({map, val}) {
