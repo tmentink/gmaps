@@ -23,6 +23,12 @@ describe("Overlays/Polygon - Bounds", () => {
     chai.expect(bounds).to.be.an.instanceof(google.maps.LatLngBounds)
   })
 
+  it("should center to all polygons", () => {
+    const center = m.polygons().getCenter()
+    m.polygons().center()
+    chai.expect(JSON.stringify(center)).to.equal(JSON.stringify(m.getCenter()))
+  })
+
   it("should zoom to all polygons", () => {
     const mapBounds = m.polygons().zoom().getBounds()
     chai.expect(JSON.stringify(mapBounds)).to.equal(JSON.stringify(bounds))

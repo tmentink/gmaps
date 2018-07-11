@@ -24,6 +24,12 @@ describe("Overlays/Label - Bounds", () => {
     chai.expect(bounds).to.be.an.instanceof(google.maps.LatLngBounds)
   })
 
+  it("should center to all labels", () => {
+    const center = m.labels().getCenter()
+    m.labels().center()
+    chai.expect(JSON.stringify(center)).to.equal(JSON.stringify(m.getCenter()))
+  })
+
   it("should zoom to all labels", () => {
     const mapBounds = m.labels().zoom().getBounds()
     chai.expect(JSON.stringify(mapBounds)).to.equal(JSON.stringify(bounds))

@@ -17,6 +17,11 @@ var Overlays = ((Overlays) => {
     // Public
     // --------------------------------------------------------------------
 
+    center() {
+      this.map.setCenter(this.getCenter())
+      return this
+    }
+
     filter(fn) {
       return this.data.filter(fn)
     }

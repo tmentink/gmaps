@@ -23,6 +23,12 @@ describe("Overlays/Rectangle - Bounds", () => {
     chai.expect(bounds).to.be.an.instanceof(google.maps.LatLngBounds)
   })
 
+  it("should center to all rectangles", () => {
+    const center = m.rectangles().getCenter()
+    m.rectangles().center()
+    chai.expect(JSON.stringify(center)).to.equal(JSON.stringify(m.getCenter()))
+  })
+
   it("should zoom to all rectangles", () => {
     const mapBounds = m.rectangles().zoom().getBounds()
     chai.expect(JSON.stringify(mapBounds)).to.equal(JSON.stringify(bounds))

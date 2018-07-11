@@ -24,6 +24,12 @@ describe("Overlays/Circle - Bounds", () => {
     chai.expect(bounds).to.be.an.instanceof(google.maps.LatLngBounds)
   })
 
+  it("should center to all circles", () => {
+    const center = m.circles().getCenter()
+    m.circles().center()
+    chai.expect(JSON.stringify(center)).to.equal(JSON.stringify(m.getCenter()))
+  })
+
   it("should zoom to all circles", () => {
     const mapBounds = m.circles().zoom().getBounds()
     chai.expect(JSON.stringify(mapBounds)).to.equal(JSON.stringify(bounds))

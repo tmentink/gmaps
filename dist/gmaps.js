@@ -1685,6 +1685,10 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
         this.seed = 0;
         this.type = type;
       }
+      BaseOverlayArray.prototype.center = function center() {
+        this.map.setCenter(this.getCenter());
+        return this;
+      };
       BaseOverlayArray.prototype.filter = function filter(fn) {
         return this.data.filter(fn);
       };
