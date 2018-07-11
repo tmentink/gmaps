@@ -49,6 +49,15 @@ var Overlays = ((Overlays, OverlayTypes) => {
       })
     }
 
+    one(type, func) {
+      return Core.addListenerOnce({
+        func     : func,
+        ids      : this.getIds(),
+        ovlArray : this,
+        type     : type
+      })
+    }
+
     trigger(type) {
       return Core.triggerListener({
         ids      : this.getIds(),

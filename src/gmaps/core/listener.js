@@ -14,6 +14,13 @@ var Core = ((Core) => {
     return listener(args)
   }
 
+  Core.addListenerOnce = function({func, ovl, ovlArray, type}) {
+    const args  = arguments[0]
+    args.action = Action.ADD_ONCE
+
+    return listener(args)
+  }
+
   Core.removeListener = function({func, ovl, ovlArray, type}) {
     const args  = arguments[0]
     args.action = type !== "all" ? Action.REMOVE_TYPE : Action.REMOVE_ALL
@@ -35,6 +42,7 @@ var Core = ((Core) => {
 
   const Action = {
     ADD         : "add",
+    ADD_ONCE    : "add_once",
     REMOVE_ALL  : "remove_all",
     REMOVE_TYPE : "remove_type",
     TRIGGER     : "trigger"
@@ -43,6 +51,10 @@ var Core = ((Core) => {
   const Execute = {
     add({func, ovl, type}) {
       google.maps.event.addListener(ovl.obj, type, func)
+      return ovl
+    },
+    add_once({func, ovl, type}) {
+      google.maps.event.addListenerOnce(ovl.obj, type, func)
       return ovl
     },
     remove_all({ovl}) {

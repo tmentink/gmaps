@@ -1,6 +1,6 @@
 
 describe("Overlays/Polyline - Listeners", () => {
-  let m
+  let m, oa, ovl
 
   before((done) => {
     m = new gmap({
@@ -13,13 +13,17 @@ describe("Overlays/Polyline - Listeners", () => {
           }
         }))
 
+        oa = m.polylines()
+        ovl = oa.findById(1)
+
         done()
       }
     })
   })
 
   afterEach(() => {
-    m.polylines().off("all")
+    oa.off("all")
+    ovl.off("all")
   })
 
 
@@ -27,69 +31,80 @@ describe("Overlays/Polyline - Listeners", () => {
   // All Polylines
   // ----------------------------------------------------------------------
 
-  it("should add and trigger a click event for all polylines", () => {
+  it("ALL: should add and trigger a click event", () => {
     let click = false
-    m.polylines().on("click", () => {
+    oa.on("click", () => {
       click = true
     })
 
-    m.polylines().trigger("click")
+    oa.trigger("click")
     chai.expect(click).to.be.true
   })
 
-  it("should add and trigger a double click event for all polylines", () => {
+  it("ALL: should add and trigger a double click event", () => {
     let dblClick = false
-    m.polylines().on("double click", () => {
+    oa.on("double click", () => {
       dblClick = true
     })
 
-    m.polylines().trigger("double click")
+    oa.trigger("double click")
     chai.expect(dblClick).to.be.true
   })
 
-  it("should remove the click event before it is triggered for all polylines", () => {
+  it("ALL: should remove the click event before it is triggered", () => {
     let click = false
-    m.polylines().on("click", () => {
+    oa.on("click", () => {
       click = true
     })
 
-    m.polylines().off("click")
-    m.polylines().trigger("click")
+    oa.off("click")
+    oa.trigger("click")
     chai.expect(click).to.be.false
   })
 
-  it("should remove the click event but not the double click event for all polylines", () => {
+  it("ALL: should remove the click event but not the double click event", () => {
     let click = false
     let dblClick = false
-    m.polylines().on("click", () => {
+    oa.on("click", () => {
       click = true
     })
-    m.polylines().on("double click", () => {
+    oa.on("double click", () => {
       dblClick = true
     })
 
-    m.polylines().off("click")
-    m.polylines().trigger("click")
-    m.polylines().trigger("double click")
+    oa.off("click")
+    oa.trigger("click")
+    oa.trigger("double click")
     chai.expect(click).to.be.false
     chai.expect(dblClick).to.be.true
   })
 
-  it("should remove all events for all polylines", () => {
+  it("ALL: should remove all events", () => {
     let click = false
     let dblClick = false
-    m.polylines().on("click", () => {
+    oa.on("click", () => {
       click = true
     })
-    m.polylines().on("double click", () => {
+    oa.on("double click", () => {
       dblClick = true
     })
 
-    m.polylines().off("all")
-    m.polylines().trigger("click")
-    m.polylines().trigger("double click")
+    oa.off("all")
+    oa.trigger("click")
+    oa.trigger("double click")
     chai.expect(click).to.be.false
     chai.expect(dblClick).to.be.false
+  })
+
+  it("ALL: should add a click event that only triggers once", () => {
+    let click = 1
+    oa.one("click", () => {
+      click += 1
+    })
+
+    oa.trigger("click")
+    oa.trigger("click")
+    chai.expect(click).to.equal(59)
   })
 
 
@@ -97,69 +112,80 @@ describe("Overlays/Polyline - Listeners", () => {
   // Single Polyline
   // ----------------------------------------------------------------------
 
-  it("should add and trigger a click event for a single polyline", () => {
+  it("ONE: should add and trigger a click event", () => {
     let click = false
-    m.polylines().findById(1).on("click", () => {
+    ovl.on("click", () => {
       click = true
     })
 
-    m.polylines().findById(1).trigger("click")
+    ovl.trigger("click")
     chai.expect(click).to.be.true
   })
 
-  it("should add and trigger a double click event for a single polyline", () => {
+  it("ONE: should add and trigger a double click event", () => {
     let dblClick = false
-    m.polylines().findById(1).on("double click", () => {
+    ovl.on("double click", () => {
       dblClick = true
     })
 
-    m.polylines().findById(1).trigger("double click")
+    ovl.trigger("double click")
     chai.expect(dblClick).to.be.true
   })
 
-  it("should remove the click event before it is triggered for a single polyline", () => {
+  it("ONE: should remove the click event before it is triggered", () => {
     let click = false
-    m.polylines().findById(1).on("click", () => {
+    ovl.on("click", () => {
       click = true
     })
 
-    m.polylines().findById(1).off("click")
-    m.polylines().findById(1).trigger("click")
+    ovl.off("click")
+    ovl.trigger("click")
     chai.expect(click).to.be.false
   })
 
-  it("should remove the click event but not the double click event for a single polyline", () => {
+  it("ONE: should remove the click event but not the double click event", () => {
     let click = false
     let dblClick = false
-    m.polylines().findById(1).on("click", () => {
+    ovl.on("click", () => {
       click = true
     })
-    m.polylines().findById(1).on("double click", () => {
+    ovl.on("double click", () => {
       dblClick = true
     })
 
-    m.polylines().findById(1).off("click")
-    m.polylines().findById(1).trigger("click")
-    m.polylines().findById(1).trigger("double click")
+    ovl.off("click")
+    ovl.trigger("click")
+    ovl.trigger("double click")
     chai.expect(click).to.be.false
     chai.expect(dblClick).to.be.true
   })
 
-  it("should remove all events for a single polyline", () => {
+  it("ONE: should remove all events", () => {
     let click = false
     let dblClick = false
-    m.polylines().findById(1).on("click", () => {
+    ovl.on("click", () => {
       click = true
     })
-    m.polylines().findById(1).on("double click", () => {
+    ovl.on("double click", () => {
       dblClick = true
     })
 
-    m.polylines().findById(1).off("all")
-    m.polylines().findById(1).trigger("click")
-    m.polylines().findById(1).trigger("double click")
+    ovl.off("all")
+    ovl.trigger("click")
+    ovl.trigger("double click")
     chai.expect(click).to.be.false
     chai.expect(dblClick).to.be.false
+  })
+
+  it("ONE: should add a click event that only triggers once", () => {
+    let click = 1
+    ovl.one("click", () => {
+      click += 1
+    })
+
+    ovl.trigger("click")
+    ovl.trigger("click")
+    chai.expect(click).to.equal(2)
   })
 
 })

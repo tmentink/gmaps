@@ -104,6 +104,14 @@
       })
     },
 
+    one(type, func) {
+      return Core.addListenerOnce({
+        ovl  : this,
+        func : func,
+        type : type
+      })
+    },
+
     polygons(ids) {
       return Core.search({
         ids      : ids,

@@ -47,6 +47,14 @@ var Overlays = ((Overlays, OverlayTypes, GoogleClasses) => {
       })
     }
 
+    one(type, func) {
+      return Core.addListenerOnce({
+        ovl  : this,
+        func : func,
+        type : type
+      })
+    }
+
     trigger(type) {
       return Core.triggerListener({
         ovl  : this,

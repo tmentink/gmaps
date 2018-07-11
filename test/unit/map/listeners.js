@@ -79,4 +79,15 @@ describe("Map - Listeners", () => {
     chai.expect(dblClick).to.be.false
   })
 
+  it("should add a click event that only triggers once", () => {
+    let click = 1
+    m.one("click", () => {
+      click += 1
+    })
+
+    m.trigger("click")
+    m.trigger("click")
+    chai.expect(click).to.equal(2)
+  })
+
 })

@@ -813,6 +813,13 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
           type: type
         });
       },
+      one: function one(type, func) {
+        return Core.addListenerOnce({
+          ovl: this,
+          func: func,
+          type: type
+        });
+      },
       polygons: function polygons(ids) {
         return Core.search({
           ids: ids,
@@ -1258,54 +1265,66 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       args.action = Action.ADD;
       return listener(args);
     };
-    Core.removeListener = function(_ref35) {
+    Core.addListenerOnce = function(_ref35) {
       var func = _ref35.func, ovl = _ref35.ovl, ovlArray = _ref35.ovlArray, type = _ref35.type;
+      var args = arguments[0];
+      args.action = Action.ADD_ONCE;
+      return listener(args);
+    };
+    Core.removeListener = function(_ref36) {
+      var func = _ref36.func, ovl = _ref36.ovl, ovlArray = _ref36.ovlArray, type = _ref36.type;
       var args = arguments[0];
       args.action = type !== "all" ? Action.REMOVE_TYPE : Action.REMOVE_ALL;
       return listener(args);
     };
-    Core.triggerListener = function(_ref36) {
-      var func = _ref36.func, ovl = _ref36.ovl, ovlArray = _ref36.ovlArray, type = _ref36.type;
+    Core.triggerListener = function(_ref37) {
+      var func = _ref37.func, ovl = _ref37.ovl, ovlArray = _ref37.ovlArray, type = _ref37.type;
       var args = arguments[0];
       args.action = Action.TRIGGER;
       return listener(args);
     };
     var Action = {
       ADD: "add",
+      ADD_ONCE: "add_once",
       REMOVE_ALL: "remove_all",
       REMOVE_TYPE: "remove_type",
       TRIGGER: "trigger"
     };
     var Execute = {
-      add: function add(_ref37) {
-        var func = _ref37.func, ovl = _ref37.ovl, type = _ref37.type;
+      add: function add(_ref38) {
+        var func = _ref38.func, ovl = _ref38.ovl, type = _ref38.type;
         google.maps.event.addListener(ovl.obj, type, func);
         return ovl;
       },
-      remove_all: function remove_all(_ref38) {
-        var ovl = _ref38.ovl;
+      add_once: function add_once(_ref39) {
+        var func = _ref39.func, ovl = _ref39.ovl, type = _ref39.type;
+        google.maps.event.addListenerOnce(ovl.obj, type, func);
+        return ovl;
+      },
+      remove_all: function remove_all(_ref40) {
+        var ovl = _ref40.ovl;
         google.maps.event.clearInstanceListeners(ovl.obj);
         return ovl;
       },
-      remove_type: function remove_type(_ref39) {
-        var ovl = _ref39.ovl, type = _ref39.type;
+      remove_type: function remove_type(_ref41) {
+        var ovl = _ref41.ovl, type = _ref41.type;
         google.maps.event.clearListeners(ovl.obj, type);
         return ovl;
       },
-      trigger: function trigger(_ref40) {
-        var ovl = _ref40.ovl, type = _ref40.type;
+      trigger: function trigger(_ref42) {
+        var ovl = _ref42.ovl, type = _ref42.type;
         google.maps.event.trigger(ovl.obj, type, {});
         return ovl;
       }
     };
-    function listener(_ref41) {
-      var action = _ref41.action, func = _ref41.func, ovl = _ref41.ovl, ovlArray = _ref41.ovlArray, type = _ref41.type;
+    function listener(_ref43) {
+      var action = _ref43.action, func = _ref43.func, ovl = _ref43.ovl, ovlArray = _ref43.ovlArray, type = _ref43.type;
       var args = arguments[0];
       args.type = Lookup.eventType(type);
       return ovlArray ? multiListener(args) : Execute[action](args);
     }
-    function multiListener(_ref42) {
-      var action = _ref42.action, func = _ref42.func, ovlArray = _ref42.ovlArray, type = _ref42.type;
+    function multiListener(_ref44) {
+      var action = _ref44.action, func = _ref44.func, ovlArray = _ref44.ovlArray, type = _ref44.type;
       var args = arguments[0];
       var ids = ovlArray.getIds();
       var newOvlArray = Get.newOverlayArray({
@@ -1321,19 +1340,19 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
   }(Core || (Core = {}));
   var Core = function(Core) {
     "use strict";
-    Core.pop = function(_ref43) {
-      var count = _ref43.count, ovlArray = _ref43.ovlArray;
+    Core.pop = function(_ref45) {
+      var count = _ref45.count, ovlArray = _ref45.ovlArray;
       var args = arguments[0];
       args.action = Action.POP;
       return pop(args);
     };
-    Core.remove = function(_ref44) {
-      var ovl = _ref44.ovl, ovlArray = _ref44.ovlArray;
+    Core.remove = function(_ref46) {
+      var ovl = _ref46.ovl, ovlArray = _ref46.ovlArray;
       var args = arguments[0];
       return ovlArray ? multiRemove(ovlArray) : remove(ovl);
     };
-    Core.shift = function(_ref45) {
-      var count = _ref45.count, ovlArray = _ref45.ovlArray;
+    Core.shift = function(_ref47) {
+      var count = _ref47.count, ovlArray = _ref47.ovlArray;
       var args = arguments[0];
       args.action = Action.SHIFT;
       return pop(args);
@@ -1370,8 +1389,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       }
       return newOvlArray;
     }
-    function pop(_ref46) {
-      var action = _ref46.action, _ref46$count = _ref46.count, count = _ref46$count === undefined ? 1 : _ref46$count, ovlArray = _ref46.ovlArray;
+    function pop(_ref48) {
+      var action = _ref48.action, _ref48$count = _ref48.count, count = _ref48$count === undefined ? 1 : _ref48$count, ovlArray = _ref48.ovlArray;
       var newOvlArray = Get.newOverlayArray({
         ovlArray: ovlArray
       });
@@ -1385,13 +1404,13 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
   }(Core || (Core = {}));
   var Core = function(Core) {
     "use strict";
-    Core.reset = function(_ref47) {
-      var ovl = _ref47.ovl, ovlArray = _ref47.ovlArray;
+    Core.reset = function(_ref49) {
+      var ovl = _ref49.ovl, ovlArray = _ref49.ovlArray;
       var args = arguments[0];
       return ovlArray ? multiReset(ovlArray) : reset(ovl);
     };
-    Core.resetMap = function(_ref48) {
-      var map = _ref48.map;
+    Core.resetMap = function(_ref50) {
+      var map = _ref50.map;
       map.obj.fitBounds(map.init.bounds);
       map.obj.setOptions(map.init.options);
       return map;
@@ -1416,8 +1435,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
   }(Core || (Core = {}));
   var Core = function(Core) {
     "use strict";
-    Core.search = function(_ref49) {
-      var ids = _ref49.ids, matching = _ref49.matching, ovlArray = _ref49.ovlArray;
+    Core.search = function(_ref51) {
+      var ids = _ref51.ids, matching = _ref51.matching, ovlArray = _ref51.ovlArray;
       var args = arguments[0];
       var map = ovlArray.map;
       var newOvlArray = Get.newOverlayArray({
@@ -1431,8 +1450,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
         return id.toString();
       });
     }
-    function getDataByIds(_ref50) {
-      var ids = _ref50.ids, matching = _ref50.matching, ovlArray = _ref50.ovlArray;
+    function getDataByIds(_ref52) {
+      var ids = _ref52.ids, matching = _ref52.matching, ovlArray = _ref52.ovlArray;
       ids = formatIds(ids);
       return ovlArray.data.filter(function(ovl) {
         return matching === true ? ids.indexOf(ovl.id) !== -1 : ids.indexOf(ovl.id) === -1;
@@ -1442,32 +1461,32 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
   }(Core || (Core = {}));
   var Core = function(Core) {
     "use strict";
-    Core.setOptions = function(_ref51) {
-      var option = _ref51.option, ovl = _ref51.ovl, ovlArray = _ref51.ovlArray, value = _ref51.value;
+    Core.setOptions = function(_ref53) {
+      var option = _ref53.option, ovl = _ref53.ovl, ovlArray = _ref53.ovlArray, value = _ref53.value;
       var args = arguments[0];
       args.option = formatOverlayOptions(args);
       return ovlArray ? multiSetOptions(args) : setOptions(args);
     };
-    Core.setMapOptions = function(_ref52) {
-      var map = _ref52.map, option = _ref52.option, value = _ref52.value;
+    Core.setMapOptions = function(_ref54) {
+      var map = _ref54.map, option = _ref54.option, value = _ref54.value;
       return setOptions({
         option: formatMapOptions(arguments[0]),
         ovl: map
       });
     };
-    function formatMapOptions(_ref53) {
-      var map = _ref53.map, option = _ref53.option, value = _ref53.value;
+    function formatMapOptions(_ref55) {
+      var map = _ref55.map, option = _ref55.option, value = _ref55.value;
       var Format = {
-        object: function object(_ref54) {
-          var option = _ref54.option;
+        object: function object(_ref56) {
+          var option = _ref56.option;
           return Get.renamedMapOptions({
             options: option
           });
         },
-        string: function string(_ref55) {
-          var _ref56;
-          var option = _ref55.option, value = _ref55.value;
-          return _ref56 = {}, _ref56[option] = value, _ref56;
+        string: function string(_ref57) {
+          var _ref58;
+          var option = _ref57.option, value = _ref57.value;
+          return _ref58 = {}, _ref58[option] = value, _ref58;
         }
       };
       return Get.convertedMapOptions({
@@ -1475,19 +1494,19 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
         options: Format[Get.type(option)](arguments[0])
       });
     }
-    function formatOverlayOptions(_ref57) {
-      var option = _ref57.option, ovl = _ref57.ovl, ovlArray = _ref57.ovlArray, value = _ref57.value;
+    function formatOverlayOptions(_ref59) {
+      var option = _ref59.option, ovl = _ref59.ovl, ovlArray = _ref59.ovlArray, value = _ref59.value;
       var Format = {
-        object: function object(_ref58) {
-          var option = _ref58.option;
+        object: function object(_ref60) {
+          var option = _ref60.option;
           return Get.renamedOptions({
             options: option
           });
         },
-        string: function string(_ref59) {
-          var _ref60;
-          var option = _ref59.option, value = _ref59.value;
-          return _ref60 = {}, _ref60[option] = value, _ref60;
+        string: function string(_ref61) {
+          var _ref62;
+          var option = _ref61.option, value = _ref61.value;
+          return _ref62 = {}, _ref62[option] = value, _ref62;
         }
       };
       return Get.convertedOptions({
@@ -1496,8 +1515,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
         type: ovlArray ? ovlArray.getChildType() : ovl.type
       });
     }
-    function multiSetOptions(_ref61) {
-      var option = _ref61.option, ovlArray = _ref61.ovlArray;
+    function multiSetOptions(_ref63) {
+      var option = _ref63.option, ovlArray = _ref63.ovlArray;
       var args = arguments[0];
       var ids = ovlArray.getIds();
       var newOvlArray = Get.newOverlayArray({
@@ -1509,8 +1528,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       }
       return newOvlArray;
     }
-    function setOptions(_ref62) {
-      var option = _ref62.option, ovl = _ref62.ovl;
+    function setOptions(_ref64) {
+      var option = _ref64.option, ovl = _ref64.ovl;
       ovl.obj.setOptions(option);
       return ovl;
     }
@@ -1518,8 +1537,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
   }(Core || (Core = {}));
   var Core = function(Core, GoogleClasses, ShapeDegrees) {
     "use strict";
-    Core.shape = function(_ref63) {
-      var map = _ref63.map, type = _ref63.type, options = _ref63.options;
+    Core.shape = function(_ref65) {
+      var map = _ref65.map, type = _ref65.type, options = _ref65.options;
       var args = arguments[0];
       args.type = Lookup.shapeType(type);
       if (IsValid.shapeType(args.type) === false) {
@@ -1534,8 +1553,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       }
       return getShapePath(args);
     };
-    function getDestinationPoint(_ref64) {
-      var bearing = _ref64.bearing, distance = _ref64.distance, lat = _ref64.lat, lng = _ref64.lng;
+    function getDestinationPoint(_ref66) {
+      var bearing = _ref66.bearing, distance = _ref66.distance, lat = _ref66.lat, lng = _ref66.lng;
       bearing = Convert.toRad(bearing);
       distance = distance / 6371;
       lat = Convert.toRad(lat);
@@ -1549,8 +1568,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       dest_lng = Convert.toDeg(dest_lng);
       return new google.maps[GoogleClasses.LAT_LNG](dest_lat, dest_lng);
     }
-    function getShapePath(_ref65) {
-      var map = _ref65.map, options = _ref65.options, type = _ref65.type;
+    function getShapePath(_ref67) {
+      var map = _ref67.map, options = _ref67.options, type = _ref67.type;
       var center = options.center || map.getCenter();
       var size = options.size || getSizeFromMapZoom(map);
       if (Is.LatLng(center) === false) {
@@ -1579,8 +1598,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
   var Overlays = function(Overlays) {
     "use strict";
     var BaseOverlay = function() {
-      function BaseOverlay(_ref66) {
-        var map = _ref66.map, obj = _ref66.obj, options = _ref66.options, type = _ref66.type;
+      function BaseOverlay(_ref68) {
+        var map = _ref68.map, obj = _ref68.obj, options = _ref68.options, type = _ref68.type;
         _classCallCheck(this, BaseOverlay);
         this.id = options.id;
         this.init = {
@@ -1677,8 +1696,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
   var Overlays = function(Overlays) {
     "use strict";
     var BaseOverlayArray = function() {
-      function BaseOverlayArray(_ref67) {
-        var map = _ref67.map, type = _ref67.type;
+      function BaseOverlayArray(_ref69) {
+        var map = _ref69.map, type = _ref69.type;
         _classCallCheck(this, BaseOverlayArray);
         this.data = [];
         this.map = map;
@@ -1821,8 +1840,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     "use strict";
     var Circle = function(_Overlays$BaseOverlay) {
       _inherits(Circle, _Overlays$BaseOverlay);
-      function Circle(_ref68) {
-        var map = _ref68.map, options = _ref68.options;
+      function Circle(_ref70) {
+        var map = _ref70.map, options = _ref70.options;
         _classCallCheck(this, Circle);
         return _possibleConstructorReturn(this, _Overlays$BaseOverlay.call(this, {
           map: map,
@@ -1844,6 +1863,13 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
           type: type
         });
       };
+      Circle.prototype.one = function one(type, func) {
+        return Core.addListenerOnce({
+          ovl: this,
+          func: func,
+          type: type
+        });
+      };
       Circle.prototype.trigger = function trigger(type) {
         return Core.triggerListener({
           ovl: this,
@@ -1859,8 +1885,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     "use strict";
     var CircleArray = function(_Overlays$BaseOverlay2) {
       _inherits(CircleArray, _Overlays$BaseOverlay2);
-      function CircleArray(_ref69) {
-        var map = _ref69.map;
+      function CircleArray(_ref71) {
+        var map = _ref71.map;
         _classCallCheck(this, CircleArray);
         return _possibleConstructorReturn(this, _Overlays$BaseOverlay2.call(this, {
           map: map,
@@ -1876,6 +1902,14 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       };
       CircleArray.prototype.on = function on(type, func) {
         return Core.addListener({
+          func: func,
+          ids: this.getIds(),
+          ovlArray: this,
+          type: type
+        });
+      };
+      CircleArray.prototype.one = function one(type, func) {
+        return Core.addListenerOnce({
           func: func,
           ids: this.getIds(),
           ovlArray: this,
@@ -2061,8 +2095,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     "use strict";
     var Label = function(_Overlays$BaseOverlay3) {
       _inherits(Label, _Overlays$BaseOverlay3);
-      function Label(_ref70) {
-        var map = _ref70.map, options = _ref70.options;
+      function Label(_ref72) {
+        var map = _ref72.map, options = _ref72.options;
         _classCallCheck(this, Label);
         return _possibleConstructorReturn(this, _Overlays$BaseOverlay3.call(this, {
           map: map,
@@ -2080,8 +2114,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     "use strict";
     var LabelArray = function(_Overlays$BaseOverlay4) {
       _inherits(LabelArray, _Overlays$BaseOverlay4);
-      function LabelArray(_ref71) {
-        var map = _ref71.map;
+      function LabelArray(_ref73) {
+        var map = _ref73.map;
         _classCallCheck(this, LabelArray);
         return _possibleConstructorReturn(this, _Overlays$BaseOverlay4.call(this, {
           map: map,
@@ -2108,8 +2142,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     "use strict";
     var Marker = function(_Overlays$BaseOverlay5) {
       _inherits(Marker, _Overlays$BaseOverlay5);
-      function Marker(_ref72) {
-        var map = _ref72.map, options = _ref72.options;
+      function Marker(_ref74) {
+        var map = _ref74.map, options = _ref74.options;
         _classCallCheck(this, Marker);
         return _possibleConstructorReturn(this, _Overlays$BaseOverlay5.call(this, {
           map: map,
@@ -2142,6 +2176,13 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
           type: type
         });
       };
+      Marker.prototype.one = function one(type, func) {
+        return Core.addListenerOnce({
+          ovl: this,
+          func: func,
+          type: type
+        });
+      };
       Marker.prototype.trigger = function trigger(type) {
         return Core.triggerListener({
           ovl: this,
@@ -2157,8 +2198,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     "use strict";
     var MarkerArray = function(_Overlays$BaseOverlay6) {
       _inherits(MarkerArray, _Overlays$BaseOverlay6);
-      function MarkerArray(_ref73) {
-        var map = _ref73.map;
+      function MarkerArray(_ref75) {
+        var map = _ref75.map;
         _classCallCheck(this, MarkerArray);
         return _possibleConstructorReturn(this, _Overlays$BaseOverlay6.call(this, {
           map: map,
@@ -2191,6 +2232,14 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
           type: type
         });
       };
+      MarkerArray.prototype.one = function one(type, func) {
+        return Core.addListenerOnce({
+          func: func,
+          ids: this.getIds(),
+          ovlArray: this,
+          type: type
+        });
+      };
       MarkerArray.prototype.trigger = function trigger(type) {
         return Core.triggerListener({
           ids: this.getIds(),
@@ -2207,8 +2256,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     "use strict";
     var Polygon = function(_Overlays$BaseOverlay7) {
       _inherits(Polygon, _Overlays$BaseOverlay7);
-      function Polygon(_ref74) {
-        var map = _ref74.map, options = _ref74.options;
+      function Polygon(_ref76) {
+        var map = _ref76.map, options = _ref76.options;
         _classCallCheck(this, Polygon);
         return _possibleConstructorReturn(this, _Overlays$BaseOverlay7.call(this, {
           map: map,
@@ -2243,6 +2292,13 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
           type: type
         });
       };
+      Polygon.prototype.one = function one(type, func) {
+        return Core.addListenerOnce({
+          ovl: this,
+          func: func,
+          type: type
+        });
+      };
       Polygon.prototype.trigger = function trigger(type) {
         return Core.triggerListener({
           ovl: this,
@@ -2258,8 +2314,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     "use strict";
     var PolygonArray = function(_Overlays$BaseOverlay8) {
       _inherits(PolygonArray, _Overlays$BaseOverlay8);
-      function PolygonArray(_ref75) {
-        var map = _ref75.map;
+      function PolygonArray(_ref77) {
+        var map = _ref77.map;
         _classCallCheck(this, PolygonArray);
         return _possibleConstructorReturn(this, _Overlays$BaseOverlay8.call(this, {
           map: map,
@@ -2294,6 +2350,14 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
           type: type
         });
       };
+      PolygonArray.prototype.one = function one(type, func) {
+        return Core.addListenerOnce({
+          func: func,
+          ids: this.getIds(),
+          ovlArray: this,
+          type: type
+        });
+      };
       PolygonArray.prototype.trigger = function trigger(type) {
         return Core.triggerListener({
           ids: this.getIds(),
@@ -2310,8 +2374,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     "use strict";
     var Polyline = function(_Overlays$BaseOverlay9) {
       _inherits(Polyline, _Overlays$BaseOverlay9);
-      function Polyline(_ref76) {
-        var map = _ref76.map, options = _ref76.options;
+      function Polyline(_ref78) {
+        var map = _ref78.map, options = _ref78.options;
         _classCallCheck(this, Polyline);
         return _possibleConstructorReturn(this, _Overlays$BaseOverlay9.call(this, {
           map: map,
@@ -2344,6 +2408,13 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
           type: type
         });
       };
+      Polyline.prototype.one = function one(type, func) {
+        return Core.addListenerOnce({
+          ovl: this,
+          func: func,
+          type: type
+        });
+      };
       Polyline.prototype.trigger = function trigger(type) {
         return Core.triggerListener({
           ovl: this,
@@ -2359,8 +2430,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     "use strict";
     var PolylineArray = function(_Overlays$BaseOverlay10) {
       _inherits(PolylineArray, _Overlays$BaseOverlay10);
-      function PolylineArray(_ref77) {
-        var map = _ref77.map;
+      function PolylineArray(_ref79) {
+        var map = _ref79.map;
         _classCallCheck(this, PolylineArray);
         return _possibleConstructorReturn(this, _Overlays$BaseOverlay10.call(this, {
           map: map,
@@ -2393,6 +2464,14 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
           type: type
         });
       };
+      PolylineArray.prototype.one = function one(type, func) {
+        return Core.addListenerOnce({
+          func: func,
+          ids: this.getIds(),
+          ovlArray: this,
+          type: type
+        });
+      };
       PolylineArray.prototype.trigger = function trigger(type) {
         return Core.triggerListener({
           ids: this.getIds(),
@@ -2409,8 +2488,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     "use strict";
     var Rectangle = function(_Overlays$BaseOverlay11) {
       _inherits(Rectangle, _Overlays$BaseOverlay11);
-      function Rectangle(_ref78) {
-        var map = _ref78.map, options = _ref78.options;
+      function Rectangle(_ref80) {
+        var map = _ref80.map, options = _ref80.options;
         _classCallCheck(this, Rectangle);
         return _possibleConstructorReturn(this, _Overlays$BaseOverlay11.call(this, {
           map: map,
@@ -2432,6 +2511,13 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
           type: type
         });
       };
+      Rectangle.prototype.one = function one(type, func) {
+        return Core.addListenerOnce({
+          ovl: this,
+          func: func,
+          type: type
+        });
+      };
       Rectangle.prototype.trigger = function trigger(type) {
         return Core.triggerListener({
           ovl: this,
@@ -2447,8 +2533,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     "use strict";
     var RectangleArray = function(_Overlays$BaseOverlay12) {
       _inherits(RectangleArray, _Overlays$BaseOverlay12);
-      function RectangleArray(_ref79) {
-        var map = _ref79.map;
+      function RectangleArray(_ref81) {
+        var map = _ref81.map;
         _classCallCheck(this, RectangleArray);
         return _possibleConstructorReturn(this, _Overlays$BaseOverlay12.call(this, {
           map: map,
@@ -2464,6 +2550,14 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       };
       RectangleArray.prototype.on = function on(type, func) {
         return Core.addListener({
+          func: func,
+          ids: this.getIds(),
+          ovlArray: this,
+          type: type
+        });
+      };
+      RectangleArray.prototype.one = function one(type, func) {
+        return Core.addListenerOnce({
           func: func,
           ids: this.getIds(),
           ovlArray: this,
@@ -2501,8 +2595,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
   }(Convert || (Convert = {}));
   var Convert = function(Convert, GoogleClasses, Settings) {
     "use strict";
-    Convert.toLatLng = function(_ref80) {
-      var map = _ref80.map, val = _ref80.val;
+    Convert.toLatLng = function(_ref82) {
+      var map = _ref82.map, val = _ref82.val;
       if (Is.LatLng(val)) return val;
       if (Is.String(val)) {
         if (map.settings[Settings.DELIMITED_STRINGS]) {
@@ -2514,8 +2608,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
         return new google.maps[GoogleClasses.LAT_LNG](val.lat, val.lng);
       }
     };
-    Convert.toLatLngArray = function(_ref81) {
-      var map = _ref81.map, val = _ref81.val;
+    Convert.toLatLngArray = function(_ref83) {
+      var map = _ref83.map, val = _ref83.val;
       if (Is.Array(val)) return val;
       if (Is.String(val)) {
         return map.settings[Settings.DELIMITED_STRINGS] ? strToLatLngArray(arguments[0]) : JSON.parse(val);
@@ -2525,8 +2619,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
         return Is.MVCArray(val0) ? val0.getArray() : val0;
       }
     };
-    Convert.toLatLngBounds = function(_ref82) {
-      var map = _ref82.map, val = _ref82.val;
+    Convert.toLatLngBounds = function(_ref84) {
+      var map = _ref84.map, val = _ref84.val;
       if (Is.LatLngBounds(val)) return val;
       if (Is.String(val)) {
         if (map.settings[Settings.DELIMITED_STRINGS]) {
@@ -2555,8 +2649,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       var lng = parseFloat(points[1]);
       return new google.maps[GoogleClasses.LAT_LNG](lat, lng);
     }
-    function strToLatLngArray(_ref83) {
-      var map = _ref83.map, val = _ref83.val;
+    function strToLatLngArray(_ref85) {
+      var map = _ref85.map, val = _ref85.val;
       var delimiter = map.settings[Settings.DELIMITER].latLng;
       var latLngs = val.split(delimiter);
       var latLngArray = [];
@@ -2565,8 +2659,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       }
       return latLngArray;
     }
-    function strToLatLngBounds(_ref84) {
-      var map = _ref84.map, val = _ref84.val;
+    function strToLatLngBounds(_ref86) {
+      var map = _ref86.map, val = _ref86.val;
       var delimiter = map.settings[Settings.DELIMITER].latLngBounds;
       var latLngs = val.split(delimiter);
       return objToLatLngBounds({
@@ -2580,35 +2674,35 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
   }(Convert || (Convert = {}), Const.GoogleClasses, Const.Settings);
   var Convert = function(Convert, Settings, GoogleClasses) {
     "use strict";
-    Convert.toString = function(_ref85) {
-      var map = _ref85.map, val = _ref85.val;
+    Convert.toString = function(_ref87) {
+      var map = _ref87.map, val = _ref87.val;
       var args = arguments[0];
       args.delimited = map.settings[Settings.DELIMITED_STRINGS];
       args.precision = map.settings[Settings.URL_PRECISION];
       return Conversions[Get.googleClass(val)](args);
     };
     var Conversions = {
-      LatLng: function LatLng(_ref86) {
-        var map = _ref86.map, val = _ref86.val, delimited = _ref86.delimited;
+      LatLng: function LatLng(_ref88) {
+        var map = _ref88.map, val = _ref88.val, delimited = _ref88.delimited;
         var args = arguments[0];
         return delimited ? toDelimited(args) : toJSON(args);
       },
-      MVCArray: function MVCArray(_ref87) {
-        var map = _ref87.map, val = _ref87.val, delimited = _ref87.delimited;
+      MVCArray: function MVCArray(_ref89) {
+        var map = _ref89.map, val = _ref89.val, delimited = _ref89.delimited;
         var args = arguments[0];
         if (Is.MVCArray(val.getAt(0))) {
           return Conversions.NestedMVCArray(args);
         }
         return delimited ? toDelimited(args) : toJSON(args);
       },
-      NestedMVCArray: function NestedMVCArray(_ref88) {
-        var map = _ref88.map, val = _ref88.val, delimited = _ref88.delimited;
+      NestedMVCArray: function NestedMVCArray(_ref90) {
+        var map = _ref90.map, val = _ref90.val, delimited = _ref90.delimited;
         var args = arguments[0];
         return delimited ? toMultiDelimited(args) : toMultiJSON(args);
       }
     };
-    function toDelimited(_ref89) {
-      var map = _ref89.map, val = _ref89.val, precision = _ref89.precision;
+    function toDelimited(_ref91) {
+      var map = _ref91.map, val = _ref91.val, precision = _ref91.precision;
       var str = "";
       if (Is.MVCArray(val)) {
         val.forEach(function(el, i) {
@@ -2620,15 +2714,15 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       }
       return str;
     }
-    function toJSON(_ref90) {
-      var map = _ref90.map, val = _ref90.val, precision = _ref90.precision;
+    function toJSON(_ref92) {
+      var map = _ref92.map, val = _ref92.val, precision = _ref92.precision;
       if (Is.MVCArray(val)) val = val.getArray();
       return JSON.stringify(val, function(key, value) {
         return key === "lat" || key === "lng" ? Number(value.toFixed(precision)) : value;
       });
     }
-    function toMultiDelimited(_ref91) {
-      var map = _ref91.map, val = _ref91.val, precision = _ref91.precision;
+    function toMultiDelimited(_ref93) {
+      var map = _ref93.map, val = _ref93.val, precision = _ref93.precision;
       var args = arguments[0];
       var str = "";
       val.forEach(function(el, i) {
@@ -2638,8 +2732,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       });
       return str;
     }
-    function toMultiJSON(_ref92) {
-      var map = _ref92.map, val = _ref92.val, precision = _ref92.precision;
+    function toMultiJSON(_ref94) {
+      var map = _ref94.map, val = _ref94.val, precision = _ref94.precision;
       var args = arguments[0];
       var arr = new google.maps[GoogleClasses.MVC_ARRAY]();
       val.forEach(function(el) {
@@ -2652,8 +2746,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
   }(Convert || (Convert = {}), Const.Settings, Const.GoogleClasses);
   var Error = function(Error) {
     "use strict";
-    Error.throw = function(_ref93) {
-      var method = _ref93.method, msg = _ref93.msg, args = _ref93.args;
+    Error.throw = function(_ref95) {
+      var method = _ref95.method, msg = _ref95.msg, args = _ref95.args;
       console.error(method + ": " + msg, args);
       return false;
     };
@@ -2661,8 +2755,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
   }(Error || (Error = {}));
   var Get = function(Get, GoogleClasses) {
     "use strict";
-    Get.boundsByInterface = function(_ref94) {
-      var map = _ref94.map, ovls = _ref94.ovls;
+    Get.boundsByInterface = function(_ref96) {
+      var map = _ref96.map, ovls = _ref96.ovls;
       var bounds = new google.maps[GoogleClasses.LAT_LNG_BOUNDS]();
       var types = Object.keys(ovls);
       for (var i = 0, i_end = types.length; i < i_end; i++) {
@@ -2675,16 +2769,16 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       }
       return bounds;
     };
-    Get.boundsByPath = function(_ref95) {
-      var bounds = _ref95.bounds, ovl = _ref95.ovl;
+    Get.boundsByPath = function(_ref97) {
+      var bounds = _ref97.bounds, ovl = _ref97.ovl;
       var path = ovl.obj.getPath();
       for (var i = 0, i_end = path.length; i < i_end; i++) {
         bounds.extend(path.getAt(i));
       }
       return bounds;
     };
-    Get.boundsByPaths = function(_ref96) {
-      var bounds = _ref96.bounds, ovl = _ref96.ovl;
+    Get.boundsByPaths = function(_ref98) {
+      var bounds = _ref98.bounds, ovl = _ref98.ovl;
       var paths = ovl.obj.getPaths();
       for (var i = 0, i_end = paths.length; i < i_end; i++) {
         var path = paths.getAt(i);
@@ -2694,8 +2788,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       }
       return bounds;
     };
-    Get.boundsByPosition = function(_ref97) {
-      var bounds = _ref97.bounds, ovl = _ref97.ovl;
+    Get.boundsByPosition = function(_ref99) {
+      var bounds = _ref99.bounds, ovl = _ref99.ovl;
       bounds.extend(ovl.obj.getPosition());
       return bounds;
     };
@@ -2706,8 +2800,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
   }(Get || (Get = {}), Const.GoogleClasses);
   var Get = function(Get) {
     "use strict";
-    Get.convertedMapOptions = function(_ref98) {
-      var map = _ref98.map, options = _ref98.options;
+    Get.convertedMapOptions = function(_ref100) {
+      var map = _ref100.map, options = _ref100.options;
       var mapOptions = Const.Map.options;
       var convertableOpts = mapOptions.filter(function(opt) {
         return opt["convertable"] === true;
@@ -2718,8 +2812,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
         options: options
       });
     };
-    Get.convertedOptions = function(_ref99) {
-      var map = _ref99.map, options = _ref99.options, type = _ref99.type;
+    Get.convertedOptions = function(_ref101) {
+      var map = _ref101.map, options = _ref101.options, type = _ref101.type;
       var convertableOpts = Get.filteredOptions({
         filter: "convertable",
         type: type
@@ -2730,8 +2824,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
         options: options
       });
     };
-    Get.renamedMapOptions = function(_ref100) {
-      var options = _ref100.options;
+    Get.renamedMapOptions = function(_ref102) {
+      var options = _ref102.options;
       Object.keys(options).forEach(function(key) {
         Util.renameProperty({
           newName: Lookup.mapOption(key),
@@ -2741,8 +2835,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       });
       return options;
     };
-    Get.renamedOptions = function(_ref101) {
-      var options = _ref101.options;
+    Get.renamedOptions = function(_ref103) {
+      var options = _ref103.options;
       Object.keys(options).forEach(function(key) {
         Util.renameProperty({
           newName: Lookup.overlayOption(key),
@@ -2753,8 +2847,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       return options;
     };
     var Conversions = {
-      bounds: function bounds(_ref102) {
-        var options = _ref102.options, map = _ref102.map;
+      bounds: function bounds(_ref104) {
+        var options = _ref104.options, map = _ref104.map;
         if (options.bounds) {
           options.bounds = Convert.toLatLngBounds({
             map: map,
@@ -2762,8 +2856,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
           });
         }
       },
-      center: function center(_ref103) {
-        var options = _ref103.options, map = _ref103.map;
+      center: function center(_ref105) {
+        var options = _ref105.options, map = _ref105.map;
         if (options.center) {
           options.center = Convert.toLatLng({
             map: map,
@@ -2771,8 +2865,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
           });
         }
       },
-      path: function path(_ref104) {
-        var options = _ref104.options, map = _ref104.map;
+      path: function path(_ref106) {
+        var options = _ref106.options, map = _ref106.map;
         if (options.path) {
           options.path = Convert.toLatLngArray({
             map: map,
@@ -2780,8 +2874,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
           });
         }
       },
-      paths: function paths(_ref105) {
-        var options = _ref105.options, map = _ref105.map;
+      paths: function paths(_ref107) {
+        var options = _ref107.options, map = _ref107.map;
         if (options.paths || options.path) {
           options.paths = Convert.toLatLngArray({
             map: map,
@@ -2790,8 +2884,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
           delete options.path;
         }
       },
-      position: function position(_ref106) {
-        var options = _ref106.options, map = _ref106.map;
+      position: function position(_ref108) {
+        var options = _ref108.options, map = _ref108.map;
         if (options.position) {
           options.position = Convert.toLatLng({
             map: map,
@@ -2800,8 +2894,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
         }
       }
     };
-    function convertOptions(_ref107) {
-      var convertableOpts = _ref107.convertableOpts, map = _ref107.map, options = _ref107.options;
+    function convertOptions(_ref109) {
+      var convertableOpts = _ref109.convertableOpts, map = _ref109.map, options = _ref109.options;
       for (var i = 0, i_end = convertableOpts.length; i < i_end; i++) {
         var opt = convertableOpts[i];
         Conversions[opt.name]({
@@ -2815,8 +2909,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
   }(Get || (Get = {}));
   var Get = function(Get, GlobalSettings) {
     "use strict";
-    Get.mergedSettings = function(_ref108) {
-      var convert = _ref108.convert, settings = _ref108.settings;
+    Get.mergedSettings = function(_ref110) {
+      var convert = _ref110.convert, settings = _ref110.settings;
       settings = Util.extend({}, GlobalSettings, settings);
       if (convert) {
         var map = {
@@ -2830,8 +2924,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       }
       return settings;
     };
-    Get.renamedSettings = function(_ref109) {
-      var settings = _ref109.settings;
+    Get.renamedSettings = function(_ref111) {
+      var settings = _ref111.settings;
       Object.keys(settings).forEach(function(key) {
         Util.renameProperty({
           newName: Lookup.setting(key),
@@ -2851,8 +2945,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       });
       return Const.GoogleClasses[key];
     };
-    Get.newOverlayArray = function(_ref110) {
-      var map = _ref110.map, ovlArray = _ref110.ovlArray, type = _ref110.type;
+    Get.newOverlayArray = function(_ref112) {
+      var map = _ref112.map, ovlArray = _ref112.ovlArray, type = _ref112.type;
       type = type + "Array";
       if (ovlArray !== undefined) {
         map = ovlArray.map;
@@ -2869,8 +2963,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
   }(Get || (Get = {}));
   var Get = function(Get) {
     "use strict";
-    Get.filteredOptions = function(_ref111) {
-      var type = _ref111.type, filter = _ref111.filter;
+    Get.filteredOptions = function(_ref113) {
+      var type = _ref113.type, filter = _ref113.filter;
       var options = Const.Overlays[type].options;
       var filterType = {
         string: function string(opt) {
@@ -2880,12 +2974,12 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       };
       return options.filter(filterType[Get.type(filter)]);
     };
-    Get.formattedId = function(_ref112) {
-      var map = _ref112.map, options = _ref112.options, type = _ref112.type;
+    Get.formattedId = function(_ref114) {
+      var map = _ref114.map, options = _ref114.options, type = _ref114.type;
       return FormatID[Get.type(options.id)](arguments[0]);
     };
-    Get.mergedOptions = function(_ref113) {
-      var map = _ref113.map, options = _ref113.options, type = _ref113.type, convert = _ref113.convert;
+    Get.mergedOptions = function(_ref115) {
+      var map = _ref115.map, options = _ref115.options, type = _ref115.type, convert = _ref115.convert;
       var args = arguments[0];
       var namespace = Lookup.setting(type + "Options");
       var defaults = map.settings[namespace] || {};
@@ -2894,16 +2988,16 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       return convert ? Get.convertedOptions(args) : args.options;
     };
     var FormatID = {
-      number: function number(_ref114) {
-        var options = _ref114.options;
+      number: function number(_ref116) {
+        var options = _ref116.options;
         return options.id.toString();
       },
-      string: function string(_ref115) {
-        var options = _ref115.options;
+      string: function string(_ref117) {
+        var options = _ref117.options;
         return options.id;
       },
-      undefined: function undefined(_ref116) {
-        var map = _ref116.map, type = _ref116.type;
+      undefined: function undefined(_ref118) {
+        var map = _ref118.map, type = _ref118.type;
         return "__" + map.overlays[type].seed++ + "__";
       }
     };
@@ -2964,8 +3058,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
   }(Is || (Is = {}));
   var IsValid = function(IsValid) {
     "use strict";
-    IsValid.overlayOptions = function(_ref117) {
-      var map = _ref117.map, options = _ref117.options, type = _ref117.type;
+    IsValid.overlayOptions = function(_ref119) {
+      var map = _ref119.map, options = _ref119.options, type = _ref119.type;
       var args = arguments[0];
       args.id = options.id;
       if (isExistingId(args)) {
@@ -2997,8 +3091,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
     function isEmpty(val) {
       return val === "" || val === null || val === undefined;
     }
-    function isExistingId(_ref118) {
-      var map = _ref118.map, type = _ref118.type, id = _ref118.id;
+    function isExistingId(_ref120) {
+      var map = _ref120.map, type = _ref120.type, id = _ref120.id;
       return map.overlays[type].includes(id);
     }
     return IsValid;
@@ -3040,8 +3134,8 @@ if (typeof google === "undefined" || typeof google.maps === "undefined") {
       }
       return target;
     };
-    Util.renameProperty = function(_ref119) {
-      var obj = _ref119.obj, oldName = _ref119.oldName, newName = _ref119.newName;
+    Util.renameProperty = function(_ref121) {
+      var obj = _ref121.obj, oldName = _ref121.oldName, newName = _ref121.newName;
       if (oldName === newName) return;
       if (obj.hasOwnProperty(oldName)) {
         obj[newName] = obj[oldName];
